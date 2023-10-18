@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import logInView from '../views/logInView.vue'
 import Dashboard from '../views/dashboard.vue'
+import EstudiantesView from '../views/EstudiantesView.vue'
 import AboutView from '../views/AboutView.vue'
 
 Vue.use(VueRouter)
@@ -18,8 +19,13 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/about',
-    name: 'about',
+    path: '/Estudiantes',
+    name: 'Estudiantes',
+    component: EstudiantesView
+  },
+  {
+    path: '/About',
+    name: 'About',
     component: AboutView
   },
 ]

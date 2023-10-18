@@ -2,11 +2,11 @@
   <v-app>
     <NavBar />
     <v-content class="ma-4">
-      <v-main>
-        <router-view />
-      </v-main>
+
+      <router-view />
+
     </v-content>
-    <Footer/>
+    <Footer />
   </v-app>
 </template>
 

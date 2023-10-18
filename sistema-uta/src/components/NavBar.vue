@@ -4,9 +4,9 @@
         <v-app-bar-nav-icon  @click.stop="drawer = !drawer">
         </v-app-bar-nav-icon>
             <v-spacer></v-spacer>
-        <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
-          <span class="mr-2">Latest Release</span>
-          <v-icon  >mdi-open-in-new</v-icon>
+        <v-btn text>
+            <span class="mr-2" style="font-size: 24px;">UNIVERSIDAD TECNICA DE AMBATO</span>
+            <v-img :src="logo" alt="logo" contain height="90"></v-img>
         </v-btn>
       </v-app-bar>
 
@@ -51,10 +51,11 @@ export default {
     data() {
         return {
             drawer: true,
+            logo: require("../assets/logo-uta.png"),
             links: [
                 { icon: 'view-dashboard', text: 'Dasboard', route: '/' },
-                { icon: 'folder', text: 'Folder', route: '/' },
-                { icon: 'view-dashboard', text: 'About', route: '/about' },
+                { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
+                { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
             ]
         }
     }
