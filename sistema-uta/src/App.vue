@@ -1,18 +1,8 @@
 <template>
-  <v-app>
-    <NavBar />
-    <v-content class="ma-4">
-
-      <router-view />
-
-    </v-content>
-    <Footer />
-  </v-app>
+      <router-view></router-view>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/footer.vue'
 export default {
   name: 'App',
 
@@ -21,8 +11,7 @@ export default {
   }),
 
   components: {
-    NavBar,
-    Footer,
+   
   },
 
 };

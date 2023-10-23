@@ -8,25 +8,27 @@ import AboutView from '../views/AboutView.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  /*{
+  {
     path: '/',
-    name: 'LogIn',
+    //name: 'LogIn',
     component: logInView
-  },*/
-  {
-    path: '/',
-    name: 'Dashboard',
-    component: Dashboard
   },
   {
-    path: '/Estudiantes',
-    name: 'Estudiantes',
-    component: EstudiantesView
-  },
-  {
-    path: '/About',
-    name: 'About',
-    component: AboutView
+    path: '/Dashboard',
+    //name: 'Dashboard',
+    component: Dashboard,
+    children:[
+      {
+        path: '/Estudiantes',
+        name: 'Estudiantes',
+        component: EstudiantesView
+      },
+      {
+        path: '/About',
+        name: 'About',
+        component: AboutView
+      },
+    ]
   },
 ]
 

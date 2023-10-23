@@ -1,6 +1,6 @@
 <template>
     <div>
-        <template>     
+        <template>
             <v-card>
                 <v-card-title>
                     {{ Titulo }}
@@ -10,26 +10,33 @@
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="5" class="elevation-1">
-                    <template v-slot:item.actions="{ item }">
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-icon size="small" class="me-2" @click="editarItem(item)" v-bind="attrs" v-on="on">
-                                    mdi-pencil
-                                </v-icon>
-                            </template>
-                            <span>Editar</span>
-                        </v-tooltip>
-
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-icon size="small" @click="eliminar(item)" v-bind="attrs" v-on="on">
-                                    mdi-delete
-                                </v-icon>
-                            </template>
-                            <span>Eliminar</span>
-                        </v-tooltip>
+                    <template v-slot:item="{ item }">
+                        <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
+                            <td  class="linea"><v-icon class="mr-3">mdi-folder</v-icon>{{ item.tag }}</td>
+                            <td>{{ item.carrera }}</td>
+                            <td>{{ item.fecha }}</td>
+                            <td>{{ item.user }}</td>
+                            <td>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon size="20" class="me-2" @click.stop="editarItem(item)" v-bind="attrs"
+                                            v-on="on">
+                                            mdi-pencil
+                                        </v-icon>
+                                    </template>
+                                    <span>Editar</span>
+                                </v-tooltip>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon size="20" @click.stop="eliminarItem(item)" v-bind="attrs" v-on="on">
+                                            mdi-delete
+                                        </v-icon>
+                                    </template>
+                                    <span>Eliminar</span>
+                                </v-tooltip>
+                            </td>
+                        </tr>
                     </template>
-
                 </v-data-table>
             </v-card>
 
@@ -62,7 +69,7 @@ export default {
 
         ...mapActions('clientes', ['eliminarUsuario']),
 
-        eliminar(item) {
+        eliminarItem(item) {
             this.$alertify.confirm(
                 'Deseas eliminar el usuario: ' + item.nombre,
                 () => {
@@ -73,11 +80,22 @@ export default {
             );
         },
 
+        hacerAlgoAlHacerClic(item) {
+            console.log("Ietm selected" + item.tag);
+        },
+
     },
 
     components: {
-        
-    },
 
+    },
 }
 </script>
+<style>
+    .myStyle:hover{
+        cursor: pointer;
+    }
+    .linea:hover{
+        text-decoration: underline;
+    }
+</style>

@@ -1,8 +1,8 @@
 <template>
     <div>
-        
+
         <BtnOpciones dark class="mb-2" @click="nuevoItem()"></BtnOpciones>
-        <TablaEst Titulo="ESTUDINATES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
+        <TablaEst Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
     </div>
 </template>
 
@@ -24,11 +24,18 @@ export default {
     data() {
         return {
             Cabecera: [
-                { text: 'ID', value: 'id' },
-                { text: 'NOMBRE', value: 'nombre' },
-                { text: 'EDAD', value: 'edad' },
-                { text: 'PROFESION', value: 'profesion' },
-                { text: 'Acciones', value: 'actions' },
+                { text: 'Nombre', value: 'tag', },
+                { text: 'Carrera', value: 'carrera', },
+                { text: 'Modificado', value: 'fecha', },
+                { text: 'Modificador por', value: 'user', },
+                { text: 'ACCIONES', value: 'acciones', },
+            ],
+            //datos de prueba=>borrar
+            getItems: [
+                { tag: 'Paulo Martinez', carrera:'Software' ,fecha: '22/02/2023', user: 'Paulo', },
+                { tag: 'Cristina Silva', carrera:'TI' ,fecha: '22/02/2023', user: 'Paulo', },
+                { tag: 'Lenin Acosta', carrera:'Industrial' ,fecha: '22/02/2023', user: 'Paulo', },
+                // Agrega más elementos al array según sea necesario
             ],
         }
     },

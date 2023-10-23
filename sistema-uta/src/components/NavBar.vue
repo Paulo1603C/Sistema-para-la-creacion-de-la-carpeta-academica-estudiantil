@@ -6,7 +6,7 @@
             <v-spacer></v-spacer>
         <v-btn text>
             <span class="mr-2" style="font-size: 24px;">UNIVERSIDAD TECNICA DE AMBATO</span>
-            <v-img :src="logo" alt="logo" contain height="90"></v-img>
+            <v-img :src="logo" alt="logo" contain height="60"></v-img>
         </v-btn>
       </v-app-bar>
 
@@ -51,9 +51,9 @@ export default {
     data() {
         return {
             drawer: true,
-            logo: require("../assets/logo-uta.png"),
+            logo: require("../assets/logo2.png"),
             links: [
-                { icon: 'view-dashboard', text: 'Dasboard', route: '/' },
+                { icon: 'view-dashboard', text: 'Administrador', route: '/' },
                 { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
                 { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
             ]
