@@ -6,7 +6,7 @@
             <v-spacer></v-spacer>
         <v-btn text>
             <span class="mr-2" style="font-size: 24px;">UNIVERSIDAD TECNICA DE AMBATO</span>
-            <v-img :src="logo" alt="logo" contain height="60"></v-img>
+            <v-img :src="logo" alt="logo UTA" contain height="60"></v-img>
         </v-btn>
       </v-app-bar>
 
@@ -15,16 +15,16 @@
             <v-list-item>
                 <v-layout column>
                     <v-avatar color="surface-variant " size="70" class="mt-2 mx-auto">
-                       <v-img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" ></v-img>
+                       <v-img :src="imgUser" alt="John" ></v-img>
                     </v-avatar>
-                    <v-card-text class="text-center" style="font-size: 24px;">Paulo Martinez</v-card-text>
+                    <v-card-text class="text-center" style="font-size: 24px;">{{nombreUser}}</v-card-text>
                 </v-layout>
             </v-list-item>
         </v-card>
 
         <v-divider></v-divider>
         <v-list density="compact" flat nav>
-            <v-list-item v-for="item in links" :key="item.text" router :to="item.route" style="margin-bottom: 1px solid white;">
+            <v-list-item v-for="item in navegacion" :key="item.text" router :to="item.route" style="margin-bottom: 1px solid white;">
                 <v-list-item-icon>
                     <v-icon >mdi-{{item.icon}}</v-icon>
                 </v-list-item-icon>
@@ -37,8 +37,8 @@
 
         <template v-slot:append>
           <div class="pa-2">
-            <v-btn href="/" block>
-                <span class="mr-2">Cerrar</span>
+            <v-btn @click="salir()" block>
+                <span class="mr-2">Salir</span>
                 <v-icon  >mdi-exit-to-app</v-icon>
             </v-btn>
           </div>
@@ -47,17 +47,47 @@
     </nav>
 </template>
 <script>
+
 export default {
+    name: "NavBar",
+
+    props: ['imgUser', 'nombreUser'],
+
     data() {
         return {
             drawer: true,
+            rolUser:null,
             logo: require("../assets/logo2.png"),
-            links: [
-                { icon: 'view-dashboard', text: 'Administrador', route: '/' },
-                { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
-                { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
-            ]
+            navegacion: [],
         }
+    },
+
+    created() {
+        const storedUser = JSON.parse( localStorage.getItem('user') );
+        this.rolUser = storedUser.rol_id;
+
+        this.roles();
+    },
+
+    methods: {
+        salir() {
+            localStorage.removeItem('user');
+            this.$router.push("/");
+        },
+        roles() {
+            if( this.rolUser == 1 ){
+                this.navegacion = [
+                    { icon: 'account-circle ', text: 'Usuarios', route: '/' },
+                    { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
+                    { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
+                ]
+            }else{
+                this.navegacion = [
+                    { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
+                    { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
+                ]
+            }
+        },
     }
 }
 </script>

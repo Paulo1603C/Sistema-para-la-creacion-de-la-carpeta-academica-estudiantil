@@ -30,15 +30,14 @@
 <script>
 import NuevaCarpeta from './NuevoCarpeta.vue';
 export default {
+
+    props:['links'],
+
     data() {
         return {
             showMenu: false,
             auxDialog: false,
             itemSeleccionado: {},
-            links: [
-                { icon: "folder-plus", text: "Crear Carpeta" },
-                { icon: "folder-arrow-up", text: "Subir Archivo" },
-            ],
         };
     },
     methods: {

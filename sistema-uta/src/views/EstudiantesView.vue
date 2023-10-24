@@ -1,7 +1,6 @@
 <template>
     <div>
-
-        <BtnOpciones dark class="mb-2" @click="nuevoItem()"></BtnOpciones>
+        <BtnOpciones :links="btnOP" dark class="mb-2" @click="nuevoItem()"></BtnOpciones>
         <TablaEst Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
     </div>
 </template>
@@ -36,6 +35,10 @@ export default {
                 { tag: 'Cristina Silva', carrera:'TI' ,fecha: '22/02/2023', user: 'Paulo', },
                 { tag: 'Lenin Acosta', carrera:'Industrial' ,fecha: '22/02/2023', user: 'Paulo', },
                 // Agrega más elementos al array según sea necesario
+            ],
+            btnOP: [
+                { icon: "folder-plus", text: "Crear Carpeta" },
+                { icon: "folder-arrow-up", text: "Subir Archivo" },
             ],
         }
     },
