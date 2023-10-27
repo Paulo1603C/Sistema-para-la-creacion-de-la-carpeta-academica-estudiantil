@@ -1,6 +1,8 @@
 <template>
     <div>
-        <NuevaCarpeta :dialog="auxDialog" @dialog="auxDialog = $event" :Item="itemSeleccionado"></NuevaCarpeta>
+        <NuevaCarpeta :dialog="dialogFolder" @dialog="dialogFolder = $event" :Item="itemSeleccionado"></NuevaCarpeta>
+        <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :Item="itemSeleccionado"></SubirArchivo>
+        <NuevaUsuario :dialog="dialogUser" @dialog="dialogUser = $event" :Item="itemSeleccionado"></NuevaUsuario>
         <v-container class="mt-5">
             <v-menu v-model="showMenu" offset-y>
                 <template v-slot:activator="{ on }">
@@ -20,7 +22,6 @@
                             <v-list-item-title>{{ item.text }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <input ref="fileInput" type="file" style="display: none" @change="handleFileChange" />
                 </v-list>
             </v-menu>
         </v-container>
@@ -29,14 +30,18 @@
   
 <script>
 import NuevaCarpeta from './NuevoCarpeta.vue';
+import NuevaUsuario from './NuevoUsuario.vue';
+import SubirArchivo from './SubirArchivo.vue';
 export default {
 
-    props:['links'],
+    props: ['links'],
 
     data() {
         return {
             showMenu: false,
-            auxDialog: false,
+            dialogFolder: false,
+            dialogFile: false,
+            dialogUser: false,
             itemSeleccionado: {},
         };
     },
@@ -44,10 +49,17 @@ export default {
         optionSelected(option) {
             switch (option) {
                 case "Crear Carpeta":
-                    this.nuevoItem();
+                    this.nuevaCarpeta();
                     break;
                 case "Subir Archivo":
-                    this.$refs.fileInput.click();
+                    this.subirArchivo();
+                    //this.$refs.fileInput.click();
+                    break;
+                case "Crear Usuario":
+                    this.nuevoUsuario();
+                    break;
+                case "Importar Datos":
+                    this.nuevoUsuario();
                     break;
                 default:
                     alert('Opción seleccionada: ' + option);
@@ -55,26 +67,38 @@ export default {
             }
         },
 
-        nuevoItem() {
+        nuevaCarpeta() {
             this.itemSeleccionado = {
                 id: 0,
                 nombre: '',
                 edad: 0,
                 profesion: '',
             }
-            this.auxDialog = true;
-
+            this.dialogFolder = true;
         },
-        handleFileChange(event) {
-            const selectedFile = event.target.files[0];
-            if (selectedFile) {
-                this.selectedFile = selectedFile;
+        
+        nuevoUsuario() {
+            this.itemSeleccionado = {
+                id: 0,
+                nombre: '',
+                edad: 0,
+                profesion: '',
             }
+            this.dialogUser = true;
         },
+        
+        subirArchivo(){
+            this.dialogFile = true;
+        },
+        
+        
     },
     components: {
         NuevaCarpeta,
+        NuevaUsuario,
+        SubirArchivo,
     }
 };
+
 </script>
   

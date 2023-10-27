@@ -1,6 +1,6 @@
 <template>
     <div>
-        <BtnOpciones :links="btnOP" dark class="mb-2" @click="nuevoItem()"></BtnOpciones>
+        <BtnOpciones :links="btnOP" dark class="mb-2"></BtnOpciones>
         <TablaEst Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
     </div>
 </template>
@@ -39,6 +39,7 @@ export default {
             btnOP: [
                 { icon: "folder-plus", text: "Crear Carpeta" },
                 { icon: "folder-arrow-up", text: "Subir Archivo" },
+                { icon: "import", text: "Importar Datos" },
             ],
         }
     },

@@ -4,6 +4,7 @@ import logInView from '../views/logInView.vue'
 import Dashboard from '../views/dashboard.vue'
 import EstudiantesView from '../views/EstudiantesView.vue'
 import AboutView from '../views/AboutView.vue'
+import UsuariosView from '../views/UsuariosView.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
         path: '/About',
         name: 'About',
         component: AboutView
+      },
+      {
+        path: '/Usuarios',
+        name: 'Usuarios',
+        component: UsuariosView
       },
     ]
   },

@@ -36,12 +36,12 @@ export default {
   },
   
   methods:{
-    ...mapMutations('Usuarios',['setUser']),
+    ...mapMutations('Login',['setUser']),
     
   },
 
   computed: {
-    ...mapGetters('Usuarios', ['getUser', 'getAuthentication']),
+    ...mapGetters('Login', ['getUser', 'getAuthentication']),
   },
 
 };

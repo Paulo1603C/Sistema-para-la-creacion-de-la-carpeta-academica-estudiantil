@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card class="mx-auto" max-width="344">
-            <v-img :src="urlDw" height="200px" cover></v-img>
+            <v-img :src="(urlDw != null) ? urlDw : imgAux" height="200px" cover></v-img>
 
             <v-card-title>
                 {{ author }}
@@ -12,8 +12,15 @@
             </v-card-subtitle>
 
             <v-card-actions>
-                <v-btn color="orange-lighten-2" variant="text">
-                    Explore
+                <v-btn @click="eliminar">
+                    <template>
+                        <v-icon>mdi-delete</v-icon>
+                    </template>
+                </v-btn>
+                <v-btn @click="editar">
+                    <template>
+                        <v-icon>mdi-pencil</v-icon>
+                    </template>
                 </v-btn>
 
                 <v-spacer></v-spacer>
@@ -34,8 +41,7 @@
                     <v-divider></v-divider>
 
                     <v-card-text>
-                        <p>Alto: {{ height }}</p>
-                        <p>Ancho: {{ width }}</p>
+                        <p>Alto:</p>
                     </v-card-text>
                 </div>
             </v-expand-transition>
@@ -47,18 +53,22 @@
 export default {
     data: () => ({
         show: false,
+        imgAux: require('../assets/user.png'),
     }),
 
     props: {
         id: String,
         author: String,
         urlDw: String,
-        width: 0,
-        height: 0,
     },
 
-    /*props: [
-        'items'
-    ]*/
+    methods: {
+        eliminar() {
+
+        },
+
+        editar() { },
+    }
+
 }
 </script>

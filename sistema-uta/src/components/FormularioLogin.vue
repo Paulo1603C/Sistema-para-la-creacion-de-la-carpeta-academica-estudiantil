@@ -40,7 +40,7 @@ export default {
     },
 
     methods: {
-        ...mapActions('Usuarios', ['login']),
+        ...mapActions('Login', ['login']),
         
         async methodLogin() {
             // Llama a la acción 'login' para autenticar al usuario.
@@ -53,7 +53,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters('Usuarios', ['getUser','getAuthentication']),
+        ...mapGetters('Login', ['getUser','getAuthentication']),
     }
 }
 </script>

@@ -77,7 +77,7 @@ export default {
         roles() {
             if( this.rolUser == 1 ){
                 this.navegacion = [
-                    { icon: 'account-circle ', text: 'Usuarios', route: '/' },
+                    { icon: 'account-circle ', text: 'Usuarios', route: '/Usuarios' },
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
                     { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
                 ]
