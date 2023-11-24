@@ -62,9 +62,8 @@ export default {
         dialog: Boolean,
         ItemUsuario: {},
     },
-
+    
     data: () => ({
-        selectedCarreras: [],
     }),
 
     created() {
@@ -83,7 +82,8 @@ export default {
 
         agregar: async function () {
             try {
-                //console.log(this.ItemUsuario);
+                console.log('this.ItemUsuario');
+                console.log(this.ItemUsuario);
                 await this.AgregarUsuario(this.ItemUsuario);
                 await this.AgregarUsuarioCarreras(this.ItemUsuario);
                 await this.AgregarUsuarioPermisos(this.ItemUsuario);

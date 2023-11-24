@@ -12,7 +12,8 @@
                 :nombre="item.NomUser" :apellido="item.ApeUser" 
                 :contraseña="item.Contraseña" :rol="item.NomRol" 
                 :carreras="item.Carreras" :permisos="item.Permisos" 
-                :urlDw="item.download_url">
+                :idCarreras="item.IdCarreras" :idPermisos="item.IdPermisos" 
+                :idRol="item.IdRol" :urlDw="item.download_url">
                 </UsuariosT>
             </v-col>
         </v-row>

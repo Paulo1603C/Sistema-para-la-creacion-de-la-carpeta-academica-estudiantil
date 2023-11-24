@@ -57,6 +57,8 @@ export default {
           method: 'POST',
           body: datosUser,
         }
+        console.log("datos");
+        console.log(datos);
         var url = "";
         if (datos.id == 0) {
           url = 'http://localhost/Apis-UTA/insetarUsuario.php';
@@ -66,7 +68,7 @@ export default {
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {
-          const jsonData = JSON.parse(data); // Analiza como JSON si parece válido
+          const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
           dispatch('cargarUsuarios');
         } else {
           //console.log('La respuesta no es JSON:', data);
@@ -99,7 +101,7 @@ export default {
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
-            const jsonData = JSON.parse(data); // Analiza como JSON si parece válido
+            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
             dispatch('cargarUsuarios');
           } else {
             //console.log('La respuesta no es JSON:', data);
@@ -134,7 +136,7 @@ export default {
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
-            const jsonData = JSON.parse(data); // Analiza como JSON si parece válido
+            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
             dispatch('cargarUsuarios');
           } else {
             //console.log('La respuesta no es JSON:', data);

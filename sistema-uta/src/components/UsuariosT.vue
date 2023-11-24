@@ -66,7 +66,7 @@ export default {
     }),
 
     props: [
-        'id', 'correo','nombre', 'apellido', 'contraseña' ,'rol', 'carreras', 'permisos','urlDw'        
+        'id', 'correo','nombre', 'apellido', 'contraseña', 'idRol','rol', 'idCarreras' ,'carreras', 'idPermisos' , 'permisos','urlDw'        
     ],
 
     methods: {
@@ -83,9 +83,9 @@ export default {
                 contraseña: this.contraseña,
                 nombre: this.nombre,
                 apellido: this.apellido,
-                rol: this.rol,
-                carreras: this.carreras,
-                permisos: this.permisos,
+                rol: this.idRol,
+                carreras: [this.idCarreras[0],this.idCarreras[1],this.idCarreras[2],this.idCarreras[3],this.idCarreras[4],],
+                permisos: [this.idPermisos[0],this.idPermisos[1],this.idPermisos[2],this.idPermisos[3],this.idPermisos[5],],
                 urlDw: this.urlDw,
             };
             console.log('Datos del card seleccionado:', this.itemSeleccionadoUsuario);
