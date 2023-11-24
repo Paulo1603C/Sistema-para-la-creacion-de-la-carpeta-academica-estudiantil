@@ -3,14 +3,14 @@
         <v-dialog v-model="dialog" persistent width="400">
             <v-card>
                 <v-card-title>
-                    <span v-if="Item.id == 0"  class="text-h5">Carpeta Nueva</span>
+                    <span v-if="ItemCarpeta.id == 0"  class="text-h5">Carpeta Nueva</span>
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-row>
                             <v-col cols="12" >
-                                <v-text-field label="Nombre*" v-model="Item.nombre"  required></v-text-field>
+                                <v-text-field label="Nombre*" v-model="ItemCarpeta.nombre"  required></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -38,7 +38,7 @@ export default {
 
     props:{
         dialog:Boolean,
-        Item:{},
+        ItemCarpeta:{},
     },
 
     data: () => ({

@@ -1,8 +1,8 @@
 <template>
     <div>
-        <NuevaCarpeta :dialog="dialogFolder" @dialog="dialogFolder = $event" :Item="itemSeleccionado"></NuevaCarpeta>
-        <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :Item="itemSeleccionado"></SubirArchivo>
-        <NuevaUsuario :dialog="dialogUser" @dialog="dialogUser = $event" :Item="itemSeleccionado"></NuevaUsuario>
+        <NuevaCarpeta :dialog="dialogFolder" @dialog="dialogFolder = $event" :ItemCarpeta="itemSeleccionado"></NuevaCarpeta>
+        <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
+        <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
         <v-container class="mt-5">
             <v-menu v-model="showMenu" offset-y>
                 <template v-slot:activator="{ on }">
@@ -30,8 +30,10 @@
   
 <script>
 import NuevaCarpeta from './NuevoCarpeta.vue';
-import NuevaUsuario from './NuevoUsuario.vue';
 import SubirArchivo from './SubirArchivo.vue';
+import NuevaUsuario from './NuevoUsuario.vue';
+import {  mapState, mapMutations, } from 'vuex';
+
 export default {
 
     props: ['links'],
@@ -41,32 +43,35 @@ export default {
             showMenu: false,
             dialogFolder: false,
             dialogFile: false,
-            dialogUser: false,
             itemSeleccionado: {},
+            usuarioSelect:{},
         };
     },
     methods: {
+        ...mapMutations('Dialogo',['setDialog']),
+        ...mapMutations('Usuarios',['setUser']),
+        
         optionSelected(option) {
             switch (option) {
                 case "Crear Carpeta":
                     this.nuevaCarpeta();
                     break;
-                case "Subir Archivo":
-                    this.subirArchivo();
-                    //this.$refs.fileInput.click();
-                    break;
-                case "Crear Usuario":
-                    this.nuevoUsuario();
-                    break;
-                case "Importar Datos":
-                    this.nuevoUsuario();
-                    break;
-                default:
-                    alert('Opción seleccionada: ' + option);
-                    break;
-            }
-        },
-
+                    case "Subir Archivo":
+                        this.subirArchivo();
+                        //this.$refs.fileInput.click();
+                        break;
+                        case "Crear Usuario":
+                            this.nuevoUsuario();
+                            break;
+                            case "Importar Datos":
+                                this.nuevoUsuario();
+                                break;
+                                default:
+                                    alert('Opción seleccionada: ' + option);
+                                    break;
+                                }
+                            },
+                            
         nuevaCarpeta() {
             this.itemSeleccionado = {
                 id: 0,
@@ -77,26 +82,37 @@ export default {
             this.dialogFolder = true;
         },
         
+        
         nuevoUsuario() {
-            this.itemSeleccionado = {
-                id: 0,
+            this.usuarioSelect={ id: 0,
                 nombre: '',
-                edad: 0,
-                profesion: '',
-            }
-            this.dialogUser = true;
+                apellido: '',
+                correo: '',
+                contraseña: '',
+                rol: 0,
+                carreras: [],
+                permisos: [],
+            },
+            this.setUser(this.usuarioSelect);
+            this.setDialog(true);
         },
         
-        subirArchivo(){
+        subirArchivo() {
             this.dialogFile = true;
         },
-        
-        
+
+
     },
+
     components: {
         NuevaCarpeta,
         NuevaUsuario,
         SubirArchivo,
+    },
+
+    computed: {
+        ...mapState('Dialogo', ['dialogUser']),
+        ...mapState('Usuarios', ['dataUsuario']),
     }
 };
 

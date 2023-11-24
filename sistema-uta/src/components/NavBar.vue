@@ -15,7 +15,7 @@
             <v-list-item>
                 <v-layout column>
                     <v-avatar color="surface-variant " size="70" class="mt-2 mx-auto">
-                       <v-img :src="imgUser" alt="John" ></v-img>
+                       <v-img :src="(imgUser != null) ? imgUser : imgAux" alt="John" style="background-color:white" ></v-img>
                     </v-avatar>
                     <v-card-text class="text-center" style="font-size: 24px;">{{nombreUser}}</v-card-text>
                 </v-layout>
@@ -56,15 +56,16 @@ export default {
     data() {
         return {
             drawer: true,
-            rolUser:null,
+            rolUser: null,
             logo: require("../assets/logo2.png"),
+            imgAux: require('../assets/user.png'),
             navegacion: [],
         }
     },
 
     created() {
-        const storedUser = JSON.parse( localStorage.getItem('user') );
-        this.rolUser = storedUser.rol_id;
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        this.rolUser = storedUser.IdRolPer;
 
         this.roles();
     },
@@ -75,13 +76,13 @@ export default {
             this.$router.push("/");
         },
         roles() {
-            if( this.rolUser == 1 ){
+            if (this.rolUser == 1) {
                 this.navegacion = [
                     { icon: 'account-circle ', text: 'Usuarios', route: '/Usuarios' },
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
                     { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
                 ]
-            }else{
+            } else {
                 this.navegacion = [
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
                     { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },

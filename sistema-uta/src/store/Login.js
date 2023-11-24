@@ -44,24 +44,22 @@ export default {
                 const url = "http://localhost/Apis-UTA/Login.php";
                 const data = await fetch(url, setting)
                 if (data.ok) {
-                    console.log(user);
                     const json = await data.json();
                     console.log(json);
-                    if (json.length > 0) {
-                        const firstObject = json[0];
+                    const firstObject = json[0];
+                    console.log('Usuario',user);                                  
+                    if (user.toLowerCase() === firstObject.Correo.toLowerCase() && pass === firstObject.Contraseña) {
                         commit('setAuthentication', true);
                         commit('setUser', firstObject);
                         localStorage.setItem('user', JSON.stringify(firstObject));
-
-                        
-                    } else {
-                        console.log("Datos incorrectos");
+                    }else{
+                        console.log("No se encontro el usuario...");
                     }
                 } else {
-                    console.log("Datos incorrectos...");
+                    console.log(" Not found => Error 400 ");
                 }
             } catch (error) {
-                console.log("Error de Autenticacion:"+ error);
+                console.log("Error de Autenticacion:" + error);
             }
         },
     },

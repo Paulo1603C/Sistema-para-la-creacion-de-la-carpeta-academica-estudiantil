@@ -13,7 +13,7 @@
                                 <input ref="fileInput" type="file" @change="handleFileChange" />
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Observación" v-model="Item.observacion"></v-text-field>
+                                <v-text-field label="Observación" v-model="ItemArchivo.observacion"></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -41,7 +41,7 @@ export default {
 
     props: {
         dialog: Boolean,
-        Item: {},
+        ItemArchivo: {},
     },
 
     data: () => ({

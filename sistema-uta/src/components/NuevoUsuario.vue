@@ -3,35 +3,35 @@
         <v-dialog v-model="dialog" persistent width="1024">
             <v-card>
                 <v-card-title>
-                    <span class="text-h5">User Profile</span>
+                    <span class="text-h5">Nuevo Usuario</span>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-row>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field label="Legal first name*" required></v-text-field>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field label="Nombre*" v-model="ItemUsuario.nombre" required></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field label="Legal middle name"
-                                    hint="example of helper text only on focus"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field label="Legal last name*" hint="example of persistent helper text"
-                                    persistent-hint required></v-text-field>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field label="Apellido*" v-model="ItemUsuario.apellido" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Email*" required></v-text-field>
+                                <v-text-field label="Email*" v-model="ItemUsuario.correo" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Password*" type="password" required></v-text-field>
+                                <v-text-field label="Password*" type="password" v-model="ItemUsuario.contraseña"
+                                    required></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6">
-                                <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required></v-select>
+                            <v-col cols="12" sm="4">
+                                <v-select :items="getRoles" item-text="NomRol" item-value="IdRol" label="Roles*"
+                                    v-model="ItemUsuario.rol" required></v-select>
                             </v-col>
-                            <v-col cols="12" sm="6">
-                                <v-autocomplete
-                                    :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                                    label="Interests" multiple></v-autocomplete>
+                            <v-col cols="12" sm="4">
+                                <v-autocomplete :items="getPermisos" item-text="nomPer" item-value="IdPer" label="Permisos*"
+                                    multiple v-model="ItemUsuario.permisos"></v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" sm="4">
+                                <v-autocomplete :items="getCarreras" item-text="NomCar" item-value="IdCar" label="Carreras*"
+                                    multiple v-model="ItemUsuario.carreras"></v-autocomplete>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -39,10 +39,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog()">
+                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar()">
+                    <v-btn color="blue-darken-1" variant="text" @click="agregar">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
 
@@ -60,28 +60,61 @@ export default {
 
     props: {
         dialog: Boolean,
-        Item: {},
+        ItemUsuario: {},
     },
 
     data: () => ({
+        selectedCarreras: [],
     }),
+
+    created() {
+        this.cargarCarreras();
+        this.cargarRoles();
+        this.cargarPermisos();
+    },
 
     methods: {
 
-        ...mapActions('clientes', ['AgregarUsuario']),
+        ...mapActions('Carreras', ['cargarCarreras']),
+        ...mapActions('Usuarios', ['AgregarUsuario', 'AgregarUsuarioCarreras', 'AgregarUsuarioPermisos']),
+        ...mapActions('Roles', ['cargarRoles']),
+        ...mapActions('Permisos', ['cargarPermisos']),
+        ...mapMutations('Dialogo', ['setDialog']),
 
-        agregar() {
-            console.log("Datos Item");
-            console.log(this.Item);
-            this.AgregarUsuario(this.Item);
-            this.$alertify.success(this.Item.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
-            this.cerrarDialog();
+        agregar: async function () {
+            try {
+                //console.log(this.ItemUsuario);
+                await this.AgregarUsuario(this.ItemUsuario);
+                await this.AgregarUsuarioCarreras(this.ItemUsuario);
+                await this.AgregarUsuarioPermisos(this.ItemUsuario);
+                this.cerrarDialog();
+                this.limpiarCampos();
+                this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+            } catch (error) {
+                console.error('Error al agregar usuario:', error);
+            }
         },
 
         cerrarDialog() {
-            this.$emit('dialog', false);
+            this.setDialog(false);
         },
 
+        limpiarCampos() {
+            this.ItemUsuario.nombre = "";
+            this.ItemUsuario.apellido = "";
+            this.ItemUsuario.correo = "";
+            this.ItemUsuario.contraseña = "";
+            this.ItemUsuario.rol = "";
+            this.ItemUsuario.permisos = "";
+            this.ItemUsuario.carreras = "";
+        },
+
+    },
+
+    computed: {
+        ...mapGetters('Carreras', ['getCarreras']),
+        ...mapGetters('Roles', ['getRoles']),
+        ...mapGetters('Permisos', ['getPermisos']),
     },
 }
 </script>       

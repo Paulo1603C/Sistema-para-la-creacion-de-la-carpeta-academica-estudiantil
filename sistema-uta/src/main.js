@@ -5,6 +5,9 @@ import store from './store'
 //import './assets/tailwind.css'
 import vuetify from './plugins/vuetify'
 
+import VueAlertify from 'vue-alertify';
+ 
+Vue.use(VueAlertify);
 
 Vue.config.productionTip = false
 

@@ -3,8 +3,17 @@
         <BtnOpciones :links="btnOP" dark class="mb-2"></BtnOpciones>
         <hr>
         <v-row>
-            <v-col v-for="(item, index) in getItems" :key="index" class="ma-2">
-                <UsuariosT :id="item.id" :author="item.author" :urlDw="item.download_url"></UsuariosT>
+            <v-col v-if="getItems.length == 0" class="d-flex justify-center align-center" style="font-size:30px" >
+                <span>Cargando Datos...</span>
+            </v-col>
+            <v-col v-else v-for="(item, index) in getItems" :key="index" class="ma-2">
+                <UsuariosT 
+                :id="item.IdUser" :correo="item.Correo" 
+                :nombre="item.NomUser" :apellido="item.ApeUser" 
+                :contraseña="item.Contraseña" :rol="item.NomRol" 
+                :carreras="item.Carreras" :permisos="item.Permisos" 
+                :urlDw="item.download_url">
+                </UsuariosT>
             </v-col>
         </v-row>
     </div>
@@ -30,12 +39,12 @@ export default {
     },
 
     methods: {
-        ...mapActions('Usuarios', ['cargarUsuarios'])
+        ...mapActions('Usuarios', ['cargarUsuarios']),
+
     },
 
     computed: {
-        ...mapGetters('Usuarios', ['getItems'])
-
+        ...mapGetters('Usuarios', ['getItems']),
     },
 
     components: {

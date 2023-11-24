@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <NavBar :nombreUser="getUser.nombre" :imgUser="imgProfile"></NavBar>
+    <NavBar :nombreUser="NomCom" :imgUser="imgProfile"></NavBar>
     <v-content class="ma-4">
       <router-view />
     </v-content>
@@ -17,7 +17,8 @@ export default {
   name: 'Dashboard',
   
   data: () => ({
-    imgProfile: 'https://cdn.vuetifyjs.com/images/john.jpg',
+    imgProfile:null,
+    NomCom:null,
     
   }),
   components: {
@@ -26,9 +27,11 @@ export default {
   },
   
   created() {
-    const storedUser =  localStorage.getItem('user');
+    const storedUser =  JSON.parse(localStorage.getItem('user'));
+    this.NomCom = storedUser.NomUser+ " " +storedUser.ApeUser;
+    console.log('nombre',storedUser.ApeUser);
     if (storedUser) {
-      this.setUser(JSON.parse(storedUser));
+      this.setUser(storedUser);
     }else{
       this.$router.push("/");
       
