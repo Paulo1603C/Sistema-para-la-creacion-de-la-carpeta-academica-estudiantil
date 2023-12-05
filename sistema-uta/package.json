@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10",
+    "moment": "^2.29.4",
     "postcss": "^8",
     "read-excel-file": "^5.7.1",
     "tailwindcss": "^3",

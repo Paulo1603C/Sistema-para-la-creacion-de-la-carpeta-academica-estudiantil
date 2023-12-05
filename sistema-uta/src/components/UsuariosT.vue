@@ -95,10 +95,11 @@ export default {
         eliminar() {
             this.itemSeleccionadoUsuario = {
                 id:this.id,
-                author: this.author,
+                nombre: this.nombre,
+                apellido: this.apellido,
             };
             this.$alertify.confirm(
-                'Deseas eliminar el usuario: ' +this.itemSeleccionadoUsuario.author,
+                'Deseas eliminar el usuario: ' +this.itemSeleccionadoUsuario.nombre+" " +this.itemSeleccionadoUsuario.apellido,
                 () => {
                     this.eliminarUsuario(this.itemSeleccionadoUsuario);
                     //console.log(this.itemSeleccionadoUsuario);

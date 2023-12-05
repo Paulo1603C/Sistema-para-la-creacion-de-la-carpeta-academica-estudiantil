@@ -12,9 +12,9 @@
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="5" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
-                            <td  class="linea"><v-icon class="mr-3">mdi-folder</v-icon>{{ item.NomEst }} {{ item.ApeEst }}</td>
-                            <td>{{ item.NomCar }}</td>
-                            <td>{{ item.Fecha }}</td>
+                            <td  class="linea"><v-icon class="mr-3">mdi-folder</v-icon>{{ item.tag }}</td>
+                            <td>{{ item.carrera }}</td>
+                            <td>{{ item.fecha }}</td>
                             <td>{{ item.user }}</td>
                             <td>
                                 <v-tooltip bottom>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 
 
 export default {
@@ -56,47 +56,32 @@ export default {
     data() {
         return {
             search: '',
-            estudianteSeleccionado:{},
         }
     },
 
     methods: {
-        ...mapMutations('Dialogo',['setDialogFolder']),
-        ...mapMutations('Estudiantes', ['setEst']),
 
         editarItem(item) {
-            console.log("item Datos");
-            this.estudianteSeleccionado={
-                IdEst: item.IdEst,
-                Cedula: item.CedEst,
-                NomEst: item.NomEst,
-                ApeEst: item.ApeEst,
-                NomCar: item.IdCar,
-                Fecha: item.Fecha,
-                modificado: '',
-            }
-            this.setEst(this.estudianteSeleccionado);
-            this.setDialogFolder(true);
-
-            //console.log(item.IdEst);
+            console.log(item);
+            this.itemSeleccionado = item;
+            this.auxDialog = true;
         },
 
-        ...mapActions('Estudiantes', ['eliminarEstudiante']),
+        ...mapActions('clientes', ['eliminarUsuario']),
 
         eliminarItem(item) {
             this.$alertify.confirm(
-                'Deseas eliminar el usuario: ' + item.NomEst+" "+item.ApeEst,
+                'Deseas eliminar el usuario: ' + item.nombre,
                 () => {
-                    this.eliminarEstudiante(item);
-                    this.$alertify.success('Usuario ' + item.NomEst +" "+item.ApeEst+ ' Eliminado');
+                    this.eliminarUsuario(item);
+                    this.$alertify.success('Usuario ' + item.nombre + ' Eliminado');
                 },
-                () => this.$alertify.error('Cancelado')
+                () => this.$alertify.error('cancel')
             );
         },
 
         hacerAlgoAlHacerClic(item) {
-            
-            console.log("Ietm selected " + item.tag);
+            console.log("Ietm selected" + item.tag);
         },
 
     },
@@ -104,7 +89,6 @@ export default {
     components: {
 
     },
-
 }
 </script>
 <style>

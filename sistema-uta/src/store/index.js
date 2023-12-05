@@ -6,6 +6,7 @@ import Carreras from './Carreras'
 import Roles from './Roles'
 import Dialogo from './Dialogo'
 import Permisos from './Permisos'
+import Estudiantes from './Estudiantes'
 
 Vue.use(Vuex)
 
@@ -25,5 +26,6 @@ export default new Vuex.Store({
     Roles,
     Dialogo,
     Permisos,
+    Estudiantes,
   }
 })

@@ -3,14 +3,27 @@
         <v-dialog v-model="dialog" persistent width="400">
             <v-card>
                 <v-card-title>
-                    <span v-if="ItemCarpeta.id == 0"  class="text-h5">Carpeta Nueva</span>
+                    <span v-if="ItemCarpeta.IdEst == 0" class="text-h5">Estudiante Nuevo</span>
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-row>
                             <v-col cols="12" >
-                                <v-text-field label="Nombre*" v-model="ItemCarpeta.nombre"  required></v-text-field>
+                                <v-text-field label="Cedula*" v-model="ItemCarpeta.Cedula" :counter="10" required></v-text-field>
+                            </v-col>
+                            <v-col cols="12"  sm="6" md="6" >
+                                <v-text-field label="Nombre*" v-model="ItemCarpeta.NomEst"  required></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field label="Apellido*" v-model="ItemCarpeta.ApeEst"  required></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6" style="display: none">
+                                <v-text-field label="Apellido*" v-model="ItemCarpeta.Fecha"  required></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-select :items="getCarreras" item-text="NomCar" item-value="IdCar" label="Carreras*"
+                                   v-model="ItemCarpeta.NomCar" required></v-select>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -30,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
 
@@ -42,24 +55,33 @@ export default {
     },
 
     data: () => ({
+        
     }),
 
-    methods:{
+    created(){
+        this.cargarCarreras();
+    },
 
-        ...mapActions('clientes', ['AgregarUsuario']),
+    methods:{
+        ...mapActions('Carreras', ['cargarCarreras']),
+        ...mapActions('Estudiantes', ['AgregarEstudiante']),
+        ...mapMutations('Dialogo',['setDialogFolder']),
         
         agregar(){
-            console.log("Datos Item");
-            console.log(this.Item);
-            this.AgregarUsuario(this.Item);
-            this.$alertify.success( this.Item.id == 0 ? "Usuario Insertado" : "Usuario Actualizado" );
+            //console.log("Datos Item");
+            //console.log(this.ItemCarpeta);
+            this.AgregarEstudiante(this.ItemCarpeta);
+            this.$alertify.success( this.ItemCarpeta.IdEst == 0 ? "Usuario Insertado" : "Usuario Actualizado" );
             this.cerrarDialog();
         },
         
         cerrarDialog(){
-            this.$emit('dialog',false);
+            this.setDialogFolder(false);
         },
             
+    },
+    computed: {
+        ...mapGetters('Carreras', ['getCarreras']),
     },
 }
 </script>       

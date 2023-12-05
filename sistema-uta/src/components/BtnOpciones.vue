@@ -1,8 +1,9 @@
 <template>
     <div>
-        <NuevaCarpeta :dialog="dialogFolder" @dialog="dialogFolder = $event" :ItemCarpeta="itemSeleccionado"></NuevaCarpeta>
+        <NuevaCarpeta :dialog="dialogFolder" :ItemCarpeta="dataEst"></NuevaCarpeta>
         <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
+        <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
         <v-container class="mt-5">
             <v-menu v-model="showMenu" offset-y>
                 <template v-slot:activator="{ on }">
@@ -32,7 +33,9 @@
 import NuevaCarpeta from './NuevoCarpeta.vue';
 import SubirArchivo from './SubirArchivo.vue';
 import NuevaUsuario from './NuevoUsuario.vue';
-import {  mapState, mapMutations, } from 'vuex';
+import { mapState, mapMutations, } from 'vuex';
+import readXlsFile from "read-excel-file";
+import moment from 'moment';
 
 export default {
 
@@ -40,51 +43,60 @@ export default {
 
     data() {
         return {
+            fecha: "",
             showMenu: false,
-            dialogFolder: false,
             dialogFile: false,
+            estudianteSelect: {},
             itemSeleccionado: {},
-            usuarioSelect:{},
+            usuarioSelect: {},
+            mostrarInput: false,
+            items: [],
         };
     },
     methods: {
-        ...mapMutations('Dialogo',['setDialog']),
-        ...mapMutations('Usuarios',['setUser']),
-        
+        ...mapMutations('Dialogo', ['setDialog','setDialogFolder']),
+        ...mapMutations('Usuarios', ['setUser']),
+        ...mapMutations('Estudiantes', ['setEst']),
+
         optionSelected(option) {
             switch (option) {
                 case "Crear Carpeta":
                     this.nuevaCarpeta();
                     break;
-                    case "Subir Archivo":
-                        this.subirArchivo();
-                        //this.$refs.fileInput.click();
-                        break;
-                        case "Crear Usuario":
-                            this.nuevoUsuario();
-                            break;
-                            case "Importar Datos":
-                                this.nuevoUsuario();
-                                break;
-                                default:
-                                    alert('Opción seleccionada: ' + option);
-                                    break;
-                                }
-                            },
-                            
-        nuevaCarpeta() {
-            this.itemSeleccionado = {
-                id: 0,
-                nombre: '',
-                edad: 0,
-                profesion: '',
+                case "Subir Archivo":
+                    this.subirArchivo();
+                    //this.$refs.fileInput.click();
+                    break;
+                case "Crear Usuario":
+                    this.nuevoUsuario();
+                    break;
+                case "Importar Datos":
+                    this.importarDatos();
+                    break;
+                default:
+                    alert('Opción seleccionada: ' + option);
+                    break;
             }
-            this.dialogFolder = true;
+        },
+
+        nuevaCarpeta() {
+            this.fechaActual();
+            this.estudianteSelect = {
+                IdEst: 0,
+                Cedula: '',
+                NomEst: '',
+                ApeEst: '',
+                NomCar: 0,
+                Fecha: this.fecha,
+                modificado: '',
+            },
+            this.setEst(this.estudianteSelect);
+            this.setDialogFolder(true);
         },
         
-        
         nuevoUsuario() {
-            this.usuarioSelect={ id: 0,
+            this.usuarioSelect = {
+                id: 0,
                 nombre: '',
                 apellido: '',
                 correo: '',
@@ -96,11 +108,26 @@ export default {
             this.setUser(this.usuarioSelect);
             this.setDialog(true);
         },
-        
+
         subirArchivo() {
             this.dialogFile = true;
         },
 
+        importarDatos(event) {
+            this.$refs.inputFile.click();
+        },
+
+        subirExcel() {
+            const input = document.getElementById("archivoExcel");
+            readXlsFile(input.files[0]).then((rows) => {
+                this.items = this.items.concat(rows);
+            });
+        },
+
+        fechaActual() {
+            const date = new Date();
+            this.fecha = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
+        },
 
     },
 
@@ -111,8 +138,9 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser']),
+        ...mapState('Dialogo', ['dialogUser','dialogFolder']),
         ...mapState('Usuarios', ['dataUsuario']),
+        ...mapState('Estudiantes', ['dataEst']),
     }
 };
 
