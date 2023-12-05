@@ -33,7 +33,7 @@
 import NuevaCarpeta from './NuevoCarpeta.vue';
 import SubirArchivo from './SubirArchivo.vue';
 import NuevaUsuario from './NuevoUsuario.vue';
-import { mapState, mapMutations, } from 'vuex';
+import { mapState, mapMutations, mapActions} from 'vuex';
 import readXlsFile from "read-excel-file";
 import moment from 'moment';
 
@@ -54,9 +54,10 @@ export default {
         };
     },
     methods: {
-        ...mapMutations('Dialogo', ['setDialog','setDialogFolder']),
+        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Estudiantes', ['setEst']),
+        ...mapActions('Estudiantes', ['AgregarEstudiante']),
 
         optionSelected(option) {
             switch (option) {
@@ -90,10 +91,10 @@ export default {
                 Fecha: this.fecha,
                 modificado: '',
             },
-            this.setEst(this.estudianteSelect);
+                this.setEst(this.estudianteSelect);
             this.setDialogFolder(true);
         },
-        
+
         nuevoUsuario() {
             this.usuarioSelect = {
                 id: 0,
@@ -105,7 +106,7 @@ export default {
                 carreras: [],
                 permisos: [],
             },
-            this.setUser(this.usuarioSelect);
+                this.setUser(this.usuarioSelect);
             this.setDialog(true);
         },
 
@@ -120,7 +121,21 @@ export default {
         subirExcel() {
             const input = document.getElementById("archivoExcel");
             readXlsFile(input.files[0]).then((rows) => {
-                this.items = this.items.concat(rows);
+                this.items = rows;
+                this.fechaActual();
+                for (const row of this.items) {
+                    const datos = {
+                        IdEst: row[0],
+                        NomEst: row[1],
+                        ApeEst: row[2],
+                        Cedula: row[3],
+                        Fecha: this.fecha,
+                        NomCar: row[5]
+                    };
+                    console.log(datos)
+                    this.AgregarEstudiante(datos);
+                }
+                this.$alertify.success( "Estudiantes Insertados"  );
             });
         },
 
@@ -138,7 +153,7 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser','dialogFolder']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
     }

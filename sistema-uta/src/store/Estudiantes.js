@@ -49,7 +49,7 @@ export default {
         datosUser.append('IdEst', datos.IdEst);
         datosUser.append('NomEst', datos.NomEst);
         datosUser.append('ApeEst', datos.ApeEst);
-        datosUser.append('CedEst', datos.CedEst);
+        datosUser.append('CedEst', datos.Cedula);
         datosUser.append('Fecha', datos.Fecha);
         datosUser.append('IdCarPer', datos.NomCar);
 
@@ -57,8 +57,8 @@ export default {
           method: 'POST',
           body: datosUser,
         }
-        //console.log("datossss");
-        console.log(datos.lenght);
+        console.log("datossss");
+        console.log(datos);
         var url = "";
         if (datos.IdEst == 0) {
           url = 'http://localhost/Apis-UTA/insertarEstudiantes.php';
