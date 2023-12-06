@@ -64,15 +64,18 @@ export default {
     },
 
     created() {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        this.rolUser = storedUser.IdRolPer;
-
-        this.roles();
+        const autenticacion = JSON.parse(localStorage.getItem('Authentication'));
+        if (autenticacion) {
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            this.rolUser = storedUser.IdRolPer;
+            this.roles();
+        }
     },
 
     methods: {
         salir() {
             localStorage.removeItem('user');
+            localStorage.removeItem('Authentication');
             this.$router.push("/");
         },
         roles() {

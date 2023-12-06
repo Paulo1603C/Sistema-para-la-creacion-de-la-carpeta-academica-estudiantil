@@ -15,32 +15,32 @@ import Footer from '@/components/footer.vue';
 import { mapGetters, mapMutations } from 'vuex';
 export default {
   name: 'Dashboard',
-  
+
   data: () => ({
-    imgProfile:null,
-    NomCom:null,
-    
+    imgProfile: null,
+    NomCom: null,
+
   }),
   components: {
     NavBar,
     Footer,
   },
-  
+
   created() {
-    const storedUser =  JSON.parse(localStorage.getItem('user'));
-    this.NomCom = storedUser.NomUser+ " " +storedUser.ApeUser;
-    console.log('nombre',storedUser.ApeUser);
-    if (storedUser) {
+    const isAuthenticated = localStorage.getItem('Authentication') === 'true';
+    
+    if (isAuthenticated) {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      this.NomCom = storedUser.NomUser + " " + storedUser.ApeUser;
       this.setUser(storedUser);
-    }else{
+    } else {
       this.$router.push("/");
-      
     }
   },
-  
-  methods:{
-    ...mapMutations('Login',['setUser']),
-    
+
+  methods: {
+    ...mapMutations('Login', ['setUser']),
+
   },
 
   computed: {

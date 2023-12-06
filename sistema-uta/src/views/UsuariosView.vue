@@ -36,7 +36,12 @@ export default {
     },
 
     created() {
-        this.cargarUsuarios();
+        const isAuthenticated = localStorage.getItem('Authentication') === 'true';
+        if (!isAuthenticated) {
+            this.$router.push("/");   
+        }else{
+            this.cargarUsuarios();
+        }
     },
 
     methods: {

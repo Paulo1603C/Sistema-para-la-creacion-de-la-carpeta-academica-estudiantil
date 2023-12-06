@@ -29,6 +29,13 @@ export default {
 
     },
 
+    created() {
+        const isAuthenticated = localStorage.getItem('Authentication') === 'true';
+        if (isAuthenticated) {
+            this.$router.push("/Estudiantes");   
+        }
+    },
+
     components: {
         FormularioLogin,
     },

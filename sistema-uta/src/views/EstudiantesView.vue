@@ -36,13 +36,6 @@ export default {
                 { text: 'Modificador por', value: 'user', },
                 { text: 'ACCIONES', value: 'acciones', },
             ],
-            //datos de prueba=>borrar
-            /*getItems: [
-                { tag: 'Paulo Martinez', carrera: 'Software', fecha: '22/02/2023', user: 'Paulo', },
-                { tag: 'Cristina Silva', carrera: 'TI', fecha: '22/02/2023', user: 'Paulo', },
-                { tag: 'Lenin Acosta', carrera: 'Industrial', fecha: '22/02/2023', user: 'Paulo', },
-                // Agrega más elementos al array según sea necesario
-            ],*/
             btnOP: [
                 { icon: "folder-plus", text: "Crear Carpeta" },
                 { icon: "folder-arrow-up", text: "Subir Archivo" },
@@ -52,7 +45,12 @@ export default {
     },
 
     created() {
-        this.cargarEstudiantes();
+        const isAuthenticated = localStorage.getItem('Authentication') === 'true';
+        if (!isAuthenticated) {
+            this.$router.push("/");   
+        }else{
+            this.cargarEstudiantes();
+        }
     },
 
     methods: {

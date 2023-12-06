@@ -45,8 +45,12 @@ export default {
         async methodLogin() {
             // Llama a la acción 'login' para autenticar al usuario.
             await this.login({ user: this.user, pass: this.pass });
-            if( this.getAuthentication == true ){
+            const autenticacion = localStorage.getItem('Authentication');
+            console.log(this.autenticacion);
+            if( autenticacion ){
                 this.$router.push("/Estudiantes");
+            }else{
+                this.$router.push("/");
             }
         },
 

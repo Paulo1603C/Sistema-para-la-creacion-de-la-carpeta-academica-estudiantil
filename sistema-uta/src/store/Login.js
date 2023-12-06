@@ -9,7 +9,6 @@ export default {
     state: {
         user: null, // Aquí almacenaremos la información del usuario autenticado
         isAuthenticated: false, // Estado de autenticación
-        // ...
     },
 
     getters: {
@@ -51,6 +50,7 @@ export default {
                     if (user.toLowerCase() === firstObject.Correo.toLowerCase() && pass === firstObject.Contraseña) {
                         commit('setAuthentication', true);
                         commit('setUser', firstObject);
+                        localStorage.setItem('Authentication', true);
                         localStorage.setItem('user', JSON.stringify(firstObject));
                     }else{
                         console.log("No se encontro el usuario...");
