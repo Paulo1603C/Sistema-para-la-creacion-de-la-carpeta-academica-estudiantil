@@ -24,9 +24,9 @@
 
         <v-divider></v-divider>
         <v-list density="compact" flat nav>
-            <v-list-item v-for="item in navegacion" :key="item.text" router :to="item.route" style="margin-bottom: 1px solid white;">
+            <v-list-item class="opNav"  v-for="item in navegacion" :key="item.text" router :to="item.route" style="margin-bottom: 1px solid white;">
                 <v-list-item-icon>
-                    <v-icon >mdi-{{item.icon}}</v-icon>
+                    <v-icon size="35" >mdi-{{item.icon}}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                     <v-list-item-title style="font-size: 19px;">{{item.text}}</v-list-item-title>
@@ -95,3 +95,9 @@ export default {
     }
 }
 </script>
+
+<style>
+    .opNav:hover{
+        backdrop-filter:blur(10px);
+    }
+</style>

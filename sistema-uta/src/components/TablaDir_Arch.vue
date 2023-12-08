@@ -1,7 +1,7 @@
 <template>
     <div>
         <template>
-            <v-card>
+            <v-card v-show="show">
                 <v-card-title>
                     {{ Titulo }}
                     <v-spacer></v-spacer>
@@ -51,7 +51,7 @@ import { mapActions } from 'vuex';
 export default {
     name: "TablaC",
 
-    props: ['Titulo', 'Cabecera', 'Items'],
+    props: ['show','Titulo', 'Cabecera', 'Items'],
 
     data() {
         return {

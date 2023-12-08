@@ -36,7 +36,7 @@ export default {
     }),
 
     created() {
-        //this.login({ user: this.user, pass: this.pass });
+        
     },
 
     methods: {
@@ -46,11 +46,9 @@ export default {
             // Llama a la acción 'login' para autenticar al usuario.
             await this.login({ user: this.user, pass: this.pass });
             const autenticacion = localStorage.getItem('Authentication');
-            console.log(this.autenticacion);
+            //console.log(this.autenticacion);
             if( autenticacion ){
                 this.$router.push("/Estudiantes");
-            }else{
-                this.$router.push("/");
             }
         },
 

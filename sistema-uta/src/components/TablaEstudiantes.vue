@@ -1,7 +1,7 @@
 <template>
     <div>
         <template>
-            <v-card>
+            <v-card v-show="show">
                 <v-card-title>
                     {{ Titulo }}
                     <v-spacer></v-spacer>
@@ -9,7 +9,7 @@
                     </v-text-field>
                     <v-spacer></v-spacer>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="5" class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
                             <td  class="linea"><v-icon class="mr-3">mdi-folder</v-icon>{{ item.NomEst }} {{ item.ApeEst }}</td>
@@ -45,13 +45,13 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions, mapMutations, } from 'vuex';
 
 
 export default {
     name: "TablaC",
 
-    props: ['Titulo', 'Cabecera', 'Items'],
+    props: ['show','Titulo', 'Cabecera', 'Items'],
 
     data() {
         return {
@@ -61,7 +61,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo',['setDialogFolder']),
+        ...mapMutations('Dialogo',['setDialogFolder','setVentanaEst','setVentanaArch','setBreadcrumbs']),
         ...mapMutations('Estudiantes', ['setEst']),
 
         editarItem(item) {
@@ -95,8 +95,10 @@ export default {
         },
 
         hacerAlgoAlHacerClic(item) {
-            
-            console.log("Ietm selected " + item.tag);
+            this.setVentanaEst(false);
+            this.setVentanaArch(true);
+            this.setBreadcrumbs(item.NomEst+' '+item.ApeEst);
+            console.log("Ietm selected " + item.NomEst);
         },
 
     },
