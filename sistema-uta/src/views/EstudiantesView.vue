@@ -14,7 +14,7 @@
         </v-col>-->
         <Carreras :show="carreras" Titulo="CARRERAS" :Cabecera="CabeceraCarreras" :Items="getCarrerasUser"></Carreras>
         <TablaEst :show="tablaEst" Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
-        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[1]" :Cabecera="Cabecera" :Items="getItems"></TablaDir_Arch>
+        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[2]" :Cabecera="Cabecera" :Items="getItems"></TablaDir_Arch>
 
     </div>
 </template>
@@ -89,7 +89,7 @@ export default {
                 this.setBreadcrumbs(this.itemsVacio);
             }
         }
-
+        
     },
 
     computed: {
