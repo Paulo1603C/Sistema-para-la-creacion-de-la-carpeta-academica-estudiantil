@@ -7,7 +7,7 @@
               <span>Cargando Datos...</span>
           </v-col>
           <v-col v-else v-for="(item, index) in getItems" :key="index" class="ma-2">
-            <Plantillas :titulo='item.NomPlan' :items="item.Items" ></Plantillas>               
+            <Plantillas :idPlan="item.IdPlan" :titulo='item.NomPlan' :items="item.Items" ></Plantillas>               
           </v-col>
       </v-row>
   </div>
@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       btnOP: [
-        { icon: "account-plus-outline", text: "Crear Plantilla" },
+        { icon: "folder-plus", text: "Crear Plantilla" },
       ],
     }
   },

@@ -3,23 +3,17 @@
         <v-dialog v-model="dialog" persistent width="400">
             <v-card>
                 <v-card-title>
-                    <span v-if="ItemPlantilla.IdEst == 0" class="text-h5">Nueva Plantilla</span>
+                    <span v-if="ItemPlantilla.idPlan == 0" class="text-h5">Nueva Plantilla</span>
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-row>
+                            <v-col cols="12">
+                                <v-text-field label="Nombre Plantilla*" v-model="ItemPlantilla.nomPlan" :counter="10" required></v-text-field>
+                            </v-col>
                             <v-col cols="12" >
-                                <v-text-field label="Cedula*" v-model="ItemPlantilla.Cedula" :counter="10" required></v-text-field>
-                            </v-col>
-                            <v-col cols="12"  sm="6" md="6" >
-                                <v-text-field label="Nombre*" v-model="ItemPlantilla.NomEst"  required></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Apellido*" v-model="ItemPlantilla.ApeEst"  required></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6" style="display: none">
-                                <v-text-field label="Apellido*" v-model="ItemPlantilla.Fecha"  required></v-text-field>
+                                <v-text-field label="Items*" v-model="ItemPlantilla.items"  required></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -41,6 +35,8 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
+    name:"NuevaPlantilla",
+
     props: {
         dialog: Boolean,
         ItemPlantilla:{},

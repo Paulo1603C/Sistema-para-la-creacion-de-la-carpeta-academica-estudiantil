@@ -8,6 +8,7 @@ export default {
 
   state: {
     Items: [],
+    dataPlan: {},
 
   },
   getters: {
@@ -19,6 +20,9 @@ export default {
   mutations: {
     llenarItems(state, data) {
       state.Items = data;
+    },
+    setPlan(state, data) {
+      state.dataPlan = data;
     },
 
   },

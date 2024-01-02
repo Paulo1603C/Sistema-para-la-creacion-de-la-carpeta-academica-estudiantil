@@ -3,7 +3,7 @@
         <NuevaCarpeta :dialog="dialogFolder" :ItemCarpeta="dataEst"></NuevaCarpeta>
         <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
-        <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataUsuario"></NuevaPlantilla>
+        <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataPlan"></NuevaPlantilla>
         <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
         <v-container class="mt-5">
             <v-menu v-model="showMenu" offset-y>
@@ -60,6 +60,7 @@ export default {
         ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder','setDialogPlantilla']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Estudiantes', ['setEst']),
+        ...mapMutations('Plantillas', ['setPlan']),
         ...mapActions('Estudiantes', ['AgregarEstudiante']),
 
         optionSelected(option) {
@@ -118,9 +119,11 @@ export default {
 
         crearPlantilla(){
             this.plantillaSelect={
-                titulo:'',
+                idPlan:0,
+                nomPlan:'',
                 items:[],
             }
+            this.setPlan(this.plantillaSelect);
             this.setDialogPlantilla(true);
         },
 
@@ -171,6 +174,7 @@ export default {
         ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
+        ...mapState('Plantillas', ['dataPlan']),
     }
 };
 

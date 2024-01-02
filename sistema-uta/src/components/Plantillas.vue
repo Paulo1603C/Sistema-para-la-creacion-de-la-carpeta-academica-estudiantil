@@ -64,7 +64,7 @@ export default {
     }),
 
     props: [
-        'titulo', 'items', 'urlDw',
+        'idPlan','titulo', 'items', 'urlDw',
     ],
 
     methods: {
@@ -74,14 +74,18 @@ export default {
         },
 
         eliminar() {
+            this.itemSeleccionadoPlan = {
+                id:this.idPlan,
+                nombre: this.titulo,
+            };
             this.$alertify.confirm(
-                'Deseas eliminar el usuario: ' + this.itemSeleccionadoUsuario.nombre + " " + this.itemSeleccionadoUsuario.apellido,
+                'Deseas eliminar la Plantilla: ' +this.itemSeleccionadoPlan.nombre,
                 () => {
-                    this.eliminarUsuario(this.itemSeleccionadoUsuario);
-                    //console.log(this.itemSeleccionadoUsuario);
-                    this.$alertify.success('Usuario  Eliminado');
+                    this.eliminarUsuario(this.itemSeleccionadoPlan);
+                    //console.log(this.itemSeleccionadoPlan);
+                    this.$alertify.success('Plantilla  Eliminada');
                 },
-                () => this.$alertify.error('cancel')
+                () => this.$alertify.error('Cancelado')
             );
         },
 
