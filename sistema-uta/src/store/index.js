@@ -7,6 +7,8 @@ import Roles from './Roles'
 import Dialogo from './Dialogo'
 import Permisos from './Permisos'
 import Estudiantes from './Estudiantes'
+import Server_Carpetas from './Server_Carpetas'
+import Server_Archivos from './Server_Archivos'
 
 Vue.use(Vuex)
 
@@ -27,5 +29,7 @@ export default new Vuex.Store({
     Dialogo,
     Permisos,
     Estudiantes,
+    Server_Carpetas,
+    Server_Archivos,
   }
 })

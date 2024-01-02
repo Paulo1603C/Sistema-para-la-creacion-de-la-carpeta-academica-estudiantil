@@ -9,10 +9,11 @@ export default {
   state: {
     dialogUser: false, // Estado del diálogo
     dialogFolder: false, // Estado del diálogo
-    tablaEst: true, // Estado del diálogo
+    tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
+    carreras: true, // Estado del diálogo
 
-    itemsBread:['Mis Archivos',],
+    itemsBread:['Carreras',],
   },
 
   mutations: {
@@ -28,9 +29,11 @@ export default {
     setVentanaArch(state, value) {
       state.tablaArch = value; // Mutación para actualizar el estado del diálogo
     },
+    setVentanaCarreras(state, value) {
+      state.carreras = value; // Mutación para actualizar el estado del diálogo
+    },
     setBreadcrumbs(state, value) {
       if( value == '' ){
-        //console.log("algom");
         state.itemsBread.splice(1, state.itemsBread.length); 
       }else{
         state.itemsBread.push(value); 

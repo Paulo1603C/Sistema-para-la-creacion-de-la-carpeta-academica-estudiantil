@@ -1,17 +1,20 @@
 <template>
     <div>
-        <BtnOpciones :links="btnOP" dark class="mb-2"></BtnOpciones>
+        <BtnOpciones :links="btnOP" v-if="tablaEst==true || tablaArch==true" dark class="mb-2"></BtnOpciones>
 
         <v-breadcrumbs>
-            <v-breadcrumbs-item v-for="(item, index) in itemsBread" :key="index" @click="acciones(item)">
+            <v-breadcrumbs-item  style="font-size:20px" class="BreadCumbs" v-for="(item, index) in itemsBread" :key="index" @click="acciones(item)">
                 {{ item }}
-                <span v-if="index < itemsBread.length - 1"> / </span>
+                <span style="color:red;font-size:30px" v-if="index < itemsBread.length - 1"> / </span>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
 
+        <!--<v-col v-for="(item, index) in getCarrerasUser" :key="index" class="ma-2">
+            <Carreras :show="carreras" :nombreCar="item.nomCar"></Carreras>
+        </v-col>-->
+        <Carreras :show="carreras" Titulo="CARRERAS" :Cabecera="CabeceraCarreras" :Items="getCarrerasUser"></Carreras>
         <TablaEst :show="tablaEst" Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
-
-        <TablaDir_Arch :show="tablaArch" Titulo="Paulo Martinez " :Cabecera="Cabecera" :Items="getItems"></TablaDir_Arch>
+        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[1]" :Cabecera="Cabecera" :Items="getItems"></TablaDir_Arch>
 
     </div>
 </template>
@@ -23,6 +26,7 @@ import { mapActions, mapGetters, mapState, mapMutations } from 'vuex';
 import BtnOpciones from '../components/BtnOpciones.vue';
 import TablaEst from '../components/TablaEstudiantes.vue';
 import TablaDir_Arch from '../components/TablaDir_Arch.vue';
+import Carreras from '../components/CarrerasUser.vue';
 
 export default {
     name: 'Estudiantes',
@@ -31,17 +35,24 @@ export default {
         TablaEst,
         BtnOpciones,
         TablaDir_Arch,
+        Carreras,
     },
 
     data() {
         return {
             itemsVacio:[],
+            tituloUser:'',
+            idUser:null,
             Cabecera: [
-                { text: 'Nombre', value: 'tag', },
+                { text: 'Nombre', value: 'nombre', },
                 { text: 'Carrera', value: 'carrera', },
                 { text: 'Modificado', value: 'fecha', },
                 { text: 'Modificador por', value: 'user', },
                 { text: 'ACCIONES', value: 'acciones', },
+            ],
+            CabeceraCarreras: [
+                { text: 'Tipo', value: ' ', },
+                { text: 'Nombre', value: 'nombre', },
             ],
             btnOP: [
                 { icon: "folder-plus", text: "Crear Carpeta" },
@@ -56,17 +67,24 @@ export default {
         if (!isAuthenticated) {
             this.$router.push("/");
         } else {
-            this.cargarEstudiantes();
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            this.idUser = storedUser.IdUser;
+            console.log(this.carreraSelecionada);
+            this.cargarCarrerasUser(this.idUser);
+            
         }
     },
 
     methods: {
-        ...mapActions('Estudiantes', ['cargarEstudiantes']),
-        ...mapMutations('Dialogo',['setVentanaEst','setVentanaArch','setBreadcrumbs']),
+        
+        ...mapActions('Carreras',['cargarCarrerasUser']),
+        ...mapMutations('Dialogo',['setVentanaEst','setVentanaArch','setVentanaCarreras','setBreadcrumbs']),
 
         acciones(item) {
-            if (item == 'Mis Archivos') {
-                this.setVentanaEst(true);
+            console.log(item);
+            if (item == this.itemsBread[0]) {
+                this.setVentanaCarreras(true);
+                this.setVentanaEst(false);
                 this.setVentanaArch(false);
                 this.setBreadcrumbs(this.itemsVacio);
             }
@@ -76,7 +94,21 @@ export default {
 
     computed: {
         ...mapGetters('Estudiantes', ['getItems']),
-        ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'itemsBread']),
+        ...mapGetters('Carreras', ['getCarrerasUser']),
+        ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras','itemsBread']),
+        ...mapState('Carreras', ['carreraSelecionada']),
     }
 }
 </script>
+
+<style>
+    .BreadCumbs{
+        color:blue; 
+        font-size:20px;
+        font-weight: bold;
+    }
+    .BreadCumbs:hover{
+        color:rgb(120, 120, 236); 
+        cursor: pointer;
+    }
+</style>

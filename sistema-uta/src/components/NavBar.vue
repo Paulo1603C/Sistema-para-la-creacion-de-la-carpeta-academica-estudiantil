@@ -83,12 +83,12 @@ export default {
                 this.navegacion = [
                     { icon: 'account-circle ', text: 'Usuarios', route: '/Usuarios' },
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
-                    { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
+                    { icon: 'view-dashboard', text: 'Plantillas', route: '/Plantillas' },
                 ]
             } else {
                 this.navegacion = [
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
-                    { icon: 'view-dashboard', text: 'Plantillas', route: '/About' },
+                    { icon: 'view-dashboard', text: 'Plantillas', route: '/Plantillas' },
                 ]
             }
         },

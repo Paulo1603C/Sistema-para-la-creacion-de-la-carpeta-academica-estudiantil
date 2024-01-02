@@ -12,14 +12,14 @@
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="5" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
-                            <td  class="linea"><v-icon class="mr-3">mdi-folder</v-icon>{{ item.tag }}</td>
+                            <td  class="linea"><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon>{{ item.tag }}</td>
                             <td>{{ item.carrera }}</td>
                             <td>{{ item.fecha }}</td>
                             <td>{{ item.user }}</td>
                             <td>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon  color="primary darken-2" size="20" class="me-2" @click.stop="editarItem(item)" v-bind="attrs"
+                                        <v-icon  color="primary darken-2"  size="20" class="me-2" @click.stop="editarItem(item)" v-bind="attrs"
                                             v-on="on">
                                             mdi-pencil
                                         </v-icon>

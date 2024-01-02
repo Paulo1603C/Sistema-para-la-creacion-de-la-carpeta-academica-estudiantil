@@ -8,17 +8,34 @@ export default{
   
   state: {
     carreras:[],
+    carrerasUser:[],
+    carreraSelecionada:'',
   },
+
   getters: {
     getCarreras(state){
       return state.carreras;
+    },
+
+    getCarrerasUser(state){
+      return state.carrerasUser;
     }
   },
+
   mutations: {
     llenarCarreras( state, data ){
       state.carreras = data;
-    }
+    },
+
+    llenarCarrerasUser( state, data ){
+      state.carrerasUser = data;
+    },
+
+    setCarreraSelect(state, value) {
+      state.carreraSelecionada = value; 
+    },
   },
+
   actions: {
 
     cargarCarreras:async function({commit}){
@@ -31,10 +48,35 @@ export default{
         const json = await data.json();
         commit('llenarCarreras', json); 
       } catch (error) {
-        
+        console.error('Error en la solicitud:', error);
       }
-    }
+
+    },
+    
+    cargarCarrerasUser:async function({commit}, idUser){
+      
+      try {
+        const datosUser = new FormData();
+        datosUser.append('IdUser', idUser);
+        //console.log(idUser);
+
+        const setting ={
+          method:'POST',
+          body:datosUser,
+        }
+        const url = 'http://localhost/Apis-UTA/carrerasUsuarios.php';
+        const data = await fetch(url, setting);
+        const json = await data.json();
+        //console.log(json);
+        commit('llenarCarrerasUser', json); 
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+      
+    },
+
   },
+
   modules: {
   }
 

@@ -1,9 +1,11 @@
 <template lang="">
   <div>
-    Plantilla
+    <Carreras texto="Software" />
   </div>
 </template>
 <script>
+import Carreras from '../components/CarrerasUser.vue';
+
 export default {
 
   created() {
@@ -11,6 +13,10 @@ export default {
         if (!isAuthenticated) {
             this.$router.push("/");   
         }
+    },
+
+    components:{
+      Carreras,
     },
   
 }

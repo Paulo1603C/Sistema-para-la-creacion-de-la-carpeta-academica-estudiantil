@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
 
@@ -66,7 +66,8 @@ export default {
         handleFileChange(event) {
             this.selectedFile = event.target.files[0];
             if (this.selectedFile) {
-                this.selectedFile = this.selectedFile;
+                const rutaArchivo = this.selectedFile;
+                console.log('Ruta: ', rutaArchivo);
             }
         },
 

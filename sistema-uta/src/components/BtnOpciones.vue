@@ -39,7 +39,7 @@ import moment from 'moment';
 
 export default {
 
-    props: ['links'],
+    props: ['links',],
 
     data() {
         return {

@@ -12,7 +12,7 @@
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
-                            <td  class="linea"><v-icon class="mr-3">mdi-folder</v-icon>{{ item.NomEst }} {{ item.ApeEst }}</td>
+                            <td  class="linea"><v-icon class="mr-3" color="yellow darken-1" >mdi-folder</v-icon>{{ item.NomEst }} {{ item.ApeEst }}</td>
                             <td>{{ item.NomCar }}</td>
                             <td>{{ item.Fecha }}</td>
                             <td>{{ item.user }}</td>
@@ -59,10 +59,11 @@ export default {
             estudianteSeleccionado:{},
         }
     },
-
+    
     methods: {
         ...mapMutations('Dialogo',['setDialogFolder','setVentanaEst','setVentanaArch','setBreadcrumbs']),
         ...mapMutations('Estudiantes', ['setEst']),
+        ...mapActions('Estudiantes', ['eliminarEstudiante']),
 
         editarItem(item) {
             console.log("item Datos");
@@ -81,7 +82,6 @@ export default {
             //console.log(item.IdEst);
         },
 
-        ...mapActions('Estudiantes', ['eliminarEstudiante']),
 
         eliminarItem(item) {
             this.$alertify.confirm(
@@ -97,6 +97,7 @@ export default {
         hacerAlgoAlHacerClic(item) {
             this.setVentanaEst(false);
             this.setVentanaArch(true);
+            //this.$emit('tituloUser', item.NomEst+' '+item.ApeEst);
             this.setBreadcrumbs(item.NomEst+' '+item.ApeEst);
             console.log("Ietm selected " + item.NomEst);
         },

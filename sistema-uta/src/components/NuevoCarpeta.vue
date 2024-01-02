@@ -65,14 +65,20 @@ export default {
     methods:{
         ...mapActions('Carreras', ['cargarCarreras']),
         ...mapActions('Estudiantes', ['AgregarEstudiante']),
+        ...mapActions('Server_Carpetas', ['crearCarpeta']),
         ...mapMutations('Dialogo',['setDialogFolder']),
         
-        agregar(){
-            //console.log("Datos Item");
-            //console.log(this.ItemCarpeta);
-            this.AgregarEstudiante(this.ItemCarpeta);
-            this.$alertify.success( this.ItemCarpeta.IdEst == 0 ? "Usuario Insertado" : "Usuario Actualizado" );
-            this.cerrarDialog();
+        agregar: async function(){
+            try {
+                //console.log("Datos Item");
+                //console.log(this.ItemCarpeta);
+                //await this.AgregarEstudiante(this.ItemCarpeta);
+                await this.crearCarpeta(this.ItemCarpeta);
+                this.$alertify.success( this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada" );
+                this.cerrarDialog();
+            } catch (error) {
+                console.error('Error al agregar estudiante:', error);
+            }
         },
         
         cerrarDialog(){

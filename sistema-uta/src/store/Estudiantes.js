@@ -28,19 +28,32 @@ export default {
 
   },
   actions: {
-    cargarEstudiantes: async function ({ commit }) {
+    cargarEstudiantes: async function ({ commit }, { idCar, idUser }) {
       try {
+        const datosEST = new FormData();
+        datosEST.append('IdUser', idUser);
+        datosEST.append('IdCar', idCar);
+
+        console.log(idCar);
+        console.log(idUser);
+
         const setting = {
-          methods: 'GET',
-        }
+          method: 'POST',
+          body: datosEST,
+        };
         const url = 'http://localhost/Apis-UTA/estudiantesSelect.php';
         const data = await fetch(url, setting);
         const json = await data.json();
-        commit('llenarItems', json);
 
+        if (data.ok) {
+          commit('llenarItems', json);
+        } else {
+          console.log('La respuesta no es un JSON válido:', await data.text());
+        }
       } catch (error) {
-
+        console.error('Error en la solicitud:', error);
       }
+
     },
 
     AgregarEstudiante: async function ({ commit, dispatch }, datos) {
@@ -91,7 +104,7 @@ export default {
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {
-          const jsonData = JSON.parse(json); 
+          const jsonData = JSON.parse(json);
           dispatch('cargarEstudiantes');
         } else {
           dispatch('cargarEstudiantes');
