@@ -9,6 +9,7 @@ export default {
   state: {
     dialogUser: false, // Estado del diálogo
     dialogFolder: false, // Estado del diálogo
+    dailogPlantilla:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
@@ -22,6 +23,9 @@ export default {
     },
     setDialogFolder(state, value) {
       state.dialogFolder = value; // Mutación para actualizar el estado del diálogo
+    },
+    setDialogPlantilla(state, value) {
+      state.dailogPlantilla = value; // Mutación para actualizar el estado del diálogo
     },
     setVentanaEst(state, value) {
       state.tablaEst = value; // Mutación para actualizar el estado del diálogo

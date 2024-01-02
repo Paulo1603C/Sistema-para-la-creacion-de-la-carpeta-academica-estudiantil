@@ -3,6 +3,7 @@
         <NuevaCarpeta :dialog="dialogFolder" :ItemCarpeta="dataEst"></NuevaCarpeta>
         <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
+        <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataUsuario"></NuevaPlantilla>
         <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
         <v-container class="mt-5">
             <v-menu v-model="showMenu" offset-y>
@@ -33,6 +34,7 @@
 import NuevaCarpeta from './NuevoCarpeta.vue';
 import SubirArchivo from './SubirArchivo.vue';
 import NuevaUsuario from './NuevoUsuario.vue';
+import NuevaPlantilla from './NuevaPlantilla.vue';
 import { mapState, mapMutations, mapActions} from 'vuex';
 import readXlsFile from "read-excel-file";
 import moment from 'moment';
@@ -49,12 +51,13 @@ export default {
             estudianteSelect: {},
             itemSeleccionado: {},
             usuarioSelect: {},
+            plantillaSelect: {},
             mostrarInput: false,
             items: [],
         };
     },
     methods: {
-        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder']),
+        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder','setDialogPlantilla']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapActions('Estudiantes', ['AgregarEstudiante']),
@@ -73,6 +76,9 @@ export default {
                     break;
                 case "Importar Datos":
                     this.importarDatos();
+                    break;
+                case "Crear Plantilla":
+                    this.crearPlantilla();
                     break;
                 default:
                     alert('Opción seleccionada: ' + option);
@@ -106,8 +112,16 @@ export default {
                 carreras: [],
                 permisos: [],
             },
-                this.setUser(this.usuarioSelect);
+            this.setUser(this.usuarioSelect);
             this.setDialog(true);
+        },
+
+        crearPlantilla(){
+            this.plantillaSelect={
+                titulo:'',
+                items:[],
+            }
+            this.setDialogPlantilla(true);
         },
 
         subirArchivo() {
@@ -150,10 +164,11 @@ export default {
         NuevaCarpeta,
         NuevaUsuario,
         SubirArchivo,
+        NuevaPlantilla,
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
     }
