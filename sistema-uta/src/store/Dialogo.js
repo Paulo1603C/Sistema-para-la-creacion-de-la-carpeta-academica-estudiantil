@@ -38,8 +38,10 @@ export default {
     },
     setBreadcrumbs(state, value) {
       if( value == '' ){
+        //console.log('Borrra');
         state.itemsBread.splice(1, state.itemsBread.length); 
       }else{
+        //console.log('No Borrra');
         state.itemsBread.push(value); 
       }
     },

@@ -12,15 +12,16 @@
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
-                            <td  class="linea"><v-icon class="mr-3" color="yellow darken-1" >mdi-folder</v-icon>{{ item.NomEst }} {{ item.ApeEst }}</td>
+                            <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
+                            <td class="linea">{{ item.NomEst}} {{ item.ApeEst }}</td>
                             <td>{{ item.NomCar }}</td>
                             <td>{{ item.Fecha }}</td>
                             <td>{{ item.user }}</td>
                             <td>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon  color="primary darken-2" size="20" class="me-2" @click.stop="editarItem(item)" v-bind="attrs"
-                                            v-on="on">
+                                        <v-icon color="primary darken-2" size="20" class="me-2"
+                                            @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
                                             mdi-pencil
                                         </v-icon>
                                     </template>
@@ -28,7 +29,8 @@
                                 </v-tooltip>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="20" @click.stop="eliminarItem(item)" v-bind="attrs" v-on="on">
+                                        <v-icon color="error darken-2" size="20" @click.stop="eliminarItem(item)"
+                                            v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
                                     </template>
@@ -45,29 +47,33 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 
 export default {
     name: "TablaC",
 
-    props: ['show','Titulo', 'Cabecera', 'Items'],
+    props: ['show', 'Titulo', 'Cabecera', 'Items'],
 
     data() {
         return {
             search: '',
-            estudianteSeleccionado:{},
+            path: '',
+            estudianteSeleccionado: {},
         }
     },
-    
+
     methods: {
-        ...mapMutations('Dialogo',['setDialogFolder','setVentanaEst','setVentanaArch','setBreadcrumbs']),
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
         ...mapMutations('Estudiantes', ['setEst']),
-        ...mapActions('Estudiantes', ['eliminarEstudiante']),
+        ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
+        ...mapActions('Server_Carpetas', ['cargarCarpetas','eliminarCarpeta']),
+        ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
 
         editarItem(item) {
             console.log("item Datos");
-            this.estudianteSeleccionado={
+            this.rutaNueva();
+            this.estudianteSeleccionado = {
                 IdEst: item.IdEst,
                 Cedula: item.CedEst,
                 NomEst: item.NomEst,
@@ -78,17 +84,24 @@ export default {
             }
             this.setEst(this.estudianteSeleccionado);
             this.setDialogFolder(true);
-
+            this.setRutaAnterior(this.path+item.NomEst+" "+item.ApeEst);
+            this.path='';
             //console.log(item.IdEst);
         },
 
 
         eliminarItem(item) {
+            this.rutaNueva();
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            this.idUser = storedUser.IdUser;
             this.$alertify.confirm(
-                'Deseas eliminar el usuario: ' + item.NomEst+" "+item.ApeEst,
+                'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst,
                 () => {
                     this.eliminarEstudiante(item);
-                    this.$alertify.success('Usuario ' + item.NomEst +" "+item.ApeEst+ ' Eliminado');
+                    this.eliminarCarpeta(this.path+item.NomEst+" "+item.ApeEst);
+                    this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
+                    this.$alertify.success('Usuario ' + item.NomEst + " " + item.ApeEst + ' Eliminado');
+                    this.path='';
                 },
                 () => this.$alertify.error('Cancelado')
             );
@@ -97,9 +110,18 @@ export default {
         hacerAlgoAlHacerClic(item) {
             this.setVentanaEst(false);
             this.setVentanaArch(true);
-            //this.$emit('tituloUser', item.NomEst+' '+item.ApeEst);
-            this.setBreadcrumbs(item.NomEst+' '+item.ApeEst);
-            console.log("Ietm selected " + item.NomEst);
+            this.setBreadcrumbs(item.NomEst + ' ' + item.ApeEst);
+            this.rutaNueva();
+            this.cargarCarpetas(this.path);
+            this.path='';
+        },
+
+        rutaNueva() {
+            //metodo para obtener la ruta
+            for (let i = 0; i < this.itemsBread.length; i++) {
+                this.path += this.itemsBread[i] + "/";
+            }
+            //console.log(this.path);
         },
 
     },
@@ -108,13 +130,19 @@ export default {
 
     },
 
+    computed: {
+        ...mapState('Carreras', ['idCarreraSelect']),
+        ...mapState('Dialogo', ['itemsBread']),
+    }
+
 }
 </script>
 <style>
-    .myStyle:hover{
-        cursor: pointer;
-    }
-    .linea:hover{
-        text-decoration: underline;
-    }
+.myStyle:hover {
+    cursor: pointer;
+}
+
+.linea:hover {
+    text-decoration: underline;
+}
 </style>

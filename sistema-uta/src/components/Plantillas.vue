@@ -64,7 +64,7 @@ export default {
     }),
 
     props: [
-        'idPlan','titulo', 'items', 'urlDw',
+        'idPlan','titulo','idItem','items', 'urlDw',
     ],
 
     methods: {
@@ -88,7 +88,6 @@ export default {
                 () => this.$alertify.error('Cancelado')
             );
         },
-
     },
 
     mounted() {

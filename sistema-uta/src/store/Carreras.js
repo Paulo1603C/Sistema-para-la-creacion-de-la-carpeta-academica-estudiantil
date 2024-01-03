@@ -10,6 +10,7 @@ export default{
     carreras:[],
     carrerasUser:[],
     carreraSelecionada:'',
+    idCarreraSelect:0,
   },
 
   getters: {
@@ -33,6 +34,10 @@ export default{
 
     setCarreraSelect(state, value) {
       state.carreraSelecionada = value; 
+    },
+
+    setIdCarreraSelect(state, value) {
+      state.idCarreraSelect = value; 
     },
   },
 

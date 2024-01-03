@@ -43,6 +43,10 @@ export default {
 
     props: ['links',],
 
+    created(){
+        
+    },
+
     data() {
         return {
             fecha: "",
@@ -94,9 +98,9 @@ export default {
                 Cedula: '',
                 NomEst: '',
                 ApeEst: '',
-                NomCar: 0,
+                NomCar: this.idCarreraSelect,
                 Fecha: this.fecha,
-                modificado: '',
+                idPlanPer:0,
             },
                 this.setEst(this.estudianteSelect);
             this.setDialogFolder(true);
@@ -161,6 +165,7 @@ export default {
             this.fecha = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
         },
 
+
     },
 
     components: {
@@ -175,6 +180,7 @@ export default {
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
         ...mapState('Plantillas', ['dataPlan']),
+        ...mapState('Carreras', ['idCarreraSelect']),
     }
 };
 

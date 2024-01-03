@@ -14,7 +14,7 @@
         </v-col>-->
         <Carreras :show="carreras" Titulo="CARRERAS" :Cabecera="CabeceraCarreras" :Items="getCarrerasUser"></Carreras>
         <TablaEst :show="tablaEst" Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
-        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[2]" :Cabecera="Cabecera" :Items="getItems"></TablaDir_Arch>
+        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[2]" :Cabecera="Cabecera" :Items="getCarpetas"></TablaDir_Arch>
 
     </div>
 </template>
@@ -44,6 +44,7 @@ export default {
             tituloUser:'',
             idUser:null,
             Cabecera: [
+                { text: 'Tipo', value: 'tipo', },
                 { text: 'Nombre', value: 'nombre', },
                 { text: 'Carrera', value: 'carrera', },
                 { text: 'Modificado', value: 'fecha', },
@@ -71,7 +72,6 @@ export default {
             this.idUser = storedUser.IdUser;
             console.log(this.carreraSelecionada);
             this.cargarCarrerasUser(this.idUser);
-            
         }
     },
 
@@ -81,8 +81,9 @@ export default {
         ...mapMutations('Dialogo',['setVentanaEst','setVentanaArch','setVentanaCarreras','setBreadcrumbs']),
 
         acciones(item) {
-            console.log(item);
+            //console.log(item);
             if (item == this.itemsBread[0]) {
+                //console.log('Mijas de pan');
                 this.setVentanaCarreras(true);
                 this.setVentanaEst(false);
                 this.setVentanaArch(false);
@@ -95,8 +96,9 @@ export default {
     computed: {
         ...mapGetters('Estudiantes', ['getItems']),
         ...mapGetters('Carreras', ['getCarrerasUser']),
+        ...mapGetters('Server_Carpetas', ['getCarpetas']),
         ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras','itemsBread']),
-        ...mapState('Carreras', ['carreraSelecionada']),
+        ...mapState('Carreras', ['carreraSelecionada','idCarreraSelect']),
     }
 }
 </script>

@@ -28,14 +28,19 @@ export default {
 
   },
   actions: {
-    cargarEstudiantes: async function ({ commit }, { idCar, idUser }) {
+    cargarEstudiantes: async function ({ commit,  rootState }, { idCar,idUser }) {
+      // Acceder a idCarreraSelect del módulo carreras
+      /*const idCarrera = rootState.carreras.idCarreraSelect;
+      console.log('idCarreraSelect:', this.idCarrera);*/
+
       try {
         const datosEST = new FormData();
         datosEST.append('IdUser', idUser);
         datosEST.append('IdCar', idCar);
 
-        console.log(idCar);
         console.log(idUser);
+        console.log(this.idCar);
+
 
         const setting = {
           method: 'POST',
@@ -65,13 +70,14 @@ export default {
         datosUser.append('CedEst', datos.Cedula);
         datosUser.append('Fecha', datos.Fecha);
         datosUser.append('IdCarPer', datos.NomCar);
+        datosUser.append('IdPlanPer', datos.idPlanPer);
 
         const setting = {
           method: 'POST',
           body: datosUser,
         }
-        console.log("datossss");
-        console.log(datos);
+        //console.log("datossss");
+        //console.log(datos);
         var url = "";
         if (datos.IdEst == 0) {
           url = 'http://localhost/Apis-UTA/insertarEstudiantes.php';
@@ -82,9 +88,9 @@ export default {
         const json = await data.text();
         if (json.startsWith('{')) {
           const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-          dispatch('cargarEstudiantes');
+          //dispatch('cargarEstudiantes');
         } else {
-          dispatch('cargarEstudiantes');
+          //dispatch('cargarEstudiantes');
         }
       } catch (error) {
         console.error('Error en la solicitud:', error);
@@ -105,17 +111,15 @@ export default {
         const json = await data.text();
         if (json.startsWith('{')) {
           const jsonData = JSON.parse(json);
-          dispatch('cargarEstudiantes');
+          //dispatch('cargarEstudiantes');
         } else {
-          dispatch('cargarEstudiantes');
+          //dispatch('cargarEstudiantes');
         }
       } catch (error) {
         console.log("Error de eliminción " + error);
       }
 
     }
-
-
   },
 
   modules: {
