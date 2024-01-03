@@ -57,6 +57,7 @@ export default {
     data() {
         return {
             search: '',
+            path:'',
         }
     },
 
@@ -83,6 +84,14 @@ export default {
 
         hacerAlgoAlHacerClic(item) {
             console.log("Ietm selected" + item.tag);
+        },
+
+        rutaNueva() {
+            //metodo para obtener la ruta
+            for (let i = 0; i < this.itemsBread.length; i++) {
+                this.path += this.itemsBread[i] + "/";
+            }
+            //console.log(this.path);
         },
 
     },

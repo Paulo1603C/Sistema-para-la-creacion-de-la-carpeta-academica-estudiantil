@@ -80,6 +80,7 @@ export default {
             try {
                 //console.log(this.ItemCarpeta);
                 this.rutaNueva();
+                console.log(this.path);
                 if(this.itemsBread.length<3){
                     await this.AgregarEstudiante(this.ItemCarpeta);
                     const storedUser = JSON.parse(localStorage.getItem('user'));

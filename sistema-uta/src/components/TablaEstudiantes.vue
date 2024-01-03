@@ -86,6 +86,7 @@ export default {
             this.setDialogFolder(true);
             this.setRutaAnterior(this.path+item.NomEst+" "+item.ApeEst);
             this.path='';
+            //this.setRutaAnterior('');
             //console.log(item.IdEst);
         },
 

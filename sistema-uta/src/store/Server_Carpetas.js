@@ -59,10 +59,13 @@ export default {
                 datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
                 datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase() );
                 //console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
+                console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
+                console.log('OLD'+oldPath);
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,
                 }
+                console.log("ID"+datos.IdEst);
                 var url = "";
                 if(datos.IdEst == 0){
                     url = "http://localhost/Apis-UTA/crearCarpetas.php";
