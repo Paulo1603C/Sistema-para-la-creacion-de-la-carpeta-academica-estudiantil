@@ -38,8 +38,8 @@ export default {
         datosEST.append('IdUser', idUser);
         datosEST.append('IdCar', idCar);
 
-        console.log(idUser);
-        console.log(this.idCar);
+        //console.log(idUser);
+        //console.log(this.idCar);
 
 
         const setting = {

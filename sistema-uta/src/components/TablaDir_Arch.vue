@@ -9,13 +9,17 @@
                     </v-text-field>
                     <v-spacer></v-spacer>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="5" class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
-                            <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
-                            <td class="linea">{{ item }}</td>
-                            <td>{{ item.NomCar }}</td>
-                            <td>{{ item.Fecha }}</td>
+                            <td  >
+                                <v-icon v-if="item.tipo!='Archivo'" class="mr-3" color="yellow darken-1">mdi-folder</v-icon>
+                                <v-icon v-else class="mr-3" color="red darken-1">mdi-file-document</v-icon>
+                            </td>
+                            <td class="linea">{{ item.nombre }}</td>
+                            <td v-if="item.tipo!='Archivo'" >{{ item.cantidad }}</td>
+                            <td v-else >{{ item.tamaño }} MB</td>
+                            <td>{{ item.fecha_creacion }}</td>
                             <td>{{ item.user }}</td>
                             <td>
                                 <v-tooltip bottom>
@@ -46,7 +50,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 
 export default {
@@ -62,28 +66,57 @@ export default {
     },
 
     methods: {
-
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
+        ...mapMutations('Estudiantes', ['setEst']),
+        ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
+        ...mapActions('Server_Carpetas', ['cargarCarpetas','eliminarCarpeta']),
+        ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
+        
         editarItem(item) {
-            console.log(item);
-            this.itemSeleccionado = item;
-            this.auxDialog = true;
+            console.log("item Datos");
+            this.rutaNueva();
+            this.estudianteSeleccionado = {
+                IdEst: item.IdEst,
+                Cedula: item.CedEst,
+                NomEst: item.NomEst,
+                ApeEst: item.ApeEst,
+                NomCar: item.IdCar,
+                Fecha: item.Fecha,
+                modificado: '',
+            }
+            this.setEst(this.estudianteSeleccionado);
+            this.setDialogFolder(true);
+            this.setRutaAnterior(this.path+item.NomEst+" "+item.ApeEst);
+            this.path='';
+            //this.setRutaAnterior('');
+            //console.log(item.IdEst);
         },
 
-        ...mapActions('clientes', ['eliminarUsuario']),
 
         eliminarItem(item) {
+            this.rutaNueva();
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            this.idUser = storedUser.IdUser;
             this.$alertify.confirm(
-                'Deseas eliminar el usuario: ' + item.nombre,
+                'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst,
                 () => {
-                    this.eliminarUsuario(item);
-                    this.$alertify.success('Usuario ' + item.nombre + ' Eliminado');
+                    this.eliminarEstudiante(item);
+                    this.eliminarCarpeta(this.path+item.NomEst+" "+item.ApeEst);
+                    //this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
+                    this.$alertify.success('Usuario ' + item.NomEst + " " + item.ApeEst + ' Eliminado');
+                    this.path='';
                 },
-                () => this.$alertify.error('cancel')
+                () => this.$alertify.error('Cancelado')
             );
         },
 
         hacerAlgoAlHacerClic(item) {
-            console.log("Ietm selected" + item.tag);
+            console.log("Ietm selected" + item.nombre);
+            this.setBreadcrumbs(item.nombre);
+            this.rutaNueva();
+            console.log(this.ruta);
+            this.cargarCarpetas(this.path);
+            this.path='';
         },
 
         rutaNueva() {
@@ -99,6 +132,11 @@ export default {
     components: {
 
     },
+
+    computed: {
+        //...mapState('Carreras', ['idCarreraSelect']),
+        ...mapState('Dialogo', ['itemsBread']),
+    }
 }
 </script>
 <style>

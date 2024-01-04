@@ -109,10 +109,12 @@ export default {
         },
 
         hacerAlgoAlHacerClic(item) {
+            //console.log('rdml'+item);
             this.setVentanaEst(false);
             this.setVentanaArch(true);
-            this.setBreadcrumbs(item.NomEst + ' ' + item.ApeEst);
+            this.setBreadcrumbs(item.NomEst.toUpperCase() + ' ' + item.ApeEst.toUpperCase());
             this.rutaNueva();
+            //console.log(this.path);
             this.cargarCarpetas(this.path);
             this.path='';
         },

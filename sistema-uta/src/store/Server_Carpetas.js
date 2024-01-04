@@ -35,7 +35,7 @@ export default {
                 try {
                     const items = new FormData();
                     items.append('rutaServidor', ruta.toUpperCase());
-                    console.log(ruta.toUpperCase());
+                    console.log('RUTA=>'+ruta.toUpperCase());
 
                     const setting = {
                         method: 'POST',

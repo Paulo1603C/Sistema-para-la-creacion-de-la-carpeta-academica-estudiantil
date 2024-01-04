@@ -29,7 +29,7 @@
                     <v-icon size="35" >mdi-{{item.icon}}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                    <v-list-item-title style="font-size: 19px;">{{item.text}}</v-list-item-title>
+                    <v-list-item-title style="font-size: 22px;font-weight:bold;">{{item.text}}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
         </v-list>

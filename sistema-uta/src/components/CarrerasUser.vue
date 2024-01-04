@@ -37,48 +37,56 @@ export default {
         }
     },
 
+    created(){
+
+    },
+
     methods: {
-        ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs']),
+        ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs','setVentanaArch']),
         ...mapMutations('Carreras', ['setCarreraSelect']),
         ...mapMutations('Carreras', ['setIdCarreraSelect']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
+        //...mapActions('Server_Carpetas', ['cargarCarpetas']),
 
         abrirVentana(item) {
-            //console.log(item.idCar);
-            this.setBreadcrumbs(item.nomCar);
+            //console.log('CARRERAS');
+            this.setBreadcrumbs(item.nomCar.toUpperCase());
             this.obtnerIdCarrera();
             const storedUser = JSON.parse(localStorage.getItem('user'));
             //console.log(storedUser.IdUser);
-            console.log(this.carrera);
+            //console.log(this.carrera);
             this.cargarEstudiantes({ idCar: this.carrera, idUser: storedUser.IdUser });
+            //this.cargarCarpetas(this.path);
             this.setCarreraSelect(item.nomCar);
             this.setVentanaCarreras(false);
+            //this.setVentanaArch(true);
             this.setVentanaEst(true);
-
         }, 
 
+        //ya no lo uso
         obtnerIdCarrera(){
             switch (this.itemsBread[1]) {
-                case 'Ingeniería Industrial':
+                case 'INGENIERÍA INDUSTRIAL':
                     this.carrera=1;
                     break;
-                case 'Software':
+                case 'SOFTWARE':
                     this.carrera=2;
                     break;
                 case 'TI':
                     this.carrera=3;
                     break;
-                case 'Telecomunicaciones':
+                case 'TELECOMUNICACIONES':
                     this.carrera=4;
                     break;
-                case 'Automatización y robótica':
+                case 'AUTOMATIZACIÓN Y ROBÓTICA':
                     this.carrera=5;
                     break;
                 default:
                     break;
             }
             this.setIdCarreraSelect(this.carrera);
-        }
+        },
+
     },
     computed:{
         ...mapState('Dialogo', ['itemsBread']),

@@ -14,7 +14,7 @@ export default {
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
 
-    itemsBread:['Carreras',],
+    itemsBread:['CARRERAS',],
   },
 
   mutations: {
@@ -41,8 +41,14 @@ export default {
         //console.log('Borrra');
         state.itemsBread.splice(1, state.itemsBread.length); 
       }else{
-        //console.log('No Borrra');
-        state.itemsBread.push(value); 
+        //buscar si el parametro existe ? borramos : agregamos
+        const found = state.itemsBread.find( (item) => item == value );
+        if( found ){
+          let index = state.itemsBread.indexOf(value);
+          state.itemsBread.splice(index+1,state.itemsBread.length);
+        }else{
+          state.itemsBread.push(value); 
+        }
       }
     },
   }
