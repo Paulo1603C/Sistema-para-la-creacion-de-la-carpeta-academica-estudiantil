@@ -1,7 +1,7 @@
 <template>
     <div>
         <NuevoEstudiante :dialog="dialogFolder" :ItemEstudiante="dataEst"></NuevoEstudiante>
-        <NuevaCarpeta :dialog="dailogCarpeta" :ItemCarpeta="dataCarpeta" ></NuevaCarpeta>
+        <NuevaCarpeta :dialog="dailogCarpeta" :ItemCarpeta="dataCarpeta"></NuevaCarpeta>
         <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
         <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataPlan"></NuevaPlantilla>
@@ -16,10 +16,10 @@
                 </template>
 
                 <!-- Contenido del menú desplegable -->
-                <v-list>
+                <v-list >
                     <v-list-item v-for="item in links" :key="item.text" @click="optionSelected(item.text)">
                         <v-list-item-icon>
-                            <v-icon>mdi-{{ item.icon }}</v-icon>
+                            <v-icon color="yellow darken-4">mdi-{{ item.icon }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
                             <v-list-item-title>{{ item.text }}</v-list-item-title>
@@ -52,10 +52,12 @@ export default {
     data() {
         return {
             fecha: "",
+            path: '',
+            idUser: 0,
             showMenu: false,
             dialogFile: false,
             estudianteSelect: {},
-            carpetaSelect:{},
+            carpetaSelect: {},
             itemSeleccionado: {},
             usuarioSelect: {},
             plantillaSelect: {},
@@ -64,12 +66,13 @@ export default {
         };
     },
     methods: {
-        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder', 'setDialogPlantilla','setDialogCarpeta']),
+        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder', 'setDialogPlantilla', 'setDialogCarpeta']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapMutations('Plantillas', ['setPlan']),
         ...mapMutations('Server_Carpetas', ['setCarpeta']),
-        ...mapActions('Estudiantes', ['AgregarEstudiante']),
+        ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes']),
+        ...mapActions('Server_Carpetas', ['crearCarpeta']),
 
         optionSelected(option) {
             switch (option) {
@@ -111,7 +114,7 @@ export default {
                 //console.log("Item Est"+this.estudianteSelect);
                 this.setEst(this.estudianteSelect);
                 this.setDialogFolder(true);
-            }else{
+            } else {
                 this.carpetaSelect = {
                     IdEst: 0,
                     NomEst: '',
@@ -157,22 +160,30 @@ export default {
         },
 
         subirExcel() {
+            this.rutaNueva();
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            this.idUser = storedUser.IdUser;
             const input = document.getElementById("archivoExcel");
             readXlsFile(input.files[0]).then((rows) => {
                 this.items = rows;
                 this.fechaActual();
-                for (const row of this.items) {
+                for (let i = 1; i < this.items.length; i++) {
+                    const row = this.items[i];
                     const datos = {
                         IdEst: row[0],
                         NomEst: row[1],
                         ApeEst: row[2],
                         Cedula: row[3],
                         Fecha: this.fecha,
-                        NomCar: row[5]
+                        NomCar: row[5],
+                        idPlanPer: row[6],
                     };
-                    console.log(datos)
+
+                    console.log(datos);
                     this.AgregarEstudiante(datos);
+                    this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
                 }
+                this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                 this.$alertify.success("Estudiantes Insertados");
             });
         },
@@ -182,6 +193,13 @@ export default {
             this.fecha = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
         },
 
+        rutaNueva() {
+            //metodo para obtener la ruta
+            for (let i = 0; i < this.itemsBread.length; i++) {
+                this.path += this.itemsBread[i] + "/";
+            }
+            //console.log(this.path);
+        },
 
     },
 
@@ -194,12 +212,14 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst','dailogCarpeta']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch' ,'dailogCarpeta']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
         ...mapState('Plantillas', ['dataPlan']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['dataCarpeta']),
+        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Server_Carpetas', ['rutaAnterior']),
     }
 };
 

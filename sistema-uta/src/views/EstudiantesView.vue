@@ -67,9 +67,9 @@ export default {
                 { text: 'Nombre', value: 'nombre', },
             ],
             btnOP: [
-                { icon: "folder-plus", text: "Crear Carpeta" },
-                { icon: "folder-arrow-up", text: "Subir Archivo" },
-                { icon: "import", text: "Importar Datos" },
+                { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
+                { icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
+                { icon: "import", text: "Importar Datos", show: "true" },
             ],
         }
     },
