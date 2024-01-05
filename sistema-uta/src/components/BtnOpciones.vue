@@ -19,7 +19,7 @@
                 <v-list >
                     <v-list-item v-for="item in links" :key="item.text" @click="optionSelected(item.text)">
                         <v-list-item-icon>
-                            <v-icon color="yellow darken-4">mdi-{{ item.icon }}</v-icon>
+                            <v-icon color="blue darken-4">mdi-{{ item.icon }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
                             <v-list-item-title>{{ item.text }}</v-list-item-title>

@@ -41,10 +41,11 @@ export default {
             
         },
 
-        crearArchivos: async function( { commit, dispatch }, datos ){
+        crearArchivos: async function( { commit, dispatch }, {ruta ,archivo} ){
             try {
                 const datosArchivos = new FormData();
-                datosArchivos.append('nombreDirectorio', datos.NomEst + datos.ApeEst );
+                datosArchivos.append('rutaRemota', ruta );
+                datosArchivos.append('file', archivo );
 
                 const setting = {
                     method:'POST',
@@ -55,9 +56,9 @@ export default {
                 const json = await data.text();
                 if( json.startsWith('{') ){
                     const jsonData = JSON.parse(json);
-                    dispatch('cargarArchivos');
+                    //dispatch('cargarArchivos');
                 }else{
-                    dispatch('cargarArchivos');
+                    //dispatch('cargarArchivos');
                 }
             } catch (error) {
                 console.error('Error en la solicitud:', error);

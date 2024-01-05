@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
 
@@ -45,18 +45,24 @@ export default {
     },
 
     data: () => ({
-        selectedFile:null,
+        selectedFile: null,
+        path: '',
     }),
 
     methods: {
 
-        ...mapActions('clientes', ['AgregarUsuario']),
+        ...mapActions('Server_Archivos', ['crearArchivos']),
+        ...mapActions('Server_Carpetas', ['cargarCarpetas']),
 
-        agregar() {
-            console.log("Datos Item",this.selectedFile);
-            //this.AgregarUsuario(this.Item);
-            //this.$alertify.success(this.Item.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+        agregar:async function() {
+            this.rutaNueva();
+            console.log("Datos Item", this.selectedFile.tmp_name);
+            console.log("Datos Ruta", this.path);
+            await this.crearArchivos({ ruta: this.path, archivo:this.selectedFile });
+            await this.cargarCarpetas( this.path );
+            this.$alertify.success("Archivo Insertado");
             this.cerrarDialog();
+            this.path='';
         },
 
         cerrarDialog() {
@@ -67,10 +73,22 @@ export default {
             this.selectedFile = event.target.files[0];
             if (this.selectedFile) {
                 const rutaArchivo = this.selectedFile;
-                console.log('Ruta: ', rutaArchivo);
+                //console.log('Ruta: ', rutaArchivo);
             }
         },
 
+        rutaNueva() {
+            //metodo para obtener la ruta
+            for (let i = 0; i < this.itemsBread.length; i++) {
+                this.path += this.itemsBread[i] + "/";
+            }
+            //console.log(this.path);
+        },
+    },
+
+    computed: {
+        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Server_Carpetas', ['rutaAnterior']),
     },
 }
 </script>       
