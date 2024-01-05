@@ -62,49 +62,45 @@ export default {
         return {
             search: '',
             path:'',
+            carpetaSelecionada:{},
         }
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
-        ...mapMutations('Estudiantes', ['setEst']),
-        ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs','setDialogCarpeta']),
+        //...mapMutations('Estudiantes', ['setEst']),
+        //...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas','eliminarCarpeta']),
-        ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
+        ...mapMutations('Server_Carpetas', ['setRutaAnterior','setCarpeta']),
         
         editarItem(item) {
             console.log("item Datos");
+            console.log(item);
             this.rutaNueva();
-            this.estudianteSeleccionado = {
-                IdEst: item.IdEst,
-                Cedula: item.CedEst,
-                NomEst: item.NomEst,
-                ApeEst: item.ApeEst,
-                NomCar: item.IdCar,
-                Fecha: item.Fecha,
-                modificado: '',
+            this.carpetaSelecionada = {
+                IdEst: 1,
+                NomEst: item.nombre,
+                ApeEst: '',
             }
-            this.setEst(this.estudianteSeleccionado);
-            this.setDialogFolder(true);
-            this.setRutaAnterior(this.path+item.NomEst+" "+item.ApeEst);
+            this.setCarpeta(this.carpetaSelecionada);
+            this.setDialogCarpeta(true);
+            this.setRutaAnterior(this.path+item.nombre);
             this.path='';
             //this.setRutaAnterior('');
-            //console.log(item.IdEst);
         },
 
 
         eliminarItem(item) {
+            console.log('Borrar Items');
             this.rutaNueva();
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            this.idUser = storedUser.IdUser;
             this.$alertify.confirm(
-                'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst,
+                'Deseas eliminar el estudiante: ' + item.nombre,
                 () => {
-                    this.eliminarEstudiante(item);
-                    this.eliminarCarpeta(this.path+item.NomEst+" "+item.ApeEst);
-                    //this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
-                    this.$alertify.success('Usuario ' + item.NomEst + " " + item.ApeEst + ' Eliminado');
+                    this.eliminarCarpeta({ ruta1:this.path ,ruta2:this.path+item.nombre});
+                    console.log('Ruta Borrar '+this.path);
+                    //this.cargarCarpetas(this.path);
                     this.path='';
+                    this.$alertify.success('Carpeta ' + item.nombre + ' Eliminada');
                 },
                 () => this.$alertify.error('Cancelado')
             );

@@ -8,7 +8,10 @@ export default {
 
     state: {
         listCarpetas: [],
-        rutaAnterior:"",  //servira para tener la ruta que queremos actualizar en el servidor
+        rutaAnterior: "",  //servira para tener la ruta que queremos actualizar en el servidor
+
+        //
+        dataCarpeta: {},
     },
 
     getters: {
@@ -22,20 +25,25 @@ export default {
             state.listCarpetas = Carpetas;
         },
 
-        setRutaAnterior(state, value){
+        setRutaAnterior(state, value) {
             state.rutaAnterior = value;
-        }
+        },
+
+        setCarpeta(state, value) {
+            state.dataCarpeta = value;
+            console.log('Data Carpetas -> ' + JSON.stringify(state.dataCarpeta));
+        },
 
     },
 
     actions: {
 
         cargarCarpetas: async function ({ commit }, ruta) {
+            console.log('RUTA===>' + ruta.toUpperCase());
             if (ruta) {
                 try {
                     const items = new FormData();
                     items.append('rutaServidor', ruta.toUpperCase());
-                    console.log('RUTA=>'+ruta.toUpperCase());
 
                     const setting = {
                         method: 'POST',
@@ -54,31 +62,34 @@ export default {
         },
 
         crearCarpeta: async function ({ commit, dispatch }, { datos, path, oldPath }) {
+            //console.log('IDEst ' + JSON.stringify(datos));/
             try {
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase() );
+                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase());
+                datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
                 //console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                console.log('OLD'+oldPath);
+                //console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
+                console.log('OLD ' + oldPath);
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,
                 }
-                console.log("ID"+datos.IdEst);
+                console.log("ID" + datos.IdEst);
                 var url = "";
-                if(datos.IdEst == 0){
+                if (datos.IdEst == 0) {
                     url = "http://localhost/Apis-UTA/crearCarpetas.php";
-                }else{
+                } else {
                     url = "http://localhost/Apis-UTA/actualizarCarpetaServidor.php"
                 }
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
                     const jsonData = JSON.parse(json);
-                    dispatch('cargarCarpetas');
+                    console.log('json');
+                    dispatch('cargarCarpetas',path);
                 } else {
-                    dispatch('cargarCarpetas');
+                    console.log('Text');
+                    dispatch('cargarCarpetas',path);
                 }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
@@ -86,11 +97,11 @@ export default {
 
         },
 
-        eliminarCarpeta: async function ({ commit, dispatch }, ruta) {
+        eliminarCarpeta: async function ({ commit, dispatch }, {ruta1, ruta2}) {
             try {
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('rutaServidor', ruta.toUpperCase());
-                console.log(ruta.toUpperCase());
+                datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
+                //console.log(ruta.toUpperCase());
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,
@@ -100,9 +111,9 @@ export default {
                 const json = await data.text();
                 if (json.startsWith('{')) {
                     const jsonData = JSON.parse(json);
-                    dispatch('cargarCarpetas');
+                    dispatch('cargarCarpetas',ruta1);
                 } else {
-                    dispatch('cargarCarpetas');
+                    dispatch('cargarCarpetas',ruta1);
                 }
             } catch (error) {
                 console.log("Error de eliminción " + error);

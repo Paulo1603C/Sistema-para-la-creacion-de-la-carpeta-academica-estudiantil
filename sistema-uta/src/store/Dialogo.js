@@ -10,32 +10,43 @@ export default {
     dialogUser: false, // Estado del diálogo
     dialogFolder: false, // Estado del diálogo
     dailogPlantilla:false, // Estado del diálogo
+    dailogCarpeta:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
 
     itemsBread:['CARRERAS',],
+    
   },
 
   mutations: {
     setDialog(state, value) {
       state.dialogUser = value; // Mutación para actualizar el estado del diálogo
     },
+
     setDialogFolder(state, value) {
       state.dialogFolder = value; // Mutación para actualizar el estado del diálogo
     },
+
     setDialogPlantilla(state, value) {
       state.dailogPlantilla = value; // Mutación para actualizar el estado del diálogo
     },
+
+    setDialogCarpeta(state, value) {
+      state.dailogCarpeta = value; // Mutación para actualizar el estado del diálogo
+    },
+
     setVentanaEst(state, value) {
       state.tablaEst = value; // Mutación para actualizar el estado del diálogo
     },
     setVentanaArch(state, value) {
       state.tablaArch = value; // Mutación para actualizar el estado del diálogo
     },
+
     setVentanaCarreras(state, value) {
       state.carreras = value; // Mutación para actualizar el estado del diálogo
     },
+
     setBreadcrumbs(state, value) {
       if( value == '' ){
         //console.log('Borrra');

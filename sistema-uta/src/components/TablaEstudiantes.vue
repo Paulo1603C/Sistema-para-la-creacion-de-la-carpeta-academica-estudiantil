@@ -99,7 +99,7 @@ export default {
                 'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst,
                 () => {
                     this.eliminarEstudiante(item);
-                    this.eliminarCarpeta(this.path+item.NomEst+" "+item.ApeEst);
+                    this.eliminarCarpeta({ruta1:this.path,ruta2:this.path+item.NomEst+" "+item.ApeEst});
                     this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     this.$alertify.success('Usuario ' + item.NomEst + " " + item.ApeEst + ' Eliminado');
                     this.path='';

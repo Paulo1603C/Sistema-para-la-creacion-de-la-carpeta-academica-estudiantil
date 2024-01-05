@@ -1,6 +1,7 @@
 <template>
     <div>
-        <NuevaCarpeta :dialog="dialogFolder" :ItemCarpeta="dataEst"></NuevaCarpeta>
+        <NuevoEstudiante :dialog="dialogFolder" :ItemEstudiante="dataEst"></NuevoEstudiante>
+        <NuevaCarpeta :dialog="dailogCarpeta" :ItemCarpeta="dataCarpeta" ></NuevaCarpeta>
         <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
         <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataPlan"></NuevaPlantilla>
@@ -31,11 +32,12 @@
 </template>
   
 <script>
-import NuevaCarpeta from './NuevoCarpeta.vue';
+import NuevoEstudiante from './NuevoEstudiante.vue';
+import NuevaCarpeta from './NuevaCarpeta.vue';
 import SubirArchivo from './SubirArchivo.vue';
 import NuevaUsuario from './NuevoUsuario.vue';
 import NuevaPlantilla from './NuevaPlantilla.vue';
-import { mapState, mapMutations, mapActions} from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import readXlsFile from "read-excel-file";
 import moment from 'moment';
 
@@ -43,8 +45,8 @@ export default {
 
     props: ['links',],
 
-    created(){
-        
+    created() {
+
     },
 
     data() {
@@ -53,6 +55,7 @@ export default {
             showMenu: false,
             dialogFile: false,
             estudianteSelect: {},
+            carpetaSelect:{},
             itemSeleccionado: {},
             usuarioSelect: {},
             plantillaSelect: {},
@@ -61,10 +64,11 @@ export default {
         };
     },
     methods: {
-        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder','setDialogPlantilla']),
+        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder', 'setDialogPlantilla','setDialogCarpeta']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapMutations('Plantillas', ['setPlan']),
+        ...mapMutations('Server_Carpetas', ['setCarpeta']),
         ...mapActions('Estudiantes', ['AgregarEstudiante']),
 
         optionSelected(option) {
@@ -92,18 +96,31 @@ export default {
         },
 
         nuevaCarpeta() {
-            this.fechaActual();
-            this.estudianteSelect = {
-                IdEst: 0,
-                Cedula: '',
-                NomEst: '',
-                ApeEst: '',
-                NomCar: this.idCarreraSelect,
-                Fecha: this.fecha,
-                idPlanPer:0,
-            },
+            console.log(this.tablaEst);
+            if (this.tablaEst == true) {
+                this.fechaActual();
+                this.estudianteSelect = {
+                    IdEst: 0,
+                    Cedula: '',
+                    NomEst: '',
+                    ApeEst: '',
+                    NomCar: this.idCarreraSelect,
+                    Fecha: this.fecha,
+                    idPlanPer: 0,
+                }
+                //console.log("Item Est"+this.estudianteSelect);
                 this.setEst(this.estudianteSelect);
-            this.setDialogFolder(true);
+                this.setDialogFolder(true);
+            }else{
+                this.carpetaSelect = {
+                    IdEst: 0,
+                    NomEst: '',
+                    ApeEst: '',
+                };
+                //console.log("Item Car"+this.carpetaSelect.IdEst);
+                this.setCarpeta(this.carpetaSelect);
+                this.setDialogCarpeta(true);
+            }
         },
 
         nuevoUsuario() {
@@ -117,15 +134,15 @@ export default {
                 carreras: [],
                 permisos: [],
             },
-            this.setUser(this.usuarioSelect);
+                this.setUser(this.usuarioSelect);
             this.setDialog(true);
         },
 
-        crearPlantilla(){
-            this.plantillaSelect={
-                idPlan:0,
-                nomPlan:'',
-                items:[],
+        crearPlantilla() {
+            this.plantillaSelect = {
+                idPlan: 0,
+                nomPlan: '',
+                items: [],
             }
             this.setPlan(this.plantillaSelect);
             this.setDialogPlantilla(true);
@@ -156,7 +173,7 @@ export default {
                     console.log(datos)
                     this.AgregarEstudiante(datos);
                 }
-                this.$alertify.success( "Estudiantes Insertados"  );
+                this.$alertify.success("Estudiantes Insertados");
             });
         },
 
@@ -169,18 +186,20 @@ export default {
     },
 
     components: {
-        NuevaCarpeta,
+        NuevoEstudiante,
         NuevaUsuario,
         SubirArchivo,
         NuevaPlantilla,
+        NuevaCarpeta,
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst','dailogCarpeta']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
         ...mapState('Plantillas', ['dataPlan']),
         ...mapState('Carreras', ['idCarreraSelect']),
+        ...mapState('Server_Carpetas', ['dataCarpeta']),
     }
 };
 
