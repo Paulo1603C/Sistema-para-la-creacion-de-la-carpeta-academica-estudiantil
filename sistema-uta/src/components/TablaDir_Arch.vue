@@ -10,22 +10,23 @@
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" class="elevation-1">
+
                     <template v-slot:item="{ item }">
-                        <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
-                            <td  >
-                                <v-icon v-if="item.tipo!='Archivo'" class="mr-3" color="yellow darken-1">mdi-folder</v-icon>
+                        <tr class="myStyle">
+                            <td>
+                                <v-icon v-if="item.tipo != 'Archivo'" class="mr-3" color="yellow darken-1">mdi-folder</v-icon>
                                 <v-icon v-else class="mr-3" color="red darken-1">mdi-file-document</v-icon>
                             </td>
-                            <td class="linea">{{ item.nombre }}</td>
-                            <td v-if="item.tipo!='Archivo'" >{{ item.cantidad }}</td>
-                            <td v-else >{{ item.tamaño }} MB</td>
+                            <td @click="hacerAlgoAlHacerClic(item)" class="linea">{{ item.nombre }}</td>
+                            <td v-if="item.tipo != 'Archivo'">{{ item.cantidad }}</td>
+                            <td v-else>{{ item.tamaño }} MB</td>
                             <td>{{ item.fecha_creacion }}</td>
                             <td>{{ item.user }}</td>
                             <td>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon  color="primary darken-2"  size="20" class="me-2" @click.stop="editarItem(item)" v-bind="attrs"
-                                            v-on="on">
+                                        <v-icon color="primary darken-2" size="20" class="me-2"
+                                            @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
                                             mdi-pencil
                                         </v-icon>
                                     </template>
@@ -33,11 +34,21 @@
                                 </v-tooltip>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="20" @click.stop="eliminarItem(item)" v-bind="attrs" v-on="on">
+                                        <v-icon color="error darken-2" size="20" @click.stop="eliminarItem(item)"
+                                            v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
                                     </template>
                                     <span>Eliminar</span>
+                                </v-tooltip>
+                                <v-tooltip bottom style="margin-right: 100px;" >
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
+                                            v-bind="attrs" v-on="on">
+                                            mdi-download
+                                        </v-icon>
+                                    </template>
+                                    <span>Descargar</span>
                                 </v-tooltip>
                             </td>
                         </tr>
@@ -56,23 +67,25 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 export default {
     name: "TablaC",
 
-    props: ['show','Titulo', 'Cabecera', 'Items'],
+    props: ['show', 'Titulo', 'Cabecera', 'Items'],
 
     data() {
         return {
             search: '',
-            path:'',
-            carpetaSelecionada:{},
+            path: '',
+            selectedItems: [],
+            carpetaSelecionada: {},
         }
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs','setDialogCarpeta']),
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta']),
         //...mapMutations('Estudiantes', ['setEst']),
         //...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['cargarCarpetas','eliminarCarpeta']),
-        ...mapMutations('Server_Carpetas', ['setRutaAnterior','setCarpeta']),
-        
+        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta']),
+        ...mapActions('Server_Archivos', ['descargarArchivo']),
+        ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
+
         editarItem(item) {
             console.log("item Datos");
             console.log(item);
@@ -84,8 +97,8 @@ export default {
             }
             this.setCarpeta(this.carpetaSelecionada);
             this.setDialogCarpeta(true);
-            this.setRutaAnterior(this.path+item.nombre);
-            this.path='';
+            this.setRutaAnterior(this.path + item.nombre);
+            this.path = '';
             //this.setRutaAnterior('');
         },
 
@@ -96,10 +109,10 @@ export default {
             this.$alertify.confirm(
                 'Deseas eliminar el estudiante: ' + item.nombre,
                 () => {
-                    this.eliminarCarpeta({ ruta1:this.path ,ruta2:this.path+item.nombre});
-                    console.log('Ruta Borrar '+this.path);
+                    this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre });
+                    console.log('Ruta Borrar ' + this.path);
                     //this.cargarCarpetas(this.path);
-                    this.path='';
+                    this.path = '';
                     this.$alertify.success('Carpeta ' + item.nombre + ' Eliminada');
                 },
                 () => this.$alertify.error('Cancelado')
@@ -112,6 +125,15 @@ export default {
             this.rutaNueva();
             console.log(this.ruta);
             this.cargarCarpetas(this.path);
+            this.path = '';
+        },
+
+        descargarItem: async function (item) {
+            this.rutaNueva();
+            console.log(item.nombre);
+            console.log(this.path);
+            await this.descargarArchivo( {ruta:this.path+item.nombre ,nombre:item.nombre}  );
+            this.$alertify.success('Archivo Descargado');
             this.path='';
         },
 
@@ -123,6 +145,7 @@ export default {
             //console.log(this.path);
         },
 
+
     },
 
     components: {
@@ -132,14 +155,18 @@ export default {
     computed: {
         //...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Dialogo', ['itemsBread']),
+    },
+
+    watch: {
     }
 }
 </script>
 <style>
-    .myStyle:hover{
-        cursor: pointer;
-    }
-    .linea:hover{
-        text-decoration: underline;
-    }
+.myStyle:hover {
+    cursor: pointer;
+}
+
+.linea:hover {
+    text-decoration: underline;
+}
 </style>

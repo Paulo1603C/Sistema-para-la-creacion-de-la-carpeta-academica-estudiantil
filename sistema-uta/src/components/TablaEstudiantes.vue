@@ -11,35 +11,45 @@
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" class="elevation-1">
                     <template v-slot:item="{ item }">
-                        <tr @click="hacerAlgoAlHacerClic(item)" class="myStyle">
+                        <tr class="myStyle">
                             <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
-                            <td class="linea">{{ item.NomEst}} {{ item.ApeEst }}</td>
+                            <td @click="hacerAlgoAlHacerClic(item)" class="linea">{{ item.NomEst }} {{ item.ApeEst }}</td>
                             <td>{{ item.NomCar }}</td>
                             <td>{{ item.Fecha }}</td>
                             <td>{{ item.user }}</td>
                             <td>
-                                <v-tooltip bottom>
+                                <v-tooltip bottom style="margin-right: 100px; !important" >
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="primary darken-2" size="20" class="me-2"
+                                        <v-icon color="primary darken-2" size="25" class="me-2"
                                             @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
                                             mdi-pencil
                                         </v-icon>
                                     </template>
                                     <span>Editar</span>
                                 </v-tooltip>
-                                <v-tooltip bottom>
+                                <v-tooltip bottom style="margin-right: 100px; !important" >
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="20" @click.stop="eliminarItem(item)"
+                                        <v-icon color="red darken-2" size="25" @click.stop="eliminarItem(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
                                     </template>
                                     <span>Eliminar</span>
                                 </v-tooltip>
+                                <v-tooltip bottom style="margin-right: 100px;" >
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
+                                            v-bind="attrs" v-on="on">
+                                            mdi-download
+                                        </v-icon>
+                                    </template>
+                                    <span>Descargar</span>
+                                </v-tooltip>
                             </td>
                         </tr>
                     </template>
                 </v-data-table>
+
             </v-card>
 
         </template>
@@ -59,6 +69,7 @@ export default {
         return {
             search: '',
             path: '',
+            selectedItems: [],
             estudianteSeleccionado: {},
         }
     },
@@ -67,7 +78,8 @@ export default {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['cargarCarpetas','eliminarCarpeta']),
+        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta']),
+        
         ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
 
         editarItem(item) {
@@ -84,8 +96,8 @@ export default {
             }
             this.setEst(this.estudianteSeleccionado);
             this.setDialogFolder(true);
-            this.setRutaAnterior(this.path+item.NomEst+" "+item.ApeEst);
-            this.path='';
+            this.setRutaAnterior(this.path + item.NomEst + " " + item.ApeEst);
+            this.path = '';
             //this.setRutaAnterior('');
             //console.log(item.IdEst);
         },
@@ -99,24 +111,33 @@ export default {
                 'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst,
                 () => {
                     this.eliminarEstudiante(item);
-                    this.eliminarCarpeta({ruta1:this.path,ruta2:this.path+item.NomEst+" "+item.ApeEst});
+                    this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.NomEst + " " + item.ApeEst });
                     this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     this.$alertify.success('Usuario ' + item.NomEst + " " + item.ApeEst + ' Eliminado');
-                    this.path='';
+                    this.path = '';
                 },
                 () => this.$alertify.error('Cancelado')
             );
         },
 
+        descargarItem: async function (item) {
+            this.rutaNueva();
+            console.log(item);
+            //await this.descargarArch_Dir({});
+            this.$alertify.success('Archivo Descargado');
+        },
+
         hacerAlgoAlHacerClic(item) {
-            //console.log('rdml'+item);
+            console.log('rdml'+this.selectedItems);
+            //this.descargarItemsSeleccionados();
             this.setVentanaEst(false);
             this.setVentanaArch(true);
             this.setBreadcrumbs(item.NomEst.toUpperCase() + ' ' + item.ApeEst.toUpperCase());
             this.rutaNueva();
             //console.log(this.path);
             this.cargarCarpetas(this.path);
-            this.path='';
+            this.path = '';
+            this.selectedItems=[];
         },
 
         rutaNueva() {
@@ -127,6 +148,13 @@ export default {
             //console.log(this.path);
         },
 
+
+    },
+
+    watch:{
+        show(){
+            console.log('dfvb'+this.selectedItems);
+        }
     },
 
     components: {
@@ -136,7 +164,12 @@ export default {
     computed: {
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Dialogo', ['itemsBread']),
-    }
+    },
+
+    watch: {
+
+
+    },
 
 }
 </script>
@@ -148,4 +181,5 @@ export default {
 .linea:hover {
     text-decoration: underline;
 }
+
 </style>
