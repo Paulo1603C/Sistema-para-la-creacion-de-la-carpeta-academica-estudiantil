@@ -67,16 +67,19 @@ export default {
             try {
                 const datosCarpeta = new FormData();
                 const rutaC = path + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase();
+                //console.log('RUTAC'+rutaC);
                 const aux = rutaC.indexOf('.'); 
+                //console.log('Aux'+aux);
                 if( aux < 0 ){
                     datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase());
+                    datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
                 }else{
                     datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
+                    datosCarpeta.append('nombreDirectorio', oldPath);
                 }
-                datosCarpeta.append('nombreDirectorio', oldPath);
                 //console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
                 //console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                //console.log('OLD ' + oldPath);/
+                //console.log('OLD ' + oldPath);
 
                 const setting = {
                     method: 'POST',
@@ -108,7 +111,7 @@ export default {
         eliminarCarpeta: async function ({ commit, dispatch }, {ruta1, ruta2}) {
             try {
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('rutaServidor', ruta2);
+                datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
                 //console.log(ruta.toUpperCase());
                 const setting = {
                     method: 'POST',
