@@ -62,6 +62,7 @@ export default {
     },
 
     AgregarEstudiante: async function ({ commit, dispatch }, datos) {
+      console.log(datos);
       try {
         const datosUser = new FormData();
         datosUser.append('IdEst', datos.IdEst);
@@ -71,6 +72,7 @@ export default {
         datosUser.append('Fecha', datos.Fecha);
         datosUser.append('IdCarPer', datos.NomCar);
         datosUser.append('IdPlanPer', datos.idPlanPer);
+        datosUser.append('NomModificador', datos.NomModificador);
 
         const setting = {
           method: 'POST',

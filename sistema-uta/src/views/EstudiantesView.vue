@@ -65,6 +65,7 @@ export default {
             CabeceraCarreras: [
                 { text: 'Tipo', value: ' ', },
                 { text: 'Nombre', value: 'nombre', },
+                { text: 'Descargar', value: 'descargar', },
             ],
             btnOP: [
                 { icon: "folder-plus", text: "Crear Carpeta", show: "true" },

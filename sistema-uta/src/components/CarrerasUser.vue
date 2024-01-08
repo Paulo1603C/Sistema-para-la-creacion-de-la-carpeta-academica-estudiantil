@@ -15,6 +15,18 @@
                             <td class="linea"><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon>{{ item.NomEst
                             }} {{ item.ApeEst }}</td>
                             <td>{{ item.nomCar }}</td>
+                            <td>
+                                <v-tooltip bottom style="margin-right: 100px;">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
+                                            v-bind="attrs" v-on="on">
+                                            mdi-download
+                                        </v-icon>
+                                    </template>
+                                    <span>Descargar</span>
+                                </v-tooltip>
+                            </td>
+                            
                         </tr>
                     </template>
                 </v-data-table>

@@ -16,7 +16,7 @@
                 </template>
 
                 <!-- Contenido del menú desplegable -->
-                <v-list >
+                <v-list>
                     <v-list-item v-for="item in links" :key="item.text" @click="optionSelected(item.text)">
                         <v-list-item-icon>
                             <v-icon color="blue darken-4">mdi-{{ item.icon }}</v-icon>
@@ -99,7 +99,11 @@ export default {
         },
 
         nuevaCarpeta() {
-            console.log(this.tablaEst);
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            let nomUser = storedUser.NomUser+' '+storedUser.ApeUser;
+            console.log(storedUser.NomUser+' '+storedUser.ApeUser);
+            console.log(nomUser);
+
             if (this.tablaEst == true) {
                 this.fechaActual();
                 this.estudianteSelect = {
@@ -109,9 +113,10 @@ export default {
                     ApeEst: '',
                     NomCar: this.idCarreraSelect,
                     Fecha: this.fecha,
-                    idPlanPer: 0,
+                    IdPlanPer: 0,
+                    NomModificador: nomUser,
                 }
-                //console.log("Item Est"+this.estudianteSelect);
+                console.log("Item Est"+this.estudianteSelect);
                 this.setEst(this.estudianteSelect);
                 this.setDialogFolder(true);
             } else {
@@ -212,7 +217,7 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch' ,'dailogCarpeta']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
         ...mapState('Plantillas', ['dataPlan']),

@@ -14,11 +14,12 @@
                     <template v-slot:item="{ item }">
                         <tr class="myStyle">
                             <td>
-                                <v-icon v-if="item.tipo != 'Archivo'" class="mr-3" color="yellow darken-1">mdi-folder</v-icon>
+                                <v-icon v-if="item.tipo != 'Archivo'" class="mr-3"
+                                    color="yellow darken-1">mdi-folder</v-icon>
                                 <v-icon v-else class="mr-3" color="red darken-1">mdi-file-document</v-icon>
                             </td>
                             <td @click="hacerAlgoAlHacerClic(item)" class="linea">{{ item.nombre }}</td>
-                            <td v-if="item.tipo != 'Archivo'">{{ item.cantidad }}</td>
+                            <td v-if="item.tipo != 'Archivo'">{{ item.cantidad }} elementos </td>
                             <td v-else>{{ item.tamaño }} MB</td>
                             <td>{{ item.fecha_creacion }}</td>
                             <td>{{ item.user }}</td>
@@ -41,7 +42,7 @@
                                     </template>
                                     <span>Eliminar</span>
                                 </v-tooltip>
-                                <v-tooltip bottom style="margin-right: 100px;" >
+                                <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
                                             v-bind="attrs" v-on="on">
@@ -87,8 +88,8 @@ export default {
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
 
         editarItem(item) {
-            console.log("item Datos");
-            console.log(item);
+            //console.log("item Datos");
+            //console.log(item);
             this.rutaNueva();
             this.carpetaSelecionada = {
                 IdEst: 1,
@@ -132,9 +133,9 @@ export default {
             this.rutaNueva();
             console.log(item.nombre);
             console.log(this.path);
-            await this.descargarArchivo( {ruta:this.path+item.nombre ,nombre:item.nombre}  );
+            await this.descargarArchivo({ ruta: this.path + item.nombre, nombre: item.nombre });
             this.$alertify.success('Archivo Descargado');
-            this.path='';
+            this.path = '';
         },
 
         rutaNueva() {

@@ -66,11 +66,18 @@ export default {
             //console.log('IDEst ' + JSON.stringify(datos));/
             try {
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase());
-                datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
+                const rutaC = path + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase();
+                const aux = rutaC.indexOf('.'); 
+                if( aux < 0 ){
+                    datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase());
+                }else{
+                    datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
+                }
+                datosCarpeta.append('nombreDirectorio', oldPath);
                 //console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
                 //console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                console.log('OLD ' + oldPath);
+                //console.log('OLD ' + oldPath);/
+
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,
@@ -101,7 +108,7 @@ export default {
         eliminarCarpeta: async function ({ commit, dispatch }, {ruta1, ruta2}) {
             try {
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
+                datosCarpeta.append('rutaServidor', ruta2);
                 //console.log(ruta.toUpperCase());
                 const setting = {
                     method: 'POST',
@@ -120,5 +127,32 @@ export default {
                 console.log("Error de eliminción " + error);
             }
         },
+
+        descargarCarpeta: async function ({ commit, dispatch }, {ruta, nombre}) {
+            try {
+                console.log('RUTA '+ ruta + nombre.toUpperCase());
+                const datosArchivos = new FormData();
+                datosArchivos.append('rutaRemota', ruta + nombre.toUpperCase());
+                
+                const setting = {
+                    method: 'POST',
+                    body:datosArchivos,
+                }
+                const url = "http://localhost/Apis-UTA/descargarCarpetas.php";
+                const response = await fetch(url, setting);
+                console.log('Imprimido');
+                //const json = await response.text();
+                if (response.ok) {
+                    console.log('Imprimido');
+                }else{
+                    console.log('No Imprimido');
+
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+
+        },
+
     }
 }

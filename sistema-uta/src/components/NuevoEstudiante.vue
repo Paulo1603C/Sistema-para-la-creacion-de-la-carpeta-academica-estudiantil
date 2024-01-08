@@ -19,13 +19,6 @@
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field label="Apellido*" v-model="ItemEstudiante.ApeEst" required></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="6" style="display: none">
-                                <v-text-field label="Apellido*" v-model="ItemEstudiante.Fecha" required></v-text-field>
-                            </v-col>
-                            <v-col cols="12" style="display: none">
-                                <v-select :items="getCarreras" item-text="NomCar" item-value="IdCar" label="Carreras*"
-                                    v-model="ItemEstudiante.NomCar" required></v-select>
-                            </v-col>
                             <v-col cols="12">
                                 <v-select :items="getItems" item-text="NomPlan" item-value="IdPlan" label="Plantillas*"
                                     v-model="ItemEstudiante.idPlanPer" required></v-select>
@@ -82,6 +75,7 @@ export default {
                 console.log(this.path);
                 const storedUser = JSON.parse(localStorage.getItem('user'));
                 this.idUser = storedUser.IdUser;
+                //console.log(this.ItemEstudiante);
                 if(this.itemsBread.length<3){
                     await this.AgregarEstudiante(this.ItemEstudiante);
                     await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser});

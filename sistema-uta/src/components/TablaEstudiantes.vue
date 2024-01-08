@@ -16,9 +16,9 @@
                             <td @click="hacerAlgoAlHacerClic(item)" class="linea">{{ item.NomEst }} {{ item.ApeEst }}</td>
                             <td>{{ item.NomCar }}</td>
                             <td>{{ item.Fecha }}</td>
-                            <td>{{ item.user }}</td>
+                            <td>{{ item.NomModificador }}</td>
                             <td>
-                                <v-tooltip bottom style="margin-right: 100px; !important" >
+                                <v-tooltip bottom style="margin-right: 100px; !important">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="primary darken-2" size="25" class="me-2"
                                             @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
@@ -27,7 +27,7 @@
                                     </template>
                                     <span>Editar</span>
                                 </v-tooltip>
-                                <v-tooltip bottom style="margin-right: 100px; !important" >
+                                <v-tooltip bottom style="margin-right: 100px; !important">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="red darken-2" size="25" @click.stop="eliminarItem(item)"
                                             v-bind="attrs" v-on="on">
@@ -36,7 +36,7 @@
                                     </template>
                                     <span>Eliminar</span>
                                 </v-tooltip>
-                                <v-tooltip bottom style="margin-right: 100px;" >
+                                <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
                                             v-bind="attrs" v-on="on">
@@ -69,6 +69,7 @@ export default {
         return {
             search: '',
             path: '',
+            customDir: null,
             selectedItems: [],
             estudianteSeleccionado: {},
         }
@@ -78,8 +79,7 @@ export default {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta']),
-        
+        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta','descargarCarpeta']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
 
         editarItem(item) {
@@ -122,13 +122,15 @@ export default {
 
         descargarItem: async function (item) {
             this.rutaNueva();
-            console.log(item);
-            //await this.descargarArch_Dir({});
+            console.log(item.nombre);
+            console.log(this.path);
+            await this.descargarCarpeta({ ruta: this.path, nombre: item.NomEst + " " + item.ApeEst  });
             this.$alertify.success('Archivo Descargado');
+            this.path = '';
         },
 
         hacerAlgoAlHacerClic(item) {
-            console.log('rdml'+this.selectedItems);
+            console.log('rdml' + this.selectedItems);
             //this.descargarItemsSeleccionados();
             this.setVentanaEst(false);
             this.setVentanaArch(true);
@@ -137,7 +139,16 @@ export default {
             //console.log(this.path);
             this.cargarCarpetas(this.path);
             this.path = '';
-            this.selectedItems=[];
+            this.selectedItems = [];
+        },
+
+        handleDirChange(event) {
+            // Obtener la ruta seleccionada por el usuario
+            this.customDir = this.$refs.customDirInput.files[0]?.path;
+        },
+
+        downloadDirectory() {
+            console.log(this.customDir);
         },
 
         rutaNueva() {
@@ -151,9 +162,9 @@ export default {
 
     },
 
-    watch:{
-        show(){
-            console.log('dfvb'+this.selectedItems);
+    watch: {
+        show() {
+            console.log('dfvb' + this.selectedItems);
         }
     },
 
@@ -181,5 +192,4 @@ export default {
 .linea:hover {
     text-decoration: underline;
 }
-
 </style>
