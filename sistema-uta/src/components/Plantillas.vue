@@ -15,7 +15,7 @@
                         <v-icon>mdi-delete</v-icon>
                     </template>
                 </v-btn>
-                <v-btn color="primary darken-2" @click="editar">
+                <v-btn color="primary darken-2" @click="editar()">
                     <template>
                         <v-icon>mdi-pencil</v-icon>
                     </template>
@@ -37,7 +37,7 @@
             <v-expand-transition>
                 <div v-show="show">
                     <v-divider></v-divider>
-                    <v-card-text v-for="(word, index) in words" :key="index" >
+                    <v-card-text v-for="(word, index) in words" :key="index">
                         <p style="font-size: 20px;overflow: hidden;">
                             <strong>
                                 <v-icon class="mr-3" size="36" color="yellow darken-1">mdi-folder</v-icon>
@@ -60,26 +60,35 @@ export default {
         show: false,
         words: [],
         imgAux: require('../assets/user.png'),
-        
+
     }),
 
     props: [
-        'idPlan','titulo','idItem','items', 'urlDw',
+        'idPlan', 'titulo', 'idItem', 'items', 'urlDw',
     ],
 
     methods: {
+        ...mapMutations('Plantillas', ['setPlan']),
+        ...mapMutations('Dialogo', ['setDialogPlantilla']),
 
-        editar(item) {
-
+        editar() {
+            console.log();
+            this.setDialogPlantilla(true);
+            this.plantillaSelect = {
+                idPlan: this.idPlan,
+                nomPlan: this.titulo,
+                items: [this.items],
+            }
+            this.setPlan(this.plantillaSelect);
         },
 
         eliminar() {
             this.itemSeleccionadoPlan = {
-                id:this.idPlan,
+                id: this.idPlan,
                 nombre: this.titulo,
             };
             this.$alertify.confirm(
-                'Deseas eliminar la Plantilla: ' +this.itemSeleccionadoPlan.nombre,
+                'Deseas eliminar la Plantilla: ' + this.itemSeleccionadoPlan.nombre,
                 () => {
                     this.eliminarUsuario(this.itemSeleccionadoPlan);
                     //console.log(this.itemSeleccionadoPlan);

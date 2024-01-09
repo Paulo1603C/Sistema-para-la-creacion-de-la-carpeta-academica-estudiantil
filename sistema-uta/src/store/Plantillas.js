@@ -83,23 +83,16 @@ export default {
 
     AgregarPlantilla: async function ({ commit, dispatch }, datos) {
       try {
-        const datosUser = new FormData();
-        datosUser.append('IdEst', datos.IdEst);
-        datosUser.append('NomEst', datos.NomEst);
-        datosUser.append('ApeEst', datos.ApeEst);
-        datosUser.append('CedEst', datos.Cedula);
-        datosUser.append('Fecha', datos.Fecha);
-        datosUser.append('IdCarPer', datos.NomCar);
+        const datosPantilla = new FormData();
+        datosPantilla.append('NomPlantilla', datos.nomPlan);
 
         const setting = {
           method: 'POST',
-          body: datosUser,
+          body: datosPantilla,
         }
-        console.log("datossss");
-        console.log(datos);
         var url = "";
-        if (datos.IdEst == 0) {
-          url = 'http://localhost/Apis-UTA/insertarEstudiantes.php';
+        if (datos.idPlan == 0) {
+          url = 'http://localhost/Apis-UTA/insetarPlantilla.php';
         } else {
           url = 'http://localhost/Apis-UTA/actualizarEstudiante.php';
         }
@@ -107,12 +100,46 @@ export default {
         const json = await data.text();
         if (json.startsWith('{')) {
           const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-          dispatch('cargarEstudiantes');
+          //dispatch('cargarPlantillas');
         } else {
-          dispatch('cargarEstudiantes');
+          //dispatch('cargarPlantillas');
         }
       } catch (error) {
         console.error('Error en la solicitud:', error);
+      }
+    },
+
+    //insetar carreras para los usaurios-> se pasa un arreglo;
+    AgregarItemsPlantilla: async function ({ commit, dispatch }, datos) {
+      var aux = 0;
+      while (aux < datos.items.length) {
+        try {
+          const datosItem = new FormData();
+          datosItem.append('NomItem', datos.items[aux]);
+
+          const setting = {
+            method: 'POST',
+            body: datosItem,
+          }
+          var url = "";
+          if (datos.idPlan == 0) {
+            url = 'http://localhost/Apis-UTA/insertarItemPlantilla.php';
+          } else {
+            url = 'http://localhost/Apis-UTA/actualizarCarrerasSecre.php';
+          }
+          const data = await fetch(url, setting);
+          const json = await data.text();
+          if (json.startsWith('{')) {
+            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
+            dispatch('cargarPlantillas');
+          } else {
+            //console.log('La respuesta no es JSON:', data);
+            dispatch('cargarPlantillas');
+          }
+        } catch (error) {
+          console.error('Error en la solicitud:', error);
+        }
+        aux++;
       }
     },
 
@@ -130,9 +157,9 @@ export default {
         const json = await data.text();
         if (json.startsWith('{')) {
           const jsonData = JSON.parse(json);
-          dispatch('cargarEstudiantes');
+          dispatch('cargarPlantillas');
         } else {
-          dispatch('cargarEstudiantes');
+          dispatch('cargarPlantillas');
         }
       } catch (error) {
         console.log("Error de eliminción " + error);
