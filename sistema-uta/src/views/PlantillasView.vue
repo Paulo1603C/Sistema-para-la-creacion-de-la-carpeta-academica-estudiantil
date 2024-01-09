@@ -3,10 +3,10 @@
       <BtnOpciones :links="btnOP" dark class="mb-2"></BtnOpciones>
       <hr>
       <v-row>
-          <v-col v-if="getItems.length == 0" class="d-flex justify-center align-center" style="font-size:30px" >
+          <v-col v-if="getPlantillas.length == 0" class="d-flex justify-center align-center" style="font-size:30px" >
               <span>Cargando Datos...</span>
           </v-col>
-          <v-col v-else v-for="(item, index) in getItems" :key="index" class="ma-2">
+          <v-col v-else v-for="(item, index) in getPlantillas" :key="index" class="ma-2">
             <Plantillas :idPlan="item.IdPlan" :titulo='item.NomPlan' :idItem="item.idItem" :items="item.Items" ></Plantillas>               
           </v-col>
       </v-row>
@@ -33,16 +33,16 @@ export default {
     if (!isAuthenticated) {
       this.$router.push("/");
     } else {
-      this.cargarPlantilla();
+      this.cargarPlantillas();
     }
   },
 
   methods: {
-    ...mapActions('Plantillas', ['cargarPlantilla']),
+    ...mapActions('Plantillas', ['cargarPlantillas']),
   },
 
   computed: {
-    ...mapGetters('Plantillas', ['getItems'])
+    ...mapGetters('Plantillas', ['getPlantillas'])
   },
 
   components: {

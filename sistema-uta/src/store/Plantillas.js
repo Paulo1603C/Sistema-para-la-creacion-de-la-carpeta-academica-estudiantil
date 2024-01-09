@@ -7,27 +7,37 @@ export default {
   namespaced: true,
 
   state: {
-    Items: [],
+    Plantillas: [],
+    ItemsPlantilla:[],
     dataPlan: {},
 
   },
   getters: {
-    getItems(state) {
-      return state.Items;
+    getPlantillas(state) {
+      return state.Plantillas;
+    },
+
+    getItemsPlantillas(state) {
+      return state.ItemsPlantilla;
     },
 
   },
   mutations: {
-    llenarItems(state, data) {
-      state.Items = data;
+    llenarPlantillas(state, data) {
+      state.Plantillas = data;
     },
+
+    llenarItemsPlantillas(state, data) {
+      state.ItemsPlantilla = data;
+    },
+
     setPlan(state, data) {
       state.dataPlan = data;
     },
 
   },
   actions: {
-    cargarPlantilla: async function ({ commit }) {
+    cargarPlantillas: async function ({ commit }) {
       try {
         const setting = {
           method: 'GET',
@@ -37,7 +47,31 @@ export default {
         const json = await data.json();
 
         if (data.ok) {
-          commit('llenarItems', json);
+          commit('llenarPlantillas', json);
+        } else {
+          console.log('La respuesta no es un JSON válido:', await data.text());
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+
+    },
+
+    cargarItemsPlantillas: async function ( { commit }, datos ) {
+      try {
+        const datosPlantilla = new FormData();
+        datosPlantilla.append('idPlantilla', datos.idPlanPer );
+
+        const setting = {
+          method: 'POST',
+          body:datosPlantilla,
+        };
+        const url = 'http://localhost/Apis-UTA/plantillasSelect.php';
+        const data = await fetch(url, setting);
+        const json = await data.json();
+
+        if (data.ok) {
+          commit('llenarItemsPlantillas', json);
         } else {
           console.log('La respuesta no es un JSON válido:', await data.text());
         }

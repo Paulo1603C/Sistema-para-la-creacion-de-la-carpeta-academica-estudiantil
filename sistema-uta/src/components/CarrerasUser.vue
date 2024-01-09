@@ -18,7 +18,7 @@
                             <td>
                                 <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
+                                        <v-icon color="black darken-2" size="30" @click.stop="descargarItem(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-download
                                         </v-icon>

@@ -20,7 +20,7 @@
                             <td>
                                 <v-tooltip bottom style="margin-right: 100px; !important">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="primary darken-2" size="25" class="me-2"
+                                        <v-icon color="primary darken-2" size="30" class="me-2"
                                             @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
                                             mdi-pencil
                                         </v-icon>
@@ -29,7 +29,7 @@
                                 </v-tooltip>
                                 <v-tooltip bottom style="margin-right: 100px; !important">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="red darken-2" size="25" @click.stop="eliminarItem(item)"
+                                        <v-icon color="red darken-2" size="30" @click.stop="eliminarItem(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
@@ -38,7 +38,7 @@
                                 </v-tooltip>
                                 <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="25" @click.stop="descargarItem(item)"
+                                        <v-icon color="black darken-2" size="30" @click.stop="descargarItem(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-download
                                         </v-icon>

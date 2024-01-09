@@ -12,7 +12,7 @@ export default {
 
         //
         dataCarpeta: {},
-    
+
     },
 
     getters: {
@@ -66,14 +66,14 @@ export default {
             //console.log('IDEst ' + JSON.stringify(datos));/
             try {
                 const datosCarpeta = new FormData();
-                const rutaC = path + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase();
+                const rutaC = path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase();
                 //console.log('RUTAC'+rutaC);
-                const aux = rutaC.indexOf('.'); 
+                const aux = rutaC.indexOf('.');
                 //console.log('Aux'+aux);
-                if( aux < 0 ){
-                    datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() +' '+ datos.ApeEst.toUpperCase());
+                if (aux < 0) {
+                    datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase());
                     datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
-                }else{
+                } else {
                     datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
                     datosCarpeta.append('nombreDirectorio', oldPath);
                 }
@@ -97,10 +97,10 @@ export default {
                 if (json.startsWith('{')) {
                     const jsonData = JSON.parse(json);
                     console.log('json');
-                    dispatch('cargarCarpetas',path);
+                    dispatch('cargarCarpetas', path);
                 } else {
                     console.log('Text');
-                    dispatch('cargarCarpetas',path);
+                    dispatch('cargarCarpetas', path);
                 }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
@@ -108,7 +108,35 @@ export default {
 
         },
 
-        eliminarCarpeta: async function ({ commit, dispatch }, {ruta1, ruta2}) {
+        crearSubCarpeta: async function ({ commit, dispatch }, { datos, path, nombre }) {
+            try {
+                const datosCarpeta = new FormData();
+                datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase() );
+                console.log('RUTA->' + path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase());
+                const setting = {
+                    method: 'POST',
+                    body: datosCarpeta,
+                }
+                console.log("ID" + datos.IdEst);
+                const url = "http://localhost/Apis-UTA/crearCarpetas.php";
+
+                const data = await fetch(url, setting);
+                const json = await data.text();
+                if (json.startsWith('{')) {
+                    const jsonData = JSON.parse(json);
+                    console.log('json');
+                    dispatch('cargarCarpetas', path);
+                } else {
+                    console.log('Text');
+                    dispatch('cargarCarpetas', path);
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+
+        },
+
+        eliminarCarpeta: async function ({ commit, dispatch }, { ruta1, ruta2 }) {
             try {
                 const datosCarpeta = new FormData();
                 datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
@@ -122,24 +150,24 @@ export default {
                 const json = await data.text();
                 if (json.startsWith('{')) {
                     const jsonData = JSON.parse(json);
-                    dispatch('cargarCarpetas',ruta1);
+                    dispatch('cargarCarpetas', ruta1);
                 } else {
-                    dispatch('cargarCarpetas',ruta1);
+                    dispatch('cargarCarpetas', ruta1);
                 }
             } catch (error) {
                 console.log("Error de eliminción " + error);
             }
         },
 
-        descargarCarpeta: async function ({ commit, dispatch }, {ruta, nombre}) {
+        descargarCarpeta: async function ({ commit, dispatch }, { ruta, nombre }) {
             try {
-                console.log('RUTA '+ ruta + nombre.toUpperCase());
+                console.log('RUTA ' + ruta + nombre.toUpperCase());
                 const datosArchivos = new FormData();
                 datosArchivos.append('rutaRemota', ruta + nombre.toUpperCase());
-                
+
                 const setting = {
                     method: 'POST',
-                    body:datosArchivos,
+                    body: datosArchivos,
                 }
                 const url = "http://localhost/Apis-UTA/descargarCarpetas.php";
                 const response = await fetch(url, setting);
@@ -147,7 +175,7 @@ export default {
                 //const json = await response.text();
                 if (response.ok) {
                     console.log('Imprimido');
-                }else{
+                } else {
                     console.log('No Imprimido');
 
                 }
