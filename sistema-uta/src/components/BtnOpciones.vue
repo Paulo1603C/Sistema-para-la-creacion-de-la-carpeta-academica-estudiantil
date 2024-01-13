@@ -37,7 +37,7 @@ import NuevaCarpeta from './NuevaCarpeta.vue';
 import SubirArchivo from './SubirArchivo.vue';
 import NuevaUsuario from './NuevoUsuario.vue';
 import NuevaPlantilla from './NuevaPlantilla.vue';
-import { mapState, mapMutations, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
 import readXlsFile from "read-excel-file";
 import moment from 'moment';
 
@@ -54,6 +54,7 @@ export default {
             fecha: "",
             path: '',
             idUser: 0,
+            nomUser:'',
             showMenu: false,
             dialogFile: false,
             estudianteSelect: {},
@@ -72,7 +73,8 @@ export default {
         ...mapMutations('Plantillas', ['setPlan']),
         ...mapMutations('Server_Carpetas', ['setCarpeta']),
         ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['crearCarpeta']),
+        ...mapActions('Server_Carpetas', ['crearCarpeta','crearSubCarpeta']),
+        ...mapActions('Plantillas', ['cargarItemsPlantillas']),
 
         optionSelected(option) {
             switch (option) {
@@ -168,28 +170,41 @@ export default {
             this.rutaNueva();
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.idUser = storedUser.IdUser;
-            const input = document.getElementById("archivoExcel");
-            readXlsFile(input.files[0]).then((rows) => {
+            this.nomUser = storedUser.NomUser +' ' +storedUser.ApeUser;
+            let input = document.getElementById("archivoExcel");
+            readXlsFile(input.files[0]).then( async (rows) => {
                 this.items = rows;
                 this.fechaActual();
                 for (let i = 1; i < this.items.length; i++) {
                     const row = this.items[i];
+                    console.log(row);
                     const datos = {
                         IdEst: row[0],
                         NomEst: row[1],
                         ApeEst: row[2],
                         Cedula: row[3],
                         Fecha: this.fecha,
-                        NomCar: row[5],
-                        idPlanPer: row[6],
+                        NomModificador: this.nomUser,
+                        NomCar: this.idCarreraSelect,
+                        idPlanPer: row[4],
                     };
-                    console.log(datos);
-                    this.AgregarEstudiante(datos);
-                    this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
+                    await this.AgregarEstudiante(datos);
+                    await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
+                    await this.crearSubDirectorios( datos, this.path );
                 }
-                this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
+                await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                 this.$alertify.success("Estudiantes Insertados");
+                input.value = null;
             });
+        },
+
+        crearSubDirectorios:async function(datosEst, ruta){
+            await this.cargarItemsPlantillas(datosEst);
+            const cadenaDeItems = this.getItemsPlantillas[0].Items;
+            const auxItemsPlan = cadenaDeItems.split(',');
+            for( let i=0; i< auxItemsPlan.length; i++ ){
+                await this.crearSubCarpeta({datos:datosEst, path:ruta, nombre:auxItemsPlan[i] });
+            }
         },
 
         fechaActual() {
@@ -222,6 +237,7 @@ export default {
         ...mapState('Plantillas', ['dataPlan']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['dataCarpeta','rutaAnterior']),
+        ...mapGetters('Plantillas', ['getPlantillas','getItemsPlantillas']),
     }
 };
 

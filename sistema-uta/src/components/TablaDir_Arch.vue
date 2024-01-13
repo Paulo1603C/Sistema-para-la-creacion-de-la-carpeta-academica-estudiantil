@@ -145,8 +145,8 @@ export default {
         },
 
         verificarPermisos(item) {
-            this.rutaNueva();
-            this.rutaActual = this.path;
+            //this.rutaNueva();
+            //this.rutaActual = this.path;
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
 
@@ -154,12 +154,12 @@ export default {
                 return true;
             }
 
-            const palabras = this.rutaActual.split("/").filter(Boolean);
+            /*const palabras = this.rutaActual.split("/").filter(Boolean);
             const carpetaAnterior = palabras[palabras.length-1];
             console.log("PADRE "+carpetaAnterior);
             if( permisosSubdirectorio.get(carpetaAnterior.trim()) != null ){
                 return true;
-            }
+            }*/
             
             return false;
         },

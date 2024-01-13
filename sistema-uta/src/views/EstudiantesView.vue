@@ -128,7 +128,6 @@ export default {
                         break;
                     case 'AUTOMATIZACIÓN Y ROBÓTICA':
                         this.carrera = 5;
-
                         this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
                         console.log(this.path);
                         break;

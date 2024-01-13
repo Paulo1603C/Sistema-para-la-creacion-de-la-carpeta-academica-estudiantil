@@ -10,6 +10,7 @@ export default {
     Plantillas: [],
     ItemsPlantilla:[],
     dataPlan: {},
+    estudinates_Plantillas:[],
 
   },
   getters: {
@@ -21,6 +22,10 @@ export default {
       return state.ItemsPlantilla;
     },
 
+    getEstudinates_Plantillas(state) {
+      return state.estudinates_Plantillas;
+    },
+
   },
   mutations: {
     llenarPlantillas(state, data) {
@@ -29,6 +34,10 @@ export default {
 
     llenarItemsPlantillas(state, data) {
       state.ItemsPlantilla = data;
+    },
+
+    llenarEstudinates_Plantillas(state, data) {
+      state.estudinates_Plantillas = data;
     },
 
     setPlan(state, data) {
@@ -72,6 +81,30 @@ export default {
 
         if (data.ok) {
           commit('llenarItemsPlantillas', json);
+        } else {
+          console.log('La respuesta no es un JSON válido:', await data.text());
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+
+    },
+
+    cargarEstudinates_Plantillas: async function ( { commit }, {idPlan} ) {
+      try {
+        const datosPlantilla = new FormData();
+        datosPlantilla.append('IdPlanPer', idPlan );
+
+        const setting = {
+          method: 'POST',
+          body:datosPlantilla,
+        };
+        const url = 'http://localhost/Apis-UTA/plantillasSelect.php';
+        const data = await fetch(url, setting);
+        const json = await data.json();
+
+        if (data.ok) {
+          commit('llenarEstudinates_Plantillas', json);
         } else {
           console.log('La respuesta no es un JSON válido:', await data.text());
         }
@@ -178,7 +211,8 @@ export default {
       }
     },
 
-    eliminarEstudiante: async function ({ commit, dispatch }, datos) {
+    //por el momento no se usa debido a la integridad referencial
+    eliminarPlantilla: async function ({ commit, dispatch }, datos) {
       try {
         const idUser = new FormData();
         //console.log('ID: ' + datos.IdEst);

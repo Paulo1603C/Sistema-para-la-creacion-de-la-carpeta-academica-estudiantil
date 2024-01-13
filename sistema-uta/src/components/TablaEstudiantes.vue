@@ -136,7 +136,7 @@ export default {
             this.setVentanaArch(true);
             this.setBreadcrumbs(item.NomEst.toUpperCase() + ' ' + item.ApeEst.toUpperCase());
             this.rutaNueva();
-            //console.log(this.path);
+            console.log(this.path);
             this.cargarCarpetas(this.path);
             this.path = '';
             //this.selectedItems = [];

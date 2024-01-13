@@ -70,9 +70,9 @@ export default {
         datosUser.append('ApeEst', datos.ApeEst);
         datosUser.append('CedEst', datos.Cedula);
         datosUser.append('Fecha', datos.Fecha);
+        datosUser.append('NomModificador', datos.NomModificador);
         datosUser.append('IdCarPer', datos.NomCar);
         datosUser.append('IdPlanPer', datos.idPlanPer);
-        datosUser.append('NomModificador', datos.NomModificador);
 
         const setting = {
           method: 'POST',
