@@ -46,6 +46,7 @@ export default {
             idUser: null,
             path: '',
             carrera: 0,
+            permisosDirectorios: new Map(),
             Cabecera: [
                 { text: 'Tipo', value: 'tipo', },
                 { text: 'Nombre', value: 'nombre', },
@@ -84,7 +85,9 @@ export default {
             this.idUser = storedUser.IdUser;
             console.log(this.carreraSelecionada);
             this.cargarCarrerasUser(this.idUser);
-            this.cargarSubCarpetas();
+            //this.cargarSubCarpetas();
+            this.obtenerPermisosDirectorios();
+            this.acciones(this.itemsBread[0]);
         }
     },
 
@@ -94,7 +97,9 @@ export default {
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
         ...mapMutations('Dialogo', ['setVentanaEst', 'setVentanaArch', 'setVentanaCarreras', 'setBreadcrumbs']),
-        ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
+        //...mapActions('SubCarpetas', ['cargarSubCarpetas']),
+        ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
+        ...mapActions('Permisos', ['cargarPermisosDirectorios']),
 
 
 
@@ -160,6 +165,20 @@ export default {
             //console.log(this.path);
         },
 
+       obtenerPermisosDirectorios: async function () {
+            console.log('Metodo tienePermisoEnCarpeta lanzado');
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            const idUser = storedUser.IdUser;
+            for (const item of this.getSubCarpetas) {
+                await this.cargarPermisosDirectorios({ idUser: idUser, nomItem: item.NomItem });
+                this.permisosDirectorios.set(item.NomItem, this.getPermisosDirectorios[0].NomPer);
+                console.dir(`Peermisos ${item.NomItem}  -> ${this.getPermisosDirectorios[0].NomPer}`);
+            }
+            const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
+            localStorage.setItem('PermisosSubDirectorios', permission);
+            console.log(this.permisosDirectorios);
+        },
+
     },
 
     computed: {
@@ -168,6 +187,8 @@ export default {
         ...mapGetters('Server_Carpetas', ['getCarpetas']),
         ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras', 'itemsBread']),
         ...mapState('Carreras', ['carreraSelecionada', 'idCarreraSelect']),
+        ...mapGetters('Permisos', ['getPermisosDirectorios']),
+        ...mapGetters('SubCarpetas', ['getSubCarpetas']),
     }
 }
 </script>

@@ -12,7 +12,7 @@
 
 import NavBar from '@/components/NavBar.vue';
 import Footer from '@/components/footer.vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 export default {
   name: 'Dashboard',
 
@@ -33,6 +33,7 @@ export default {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       this.NomCom = storedUser.NomUser + " " + storedUser.ApeUser;
       this.setUser(storedUser);
+      this.cargarSubCarpetas();
     } else {
       this.$router.push("/");
     }
@@ -40,6 +41,7 @@ export default {
 
   methods: {
     ...mapMutations('Login', ['setUser']),
+    ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
 
   },
 

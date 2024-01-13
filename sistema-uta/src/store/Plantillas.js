@@ -11,6 +11,8 @@ export default {
     ItemsPlantilla:[],
     dataPlan: {},
     estudinates_Plantillas:[],
+    //alamcenara el id de la plantilla del estudiante seleccionado
+    idEstPlan:'',
 
   },
   getters: {
@@ -42,6 +44,10 @@ export default {
 
     setPlan(state, data) {
       state.dataPlan = data;
+    },
+
+    setIdEstPlan(state, data) {
+      state.idEstPlan = data;
     },
 
   },
@@ -99,7 +105,7 @@ export default {
           method: 'POST',
           body:datosPlantilla,
         };
-        const url = 'http://localhost/Apis-UTA/plantillasSelect.php';
+        const url = 'http://localhost/Apis-UTA/estudiantesPlantillaSelect.php';
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -145,6 +151,7 @@ export default {
 
     //insetar carreras para los usaurios-> se pasa un arreglo;
     AgregarItemsSubDirectorios: async function ({ commit, dispatch }, datos) {
+      console.log("DAtos "+datos);
       var aux = 0;
       while (aux < datos.items.length) {
         try {
@@ -155,12 +162,7 @@ export default {
             method: 'POST',
             body: datosItem,
           }
-          var url = "";
-          if (datos.idPlan == 0) {
-            url = 'http://localhost/Apis-UTA/insertarItemsSubdirectorios.php';
-          } else {
-            url = 'http://localhost/Apis-UTA/actualizarCarrerasSecre.php';
-          }
+          const url = 'http://localhost/Apis-UTA/insertarItemsSubdirectorios.php';
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -178,12 +180,13 @@ export default {
     },
 
     //insetar carreras para los usaurios-> se pasa un arreglo;
-    AgregarItemsDirectorios: async function ({ commit, dispatch }, datos) {
+    AgregarItemsDirectorios: async function ({ commit, dispatch }, {datos, idPlan }) {
       var aux = 0;
       while (aux < datos.items.length) {
         try {
           const datosItem = new FormData();
           datosItem.append('NomItem', datos.items[aux].toUpperCase());
+          datosItem.append('IdPlan', idPlan);
 
           const setting = {
             method: 'POST',

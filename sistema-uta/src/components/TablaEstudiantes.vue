@@ -78,9 +78,11 @@ export default {
     methods: {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
         ...mapMutations('Estudiantes', ['setEst']),
+        ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
+        ...mapMutations('Plantillas', ['setIdEstPlan']),
         ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta','descargarCarpeta']),
-        ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
+        ...mapActions('Plantillas', ['cargarEstudinates_Plantillas']),
 
         editarItem(item) {
             console.log("item Datos");
@@ -129,15 +131,15 @@ export default {
             this.path = '';
         },
 
-        hacerAlgoAlHacerClic(item) {
-            console.log('rdml' + this.item);
-            //this.descargarItemsSeleccionados();
+        hacerAlgoAlHacerClic:async function(item) {
+            this.setIdEstPlan(item.IdPlanPer);
+            await this.cargarEstudinates_Plantillas( {idPlan:item.IdPlanPer} );
             this.setVentanaEst(false);
             this.setVentanaArch(true);
             this.setBreadcrumbs(item.NomEst.toUpperCase() + ' ' + item.ApeEst.toUpperCase());
             this.rutaNueva();
             console.log(this.path);
-            this.cargarCarpetas(this.path);
+            await this.cargarCarpetas(this.path);
             this.path = '';
             //this.selectedItems = [];
         },

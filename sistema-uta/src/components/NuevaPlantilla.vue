@@ -74,7 +74,7 @@ export default {
             console.log(this.ItemPlantilla);
             await this.AgregarPlantilla( this.ItemPlantilla );
             await this.AgregarItemsSubDirectorios( this.ItemPlantilla );
-            await this.AgregarItemsDirectorios( this.ItemPlantilla );
+            await this.AgregarItemsDirectorios( {datos:this.ItemPlantilla, idPlan:'' } );
             this.$alertify.success(this.ItemPlantilla.idPlan == 0 ? "Plantilla creada" : "Plantilla Actualizada");
             this.cerrarDialog();
         },

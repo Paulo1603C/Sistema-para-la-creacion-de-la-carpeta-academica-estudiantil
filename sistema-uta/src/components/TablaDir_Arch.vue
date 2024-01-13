@@ -35,7 +35,7 @@
                                 </v-tooltip>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)" v-if="mostrarEditar(item)"
+                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)" v-if="mostrarEliminar(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
@@ -149,7 +149,7 @@ export default {
             //this.rutaActual = this.path;
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-
+            //console.log("nuevos permiso"+permisosSubdirectorio.get(item.nombre.trim()));
             if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
                 return true;
             }
@@ -167,6 +167,7 @@ export default {
         mostrarEditar(item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            console.log("nuevos permiso Editar "+permisosSubdirectorio.get(item.nombre.trim()));
             const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Editar');
             //console.log(found);
             if ( found == true ) {
@@ -175,9 +176,10 @@ export default {
             return false;
         },
 
-        mostrarEditar(item) {
+        mostrarEliminar(item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            console.log("nuevos permiso Eliminar "+permisosSubdirectorio.get(item.nombre.trim()));
             const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Eliminar');
             //console.log(found);
             if ( found == true ) {

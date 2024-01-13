@@ -64,7 +64,7 @@ export default {
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
 
         abrirVentana(item) {
-            this.obtenerPermisosDirectorios();
+            //this.obtenerPermisosDirectorios();
             //console.log('CARRERAS');
             this.setBreadcrumbs(item.nomCar.toUpperCase());
             this.obtnerIdCarrera();
