@@ -70,8 +70,14 @@ export default {
                 //console.log('RUTAC'+rutaC);
                 const aux = rutaC.indexOf('.');
                 //console.log('Aux'+aux);
+                console.log('Aux '+datos.ApeEst);
                 if (aux < 0) {
-                    datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase());
+                    if( datos.ApeEst == '' ){
+                        console.log('just folder');
+                        datosCarpeta.append( 'nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() );
+                    }else{
+                        datosCarpeta.append( 'nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase() );
+                    }
                     datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
                 } else {
                     datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
@@ -112,12 +118,12 @@ export default {
             try {
                 const datosCarpeta = new FormData();
                 datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase() );
-                console.log('RUTA->' + path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase());
+                //console.log('RUTA->' + path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase());
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,
                 }
-                console.log("ID" + datos.IdEst);
+                //console.log("ID" + datos.IdEst);
                 const url = "http://localhost/Apis-UTA/crearCarpetas.php";
 
                 const data = await fetch(url, setting);

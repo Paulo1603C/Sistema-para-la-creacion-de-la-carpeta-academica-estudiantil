@@ -28,7 +28,7 @@ export default {
 
   created() {
     const isAuthenticated = localStorage.getItem('Authentication') === 'true';
-    
+
     if (isAuthenticated) {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       this.NomCom = storedUser.NomUser + " " + storedUser.ApeUser;

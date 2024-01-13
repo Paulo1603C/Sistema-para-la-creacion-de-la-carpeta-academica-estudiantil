@@ -11,7 +11,7 @@
     </v-content>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 export default {
 
     name: "FormUser",
@@ -19,6 +19,7 @@ export default {
     data: () => ({
         user: '',
         pass: '',
+        //permisosDirectorios: new Map(),
 
         controlUser: [
             value => {
@@ -36,26 +37,28 @@ export default {
     }),
 
     created() {
-        
+        this.cargarSubCarpetas();
     },
 
     methods: {
         ...mapActions('Login', ['login']),
-        
-        async methodLogin() {
+        ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
+
+        methodLogin: async function () {
             // Llama a la acción 'login' para autenticar al usuario.
             await this.login({ user: this.user, pass: this.pass });
             const autenticacion = localStorage.getItem('Authentication');
             //console.log(this.autenticacion);
-            if( autenticacion ){
+            if (autenticacion) {
                 this.$router.push("/Estudiantes");
+                //this.obtenerPermisosDirectorios();
             }
         },
 
     },
 
     computed: {
-        ...mapGetters('Login', ['getUser','getAuthentication']),
+        ...mapGetters('Login', ['getUser', 'getAuthentication']),
     }
 }
 </script>

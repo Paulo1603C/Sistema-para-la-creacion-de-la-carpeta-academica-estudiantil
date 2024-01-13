@@ -25,7 +25,7 @@
                                 <v-select :items="getRoles" item-text="NomRol" item-value="IdRol" label="Roles*"
                                     v-model="ItemUsuario.rol" required></v-select>
                             </v-col>
-                            <v-col cols="12" sm="4">
+                            <v-col cols="12" sm="4" style="display:none;">
                                 <v-autocomplete :items="getPermisos" item-text="nomPer" item-value="IdPer" label="Permisos*"
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
@@ -75,7 +75,7 @@ export default {
     methods: {
 
         ...mapActions('Carreras', ['cargarCarreras']),
-        ...mapActions('Usuarios', ['AgregarUsuario', 'AgregarUsuarioCarreras', 'AgregarUsuarioPermisos']),
+        ...mapActions('Usuarios', ['AgregarUsuario', 'AgregarUsuarioCarreras']),
         ...mapActions('Roles', ['cargarRoles']),
         ...mapActions('Permisos', ['cargarPermisos']),
         ...mapMutations('Dialogo', ['setDialog']),
@@ -84,7 +84,6 @@ export default {
             try {
                 await this.AgregarUsuario(this.ItemUsuario);
                 await this.AgregarUsuarioCarreras(this.ItemUsuario);
-                await this.AgregarUsuarioPermisos(this.ItemUsuario);
                 this.cerrarDialog();
                 this.limpiarCampos();
                 this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");

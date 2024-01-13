@@ -16,7 +16,7 @@
                             <td @click="hacerAlgoAlHacerClic(item)" class="linea">{{ item.NomEst }} {{ item.ApeEst }}</td>
                             <td>{{ item.NomCar }}</td>
                             <td>{{ item.Fecha }}</td>
-                            <td>{{ item.NomModificador }}</td>
+                            <td>{{ item.Nom_Modificador }}</td>
                             <td>
                                 <v-tooltip bottom style="margin-right: 100px; !important">
                                     <template v-slot:activator="{ on, attrs }">
@@ -130,7 +130,7 @@ export default {
         },
 
         hacerAlgoAlHacerClic(item) {
-            console.log('rdml' + this.selectedItems);
+            console.log('rdml' + this.item);
             //this.descargarItemsSeleccionados();
             this.setVentanaEst(false);
             this.setVentanaArch(true);
@@ -139,7 +139,7 @@ export default {
             //console.log(this.path);
             this.cargarCarpetas(this.path);
             this.path = '';
-            this.selectedItems = [];
+            //this.selectedItems = [];
         },
 
         handleDirChange(event) {

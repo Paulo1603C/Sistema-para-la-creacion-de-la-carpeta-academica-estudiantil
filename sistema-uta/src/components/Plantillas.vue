@@ -72,13 +72,16 @@ export default {
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
 
         editar() {
-            console.log();
             this.setDialogPlantilla(true);
+            this.words = [this.items];
+            this.words = this.items.split(",");
             this.plantillaSelect = {
                 idPlan: this.idPlan,
                 nomPlan: this.titulo,
-                items: [this.items],
+                items: this.words,
             }
+            
+            console.log(this.words);
             this.setPlan(this.plantillaSelect);
         },
 

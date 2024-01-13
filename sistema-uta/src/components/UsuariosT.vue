@@ -1,18 +1,24 @@
 <template>
     <div>
         <div style="overflow: hidden;">
-            
+            <PermisosUser :dialog="dailogPermisos"  :PermisosUsario="dataPermisosUsuario"></PermisosUser>
         </div>
         <v-card class="mx-auto" max-width="344">
             <v-card-title class="d-flex justify-center align-center">
                 ID: {{ id }}
             </v-card-title>
 
-            <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="200px" cover></v-img>
+            <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="100px" cover></v-img>
 
             <v-card-title class="d-flex justify-center align-center">
                 {{ nombre }} {{ apellido }}
             </v-card-title>
+
+            <v-card-text class="d-flex justify-center align-center">
+                <v-btn color="primary" @click="asignarPermisos()" >Permisos
+                    <v-icon right>mdi-menu-down</v-icon>
+                </v-btn>
+            </v-card-text>
 
             <v-card-actions>
                 <v-btn color="error darken-2" @click="eliminar">
@@ -46,7 +52,6 @@
                         <p><strong>Correo: </strong> {{ correo }}</p>
                         <p><strong>Rol: </strong> {{ rol }}</p>
                         <p><strong>Carreras: </strong> {{ carreras }}</p>
-                        <p><strong>Permisos: </strong> {{ permisos }}</p>
                     </v-card-text>
                 </div>
             </v-expand-transition>
@@ -57,35 +62,39 @@
 <script>
 
 import { mapState, mapMutations, mapActions } from 'vuex';
+import PermisosUser from './PermisosUsuario.vue';
 
 export default {
     data: () => ({
         show: false,
         itemSeleccionadoUsuario: {},
+        permisoInit: {},
         imgAux: require('../assets/user.png'),
     }),
 
     props: [
-        'id', 'correo','nombre', 'apellido', 'contraseña', 'idRol','rol', 'idCarreras' ,'carreras', 'idPermisos' , 'permisos','urlDw'        
+        'id', 'correo', 'nombre', 'apellido', 'contraseña', 'idRol', 'rol', 'idCarreras', 'carreras', 'idPermisos', 'permisos', 'urlDw'
     ],
 
     methods: {
-        ...mapMutations('Dialogo',['setDialog']),
-        ...mapMutations('Usuarios',['setUser']),
-        ...mapActions('Usuarios',['eliminarUsuario']),
+        ...mapMutations('Dialogo', ['setDialog','setDialogPermisos']),
+        ...mapMutations('Usuarios', ['setUser']),
+        ...mapMutations('Permisos', ['setPermisosUsuario']),
+        ...mapActions('Usuarios', ['eliminarUsuario']),
+        ...mapActions('Permisos', ['cargarPermisosSubDir_User']),
 
         editar(item) {
             this.setDialog(true);
             // Asigna los datos del card a la variable itemSeleccionadoUsuario
             this.itemSeleccionadoUsuario = {
-                id:this.id,
+                id: this.id,
                 correo: this.correo,
                 contraseña: this.contraseña,
                 nombre: this.nombre,
                 apellido: this.apellido,
                 rol: this.idRol,
-                carreras: [this.idCarreras[0],this.idCarreras[1],this.idCarreras[2],this.idCarreras[3],this.idCarreras[4],],
-                permisos: [this.idPermisos[0],this.idPermisos[1],this.idPermisos[2],this.idPermisos[3],this.idPermisos[5],],
+                carreras: [this.idCarreras[0], this.idCarreras[1], this.idCarreras[2], this.idCarreras[3], this.idCarreras[4],],
+                //permisos: [this.idPermisos[0],this.idPermisos[1],this.idPermisos[2],this.idPermisos[3],this.idPermisos[5],],
                 urlDw: this.urlDw,
             };
             console.log('Datos del card seleccionado:', this.itemSeleccionadoUsuario);
@@ -94,12 +103,12 @@ export default {
 
         eliminar() {
             this.itemSeleccionadoUsuario = {
-                id:this.id,
+                id: this.id,
                 nombre: this.nombre,
                 apellido: this.apellido,
             };
             this.$alertify.confirm(
-                'Deseas eliminar el usuario: ' +this.itemSeleccionadoUsuario.nombre+" " +this.itemSeleccionadoUsuario.apellido,
+                'Deseas eliminar el usuario: ' + this.itemSeleccionadoUsuario.nombre + " " + this.itemSeleccionadoUsuario.apellido,
                 () => {
                     this.eliminarUsuario(this.itemSeleccionadoUsuario);
                     //console.log(this.itemSeleccionadoUsuario);
@@ -109,13 +118,29 @@ export default {
             );
         },
 
+        asignarPermisos(){
+            this.cargarPermisosSubDir_User( {idUser:this.id} );
+            console.log("PERMISOS INIT");
+            this.permisoInit={
+                IdRelacion:0,
+                IdUserPer:this.id,
+                IdPerPer:[],
+                IdItemSubPer:0,
+            }
+            console.log(this.permisoInit);
+            this.setPermisosUsuario(this.permisoInit);
+            this.setDialogPermisos(true);
+        },
+
     },
 
     components: {
-        
+        PermisosUser,
     },
 
     computed: {
+        ...mapState('Dialogo',['dailogPermisos']),
+        ...mapState('Permisos', ['dataPermisosUsuario']),
     }
 }
 </script>

@@ -10,8 +10,7 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field label="Nombre Plantilla*" v-model="ItemPlantilla.nomPlan" :counter="10"
-                                    required></v-text-field>
+                                <v-text-field label="Nombre Plantilla*" v-model="ItemPlantilla.nomPlan" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
                                 <v-input>
@@ -28,7 +27,8 @@
                                 </v-input>
                             </v-col>
                             <v-col cols="12">
-                                <v-select :items="ItemPlantilla.items" label="Subcarpetas agregadas" v-model="auxItem"
+                                <label>Subcarpetas creadas</label>
+                                <v-select :items="ItemPlantilla.items" label="Subcarpetas" v-model="auxItem"
                                 @change="cambiarValor()"   required></v-select>
                             </v-col>
                         </v-row>
@@ -68,11 +68,13 @@ export default {
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
-        ...mapActions('Plantillas', ['AgregarPlantilla','AgregarItemsPlantilla']),
+        ...mapActions('Plantillas', ['AgregarPlantilla','AgregarItemsSubDirectorios','AgregarItemsDirectorios']),
 
         agregar: async function() {
+            console.log(this.ItemPlantilla);
             await this.AgregarPlantilla( this.ItemPlantilla );
-            await this.AgregarItemsPlantilla( this.ItemPlantilla );
+            await this.AgregarItemsSubDirectorios( this.ItemPlantilla );
+            await this.AgregarItemsDirectorios( this.ItemPlantilla );
             this.$alertify.success(this.ItemPlantilla.idPlan == 0 ? "Plantilla creada" : "Plantilla Actualizada");
             this.cerrarDialog();
         },

@@ -83,8 +83,9 @@ export default {
 
     AgregarPlantilla: async function ({ commit, dispatch }, datos) {
       try {
+        console.log(datos.nomPlan.toUpperCase());
         const datosPantilla = new FormData();
-        datosPantilla.append('NomPlantilla', datos.nomPlan);
+        datosPantilla.append('NomPlantilla', datos.nomPlan.toUpperCase());
 
         const setting = {
           method: 'POST',
@@ -110,12 +111,12 @@ export default {
     },
 
     //insetar carreras para los usaurios-> se pasa un arreglo;
-    AgregarItemsPlantilla: async function ({ commit, dispatch }, datos) {
+    AgregarItemsSubDirectorios: async function ({ commit, dispatch }, datos) {
       var aux = 0;
       while (aux < datos.items.length) {
         try {
           const datosItem = new FormData();
-          datosItem.append('NomItem', datos.items[aux]);
+          datosItem.append('NomSubDirectorio', datos.items[aux].toUpperCase());
 
           const setting = {
             method: 'POST',
@@ -123,7 +124,41 @@ export default {
           }
           var url = "";
           if (datos.idPlan == 0) {
-            url = 'http://localhost/Apis-UTA/insertarItemPlantilla.php';
+            url = 'http://localhost/Apis-UTA/insertarItemsSubdirectorios.php';
+          } else {
+            url = 'http://localhost/Apis-UTA/actualizarCarrerasSecre.php';
+          }
+          const data = await fetch(url, setting);
+          const json = await data.text();
+          if (json.startsWith('{')) {
+            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
+            dispatch('cargarPlantillas');
+          } else {
+            //console.log('La respuesta no es JSON:', data);
+            dispatch('cargarPlantillas');
+          }
+        } catch (error) {
+          console.error('Error en la solicitud:', error);
+        }
+        aux++;
+      }
+    },
+
+    //insetar carreras para los usaurios-> se pasa un arreglo;
+    AgregarItemsDirectorios: async function ({ commit, dispatch }, datos) {
+      var aux = 0;
+      while (aux < datos.items.length) {
+        try {
+          const datosItem = new FormData();
+          datosItem.append('NomItem', datos.items[aux].toUpperCase());
+
+          const setting = {
+            method: 'POST',
+            body: datosItem,
+          }
+          var url = "";
+          if (datos.idPlan == 0) {
+            url = 'http://localhost/Apis-UTA/insertarItemDirectorio.php';
           } else {
             url = 'http://localhost/Apis-UTA/actualizarCarrerasSecre.php';
           }

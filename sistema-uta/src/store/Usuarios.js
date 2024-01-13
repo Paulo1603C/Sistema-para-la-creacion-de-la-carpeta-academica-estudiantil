@@ -114,40 +114,6 @@ export default {
       }
     },
 
-    //insetar permisos para los usaurios-> se pasa un arreglo;
-    AgregarUsuarioPermisos: async function ({ commit, dispatch }, datos) {
-      var aux = 0;
-      while (aux < datos.permisos.length) {
-        try {
-          const datosUser = new FormData();
-          datosUser.append('userPer', datos.id);
-          datosUser.append('perPer', datos.permisos[aux]);
-
-          const setting = {
-            method: 'POST',
-            body: datosUser,
-          }
-          var url = "";
-          if (datos.id == 0) {
-            url = 'http://localhost/Apis-UTA/insertarPermisosUser.php';
-          } else {
-            url = 'http://localhost/Apis-UTA/actualizarPermisosUser.php';
-          }
-          const data = await fetch(url, setting);
-          const json = await data.text();
-          if (json.startsWith('{')) {
-            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-            dispatch('cargarUsuarios');
-          } else {
-            //console.log('La respuesta no es JSON:', data);
-            dispatch('cargarUsuarios');
-          }
-        } catch (error) {
-          console.error('Error en la solicitud:', error);
-        }
-        aux++;
-      }
-    },
 
     eliminarUsuario: async function ({ commit, dispatch }, datos) {
       try {

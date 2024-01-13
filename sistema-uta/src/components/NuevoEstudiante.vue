@@ -79,8 +79,8 @@ export default {
                 this.idUser = storedUser.IdUser;
                 //console.log(this.ItemEstudiante);
                 if(this.itemsBread.length<3){
-                    await this.crearCarpeta({datos:this.ItemEstudiante, path:this.path, oldPath:this.rutaAnterior });
                     await this.AgregarEstudiante(this.ItemEstudiante);
+                    await this.crearCarpeta({datos:this.ItemEstudiante, path:this.path, oldPath:this.rutaAnterior });
                     await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser});
                     if( this.ItemEstudiante.IdEst == 0 ){
                         await this.crearSubDirectorios( this.ItemEstudiante, this.path );

@@ -36,7 +36,7 @@
     </div>
 </template>
 <script>
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
 
 export default {
     name: "Carreras",
@@ -46,6 +46,7 @@ export default {
     data() {
         return {
             carrera:0,
+            permisosDirectorios: new Map(),
         }
     },
 
@@ -59,8 +60,11 @@ export default {
         ...mapMutations('Carreras', ['setIdCarreraSelect']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
         //...mapActions('Server_Carpetas', ['cargarCarpetas']),
+        ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
+        ...mapActions('Permisos', ['cargarPermisosDirectorios']),
 
         abrirVentana(item) {
+            this.obtenerPermisosDirectorios();
             //console.log('CARRERAS');
             this.setBreadcrumbs(item.nomCar.toUpperCase());
             this.obtnerIdCarrera();
@@ -75,7 +79,8 @@ export default {
             this.setVentanaEst(true);
         }, 
 
-        //ya no lo uso
+  
+
         obtnerIdCarrera(){
             switch (this.itemsBread[1]) {
                 case 'INGENIERÍA INDUSTRIAL':
@@ -99,9 +104,25 @@ export default {
             this.setIdCarreraSelect(this.carrera);
         },
 
+        obtenerPermisosDirectorios: async function () {
+            console.log('Metodo tienePermisoEnCarpeta lanzado');
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            const idUser = storedUser.IdUser;
+            for (const item of this.getSubCarpetas) {
+                await this.cargarPermisosDirectorios({ idUser: idUser, nomItem: item.NomItem });
+                this.permisosDirectorios.set(item.NomItem, this.getPermisosDirectorios[0].NomPer);
+                console.dir(`Peermisos ${item.NomItem}  -> ${this.getPermisosDirectorios[0].NomPer}`);
+            }
+            const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
+            localStorage.setItem('PermisosSubDirectorios', permission);
+            console.log(this.permisosDirectorios);
+        },
+
     },
     computed:{
         ...mapState('Dialogo', ['itemsBread']),
+        ...mapGetters('Permisos', ['getPermisosDirectorios']),
+        ...mapGetters('SubCarpetas', ['getSubCarpetas']),
     }
 }
 </script>

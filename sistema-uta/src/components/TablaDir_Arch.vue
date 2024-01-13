@@ -10,9 +10,8 @@
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" class="elevation-1">
-
                     <template v-slot:item="{ item }">
-                        <tr class="myStyle">
+                        <tr class="myStyle" v-if="verificarPermisos(item)">
                             <td>
                                 <v-icon v-if="item.tipo != 'Archivo'" class="mr-3"
                                     color="yellow darken-1">mdi-folder</v-icon>
@@ -26,23 +25,25 @@
                             <td>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="primary darken-2" size="30" class="me-2"
+                                        <v-icon color="primary darken-2" size="30" class="me-2" v-if="mostrarEditar(item)"
                                             @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
                                             mdi-pencil
                                         </v-icon>
+                                        <v-icon v-else size="35">mdi-alpha-x</v-icon>
                                     </template>
                                     <span>Editar</span>
                                 </v-tooltip>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)"
+                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)" v-if="mostrarEditar(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
+                                        <v-icon v-else size="35" >mdi-alpha-x</v-icon>
                                     </template>
                                     <span>Eliminar</span>
                                 </v-tooltip>
-                                <v-tooltip bottom style="margin-right: 100px;">
+                                <v-tooltip bottom style="margin-right: 15px;">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="black darken-2" size="30" @click.stop="descargarItem(item)"
                                             v-bind="attrs" v-on="on">
@@ -62,7 +63,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 
 
 export default {
@@ -76,20 +77,17 @@ export default {
             path: '',
             selectedItems: [],
             carpetaSelecionada: {},
+            rutaActual:'',
         }
     },
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta']),
-        //...mapMutations('Estudiantes', ['setEst']),
-        //...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta']),
         ...mapActions('Server_Archivos', ['descargarArchivo']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
 
         editarItem(item) {
-            //console.log("item Datos");
-            //console.log(item);
             this.rutaNueva();
             this.carpetaSelecionada = {
                 IdEst: 1,
@@ -146,7 +144,47 @@ export default {
             //console.log(this.path);
         },
 
+        verificarPermisos(item) {
+            this.rutaNueva();
+            this.rutaActual = this.path;
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
 
+            if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
+                return true;
+            }
+
+            const palabras = this.rutaActual.split("/").filter(Boolean);
+            const carpetaAnterior = palabras[palabras.length-1];
+            console.log("PADRE "+carpetaAnterior);
+            if( permisosSubdirectorio.get(carpetaAnterior.trim()) != null ){
+                return true;
+            }
+            
+            return false;
+        },
+
+        mostrarEditar(item) {
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Editar');
+            //console.log(found);
+            if ( found == true ) {
+                return true;
+            }
+            return false;
+        },
+
+        mostrarEditar(item) {
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Eliminar');
+            //console.log(found);
+            if ( found == true ) {
+                return true;
+            }
+            return false;
+        },
     },
 
     components: {
@@ -156,6 +194,7 @@ export default {
     computed: {
         //...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Permisos', ['permisosSubDirectorios']),
     },
 
     watch: {
@@ -170,4 +209,5 @@ export default {
 .linea:hover {
     text-decoration: underline;
 }
+
 </style>

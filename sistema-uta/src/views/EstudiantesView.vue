@@ -84,6 +84,7 @@ export default {
             this.idUser = storedUser.IdUser;
             console.log(this.carreraSelecionada);
             this.cargarCarrerasUser(this.idUser);
+            this.cargarSubCarpetas();
         }
     },
 
@@ -93,6 +94,9 @@ export default {
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
         ...mapMutations('Dialogo', ['setVentanaEst', 'setVentanaArch', 'setVentanaCarreras', 'setBreadcrumbs']),
+        ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
+
+
 
         acciones(item) {
             //console.log(item);
@@ -108,24 +112,24 @@ export default {
                 switch (item) {
                     case 'INGENIERÍA INDUSTRIAL':
                         this.carrera = 1;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser,item);
+                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
                         break;
                     case 'SOFTWARE':
                         this.carrera = 2;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser,item);
+                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
                         break;
                     case 'TI':
                         this.carrera = 3;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser,item);
+                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
                         break;
                     case 'TELECOMUNICACIONES':
                         this.carrera = 4;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser,item);
+                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
                         break;
                     case 'AUTOMATIZACIÓN Y ROBÓTICA':
                         this.carrera = 5;
 
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser,item);
+                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
                         console.log(this.path);
                         break;
                     default:

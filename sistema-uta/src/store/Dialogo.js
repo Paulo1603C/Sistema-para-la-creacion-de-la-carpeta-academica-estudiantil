@@ -11,6 +11,7 @@ export default {
     dialogFolder: false, // Estado del diálogo
     dailogPlantilla:false, // Estado del diálogo
     dailogCarpeta:false, // Estado del diálogo
+    dailogPermisos:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
@@ -34,6 +35,10 @@ export default {
 
     setDialogCarpeta(state, value) {
       state.dailogCarpeta = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDialogPermisos(state, value) {
+      state.dailogPermisos = value; // Mutación para actualizar el estado del diálogo
     },
 
     setVentanaEst(state, value) {

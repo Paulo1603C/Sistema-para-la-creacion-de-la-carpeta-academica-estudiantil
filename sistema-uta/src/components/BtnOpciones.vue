@@ -140,7 +140,7 @@ export default {
                 contraseña: '',
                 rol: 0,
                 carreras: [],
-                permisos: [],
+                //permisos: [],
             },
                 this.setUser(this.usuarioSelect);
             this.setDialog(true);
@@ -183,7 +183,6 @@ export default {
                         NomCar: row[5],
                         idPlanPer: row[6],
                     };
-
                     console.log(datos);
                     this.AgregarEstudiante(datos);
                     this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
@@ -217,14 +216,12 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta','itemsBread']),
         ...mapState('Usuarios', ['dataUsuario']),
         ...mapState('Estudiantes', ['dataEst']),
         ...mapState('Plantillas', ['dataPlan']),
         ...mapState('Carreras', ['idCarreraSelect']),
-        ...mapState('Server_Carpetas', ['dataCarpeta']),
-        ...mapState('Dialogo', ['itemsBread']),
-        ...mapState('Server_Carpetas', ['rutaAnterior']),
+        ...mapState('Server_Carpetas', ['dataCarpeta','rutaAnterior']),
     }
 };
 
