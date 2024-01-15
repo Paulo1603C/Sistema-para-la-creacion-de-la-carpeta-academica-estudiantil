@@ -26,7 +26,7 @@
                                     <span>Descargar</span>
                                 </v-tooltip>
                             </td>
-                            
+
                         </tr>
                     </template>
                 </v-data-table>
@@ -45,17 +45,17 @@ export default {
 
     data() {
         return {
-            carrera:0,
+            carrera: 0,
             permisosDirectorios: new Map(),
         }
     },
 
-    created(){
+    created() {
 
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs','setVentanaArch']),
+        ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs', 'setVentanaArch']),
         ...mapMutations('Carreras', ['setCarreraSelect']),
         ...mapMutations('Carreras', ['setIdCarreraSelect']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
@@ -64,39 +64,40 @@ export default {
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
 
         abrirVentana(item) {
-            //this.obtenerPermisosDirectorios();
-            //console.log('CARRERAS');
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            console.log("nuevos permiso" + permisosSubdirectorio.get("CEDULA"));
+            this.obtenerPermisosDirectorios();
+
             this.setBreadcrumbs(item.nomCar.toUpperCase());
             this.obtnerIdCarrera();
             const storedUser = JSON.parse(localStorage.getItem('user'));
-            //console.log(storedUser.IdUser);
-            //console.log(this.carrera);
             this.cargarEstudiantes({ idCar: this.carrera, idUser: storedUser.IdUser });
-            //this.cargarCarpetas(this.path);
             this.setCarreraSelect(item.nomCar);
             this.setVentanaCarreras(false);
-            //this.setVentanaArch(true);
-            this.setVentanaEst(true);
-        }, 
+            setTimeout(() => {
+                this.setVentanaEst(true);
+            }, 3000);
+        },
 
-  
 
-        obtnerIdCarrera(){
+
+        obtnerIdCarrera() {
             switch (this.itemsBread[1]) {
                 case 'INGENIERÍA INDUSTRIAL':
-                    this.carrera=1;
+                    this.carrera = 1;
                     break;
                 case 'SOFTWARE':
-                    this.carrera=2;
+                    this.carrera = 2;
                     break;
                 case 'TI':
-                    this.carrera=3;
+                    this.carrera = 3;
                     break;
                 case 'TELECOMUNICACIONES':
-                    this.carrera=4;
+                    this.carrera = 4;
                     break;
                 case 'AUTOMATIZACIÓN Y ROBÓTICA':
-                    this.carrera=5;
+                    this.carrera = 5;
                     break;
                 default:
                     break;
@@ -105,7 +106,7 @@ export default {
         },
 
         obtenerPermisosDirectorios: async function () {
-            console.log('Metodo tienePermisoEnCarpeta lanzado');
+            //console.log('Metodo tienePermisoEnCarpeta lanzado');
             const storedUser = JSON.parse(localStorage.getItem('user'));
             const idUser = storedUser.IdUser;
             for (const item of this.getSubCarpetas) {
@@ -119,7 +120,7 @@ export default {
         },
 
     },
-    computed:{
+    computed: {
         ...mapState('Dialogo', ['itemsBread']),
         ...mapGetters('Permisos', ['getPermisosDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),

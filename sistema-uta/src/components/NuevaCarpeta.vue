@@ -56,11 +56,12 @@ export default {
         agregar: async function () {
             try {
                 this.rutaNueva();
-                console.log(this.ItemCarpeta.NomEst);
+                console.log( "CARGAR "+ this.path);
                 this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
                 this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
                 //await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
                 this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
+                await this.cargarCarpetas(this.path);
                 this.cerrarDialog();
                 this.path = '';
             } catch (error) {

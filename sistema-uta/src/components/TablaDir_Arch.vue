@@ -21,7 +21,7 @@
                             <td v-if="item.tipo != 'Archivo'">{{ item.cantidad }} elementos </td>
                             <td v-else>{{ item.tamaño }} MB</td>
                             <td>{{ item.fecha_creacion }}</td>
-                            <td>{{ item.user }}</td>
+                            <td>{{ item.tipo }}</td>
                             <td>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
@@ -35,11 +35,11 @@
                                 </v-tooltip>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)" v-if="mostrarEliminar(item)"
-                                            v-bind="attrs" v-on="on">
+                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)"
+                                            v-if="mostrarEliminar(item)" v-bind="attrs" v-on="on">
                                             mdi-delete
                                         </v-icon>
-                                        <v-icon v-else size="35" >mdi-alpha-x</v-icon>
+                                        <v-icon v-else size="35">mdi-alpha-x</v-icon>
                                     </template>
                                     <span>Eliminar</span>
                                 </v-tooltip>
@@ -51,6 +51,17 @@
                                         </v-icon>
                                     </template>
                                     <span>Descargar</span>
+                                </v-tooltip>
+                            </td>
+                            <td>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon color="yellow darken-2" size="30" class="me-2" v-if="true"
+                                            @click.stop="verObservacion(item)" v-bind="attrs" v-on="on">
+                                            mdi-eye-circle
+                                        </v-icon>
+                                    </template>
+                                    <span>Observacion</span>
                                 </v-tooltip>
                             </td>
                         </tr>
@@ -77,7 +88,7 @@ export default {
             path: '',
             selectedItems: [],
             carpetaSelecionada: {},
-            rutaActual:'',
+            rutaActual: '',
         }
     },
 
@@ -119,7 +130,10 @@ export default {
         },
 
         hacerAlgoAlHacerClic(item) {
-            console.log("Ietm selected" + item.nombre);
+            if (this.verificarSiPadre(item)) {
+                localStorage.setItem('padreActual', item.nombre.trim());
+            }
+            //console.log("Item selected" + item.nombre);
             this.setBreadcrumbs(item.nombre);
             this.rutaNueva();
             console.log(this.ruta);
@@ -145,33 +159,43 @@ export default {
         },
 
         verificarPermisos(item) {
-            //this.rutaNueva();
-            //this.rutaActual = this.path;
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
             //console.log("nuevos permiso"+permisosSubdirectorio.get(item.nombre.trim()));
             if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
                 return true;
+            } else {
+                const padreActual = localStorage.getItem('padreActual');
+                const auxPermisos = permisosSubdirectorio.get(padreActual);
+                if (auxPermisos != null) {
+                    return true;
+                }
             }
-
-            /*const palabras = this.rutaActual.split("/").filter(Boolean);
-            const carpetaAnterior = palabras[palabras.length-1];
-            console.log("PADRE "+carpetaAnterior);
-            if( permisosSubdirectorio.get(carpetaAnterior.trim()) != null ){
-                return true;
-            }*/
-            
             return false;
+        },
+
+        verificarSiPadre(item) {
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            return permisosSubdirectorio.get(item.nombre.trim()) != null ? true : false;
         },
 
         mostrarEditar(item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            console.log("nuevos permiso Editar "+permisosSubdirectorio.get(item.nombre.trim()));
-            const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Editar');
-            //console.log(found);
-            if ( found == true ) {
-                return true;
+            console.log(`Carpeta ${item.nombre} permisos ${permisosSubdirectorio.get(item.nombre.trim())} `);
+            if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
+                const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Editar');
+                if (found == true) {
+                    return true;
+                }
+            } else {
+                const padreActual = localStorage.getItem('padreActual');
+                const aux = permisosSubdirectorio.get(padreActual.trim());
+                const found = aux.includes('Editar');
+                if (found == true) {
+                    return true;
+                }
             }
             return false;
         },
@@ -179,13 +203,29 @@ export default {
         mostrarEliminar(item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            console.log("nuevos permiso Eliminar "+permisosSubdirectorio.get(item.nombre.trim()));
-            const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Eliminar');
-            //console.log(found);
-            if ( found == true ) {
-                return true;
+            console.log(`Carpeta ${item.nombre} permisos ${permisosSubdirectorio.get(item.nombre.trim())} `);
+            if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
+                const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Eliminar');
+                if (found == true) {
+                    return true;
+                }
+            } else {
+                const padreActual = localStorage.getItem('padreActual');
+                const aux = permisosSubdirectorio.get(padreActual.trim());
+                const found = aux.includes('Eliminar');
+                if (found == true) {
+                    return true;
+                }
             }
             return false;
+        },
+
+        mostrarVista(item) {
+            return item.tipo != "Directorio" ? true : false;
+        },
+
+        verObservacion(item) {
+
         },
     },
 
@@ -211,5 +251,4 @@ export default {
 .linea:hover {
     text-decoration: underline;
 }
-
 </style>

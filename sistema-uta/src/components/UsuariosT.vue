@@ -118,8 +118,8 @@ export default {
             );
         },
 
-        asignarPermisos(){
-            this.cargarPermisosSubDir_User( {idUser:this.id} );
+        asignarPermisos:async function(){
+            await this.cargarPermisosSubDir_User( {idUser:this.id} );
             console.log("PERMISOS INIT");
             this.permisoInit={
                 IdRelacion:0,

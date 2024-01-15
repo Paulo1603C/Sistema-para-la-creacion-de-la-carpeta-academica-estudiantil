@@ -1,6 +1,6 @@
 <template>
     <v-row justify="center">
-        <v-dialog v-model="dialog" persistent width="800">
+        <v-dialog :retain-focus="false" v-model="dialog" persistent width="800">
             <v-card>
                 <v-card-title>
                     <span class="text-h5">Permisos Asignados</span>

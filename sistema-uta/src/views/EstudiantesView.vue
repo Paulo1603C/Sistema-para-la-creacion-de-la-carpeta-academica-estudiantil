@@ -176,7 +176,7 @@ export default {
             }
             const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
             localStorage.setItem('PermisosSubDirectorios', permission);
-            console.log(this.permisosDirectorios);
+            //console.log(this.permisosDirectorios);
         },
 
     },

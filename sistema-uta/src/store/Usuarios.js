@@ -71,7 +71,6 @@ export default {
           const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
           dispatch('cargarUsuarios');
         } else {
-          //console.log('La respuesta no es JSON:', data);
           dispatch('cargarUsuarios');
         }
       } catch (error) {

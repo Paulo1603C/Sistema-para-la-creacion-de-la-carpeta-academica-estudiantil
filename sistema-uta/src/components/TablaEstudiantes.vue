@@ -132,6 +132,7 @@ export default {
         },
 
         hacerAlgoAlHacerClic:async function(item) {
+            localStorage.removeItem('padreActual');
             this.setIdEstPlan(item.IdPlanPer);
             await this.cargarEstudinates_Plantillas( {idPlan:item.IdPlanPer} );
             this.setVentanaEst(false);

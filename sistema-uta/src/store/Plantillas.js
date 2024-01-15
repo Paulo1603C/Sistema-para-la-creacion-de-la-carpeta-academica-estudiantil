@@ -151,13 +151,11 @@ export default {
 
     //insetar carreras para los usaurios-> se pasa un arreglo;
     AgregarItemsSubDirectorios: async function ({ commit, dispatch }, datos) {
-      console.log("DAtos "+datos);
       var aux = 0;
       while (aux < datos.items.length) {
         try {
           const datosItem = new FormData();
           datosItem.append('NomSubDirectorio', datos.items[aux].toUpperCase());
-
           const setting = {
             method: 'POST',
             body: datosItem,
@@ -169,7 +167,6 @@ export default {
             const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
             dispatch('cargarPlantillas');
           } else {
-            //console.log('La respuesta no es JSON:', data);
             dispatch('cargarPlantillas');
           }
         } catch (error) {
@@ -187,7 +184,6 @@ export default {
           const datosItem = new FormData();
           datosItem.append('NomItem', datos.items[aux].toUpperCase());
           datosItem.append('IdPlan', idPlan);
-
           const setting = {
             method: 'POST',
             body: datosItem,
@@ -204,7 +200,6 @@ export default {
             const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
             dispatch('cargarPlantillas');
           } else {
-            //console.log('La respuesta no es JSON:', data);
             dispatch('cargarPlantillas');
           }
         } catch (error) {
