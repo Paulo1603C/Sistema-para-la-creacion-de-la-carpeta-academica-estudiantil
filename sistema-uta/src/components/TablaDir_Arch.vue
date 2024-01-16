@@ -1,5 +1,7 @@
 <template>
     <div>
+        <ObsArch :dialog="dialogObs"  @dialog="dialogObs = $event" ></ObsArch>
+
         <template>
             <v-card v-show="show">
                 <v-card-title>
@@ -9,7 +11,7 @@
                     </v-text-field>
                     <v-spacer></v-spacer>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" :search="search" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle" v-if="verificarPermisos(item)">
                             <td>
@@ -75,7 +77,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-
+import ObsArch from './ventanaModalObs.vue';
 
 export default {
     name: "TablaC",
@@ -86,16 +88,18 @@ export default {
         return {
             search: '',
             path: '',
+            search:'',
             selectedItems: [],
             carpetaSelecionada: {},
             rutaActual: '',
+            dialogObs:false,
         }
     },
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta']),
-        ...mapActions('Server_Archivos', ['descargarArchivo']),
+        ...mapActions('Server_Archivos', ['descargarArchivo','cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
 
         editarItem(item) {
@@ -221,16 +225,20 @@ export default {
         },
 
         mostrarVista(item) {
-            return item.tipo != "Directorio" ? true : false;
+            return item.tipo === 'Archivo' ? true : false;
         },
 
         verObservacion(item) {
-
+            this.dialogObs = true;
+            this.rutaNueva();
+            this.cargarObsArchivos( {rutaObs:this.path+item.nombre.trim()} );
+            console.log(this.path+item.nombre);
+            this.path='';
         },
     },
 
     components: {
-
+        ObsArch,
     },
 
     computed: {

@@ -13,7 +13,7 @@
                                 <input ref="fileInput" type="file" @change="handleFileChange" />
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Observación" v-model="ItemArchivo.observacion"></v-text-field>
+                                <v-text-field label="Observación" v-model="obsAux"></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -41,28 +41,34 @@ export default {
 
     props: {
         dialog: Boolean,
-        ItemArchivo: {},
+    },
+    
+    data() {
+        return {
+            ItemArchivo: {},
+            selectedFile: null,
+            obsAux: '',
+            path: '',
+        }
     },
 
-    data: () => ({
-        selectedFile: null,
-        path: '',
-    }),
+    created(){
+        //this.subirObsArchivo();
+    },
 
     methods: {
 
-        ...mapActions('Server_Archivos', ['crearArchivos']),
+        ...mapActions('Server_Archivos', ['crearArchivos','crearObsArchivos']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
 
-        agregar:async function() {
+        agregar: async function () {
             this.rutaNueva();
-            console.log("Datos Item", this.selectedFile.tmp_name);
-            console.log("Datos Ruta", this.path);
-            await this.crearArchivos({ ruta: this.path, archivo:this.selectedFile });
-            await this.cargarCarpetas( this.path );
+            await this.crearArchivos({ ruta: this.path, archivo: this.selectedFile });
+            await this.cargarCarpetas(this.path);
+            await this.crearObsArchivos({ruta:this.path+this.selectedFile.name , observacion:this.obsAux, idEstPer:this.idEst});
             this.$alertify.success("Archivo Insertado");
             this.cerrarDialog();
-            this.path='';
+            this.path = '';
         },
 
         cerrarDialog() {
@@ -89,6 +95,7 @@ export default {
     computed: {
         ...mapState('Dialogo', ['itemsBread']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
+        ...mapState('Estudiantes', ['dataEst','idEst']),
     },
 }
 </script>       

@@ -55,15 +55,19 @@ export default {
 
         agregar: async function () {
             try {
-                this.rutaNueva();
-                console.log( "CARGAR "+ this.path);
-                this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
-                this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
-                //await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
-                this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
-                await this.cargarCarpetas(this.path);
-                this.cerrarDialog();
-                this.path = '';
+                if ( this.ItemCarpeta.NomEst != "" ) {
+                    this.rutaNueva();
+                    //console.log("CARGAR " + this.path);
+                    await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
+                    await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
+                    //await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
+                    this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
+                    await this.cargarCarpetas(this.path);
+                    this.cerrarDialog();
+                    this.path = '';
+                }else{
+                    this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+                }
             } catch (error) {
                 console.error('Error al agregar estudiante:', error);
             }
@@ -89,7 +93,7 @@ export default {
                 partes2.pop();
                 let nuevaCadena2 = partes2.join('/');
                 //console.log(nuevaCadena2 +"/"+ row.NomCar+ "/"+ row.NomEst + " " + row.ApeEst+"/"+nomSub);
-                await this.crearSubCarpeta({ datos: row, path: nuevaCadena2+"/"+row.NomCar+ "/", nombre: nomSub });
+                await this.crearSubCarpeta({ datos: row, path: nuevaCadena2 + "/" + row.NomCar + "/", nombre: nomSub });
             }
         },
 

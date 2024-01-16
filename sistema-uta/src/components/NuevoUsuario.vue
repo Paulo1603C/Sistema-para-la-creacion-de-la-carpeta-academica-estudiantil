@@ -62,7 +62,7 @@ export default {
         dialog: Boolean,
         ItemUsuario: {},
     },
-    
+
     data: () => ({
     }),
 
@@ -82,11 +82,20 @@ export default {
 
         agregar: async function () {
             try {
-                await this.AgregarUsuario(this.ItemUsuario);
-                await this.AgregarUsuarioCarreras(this.ItemUsuario);
-                this.cerrarDialog();
-                this.limpiarCampos();
-                this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+                if (this.ItemUsuario.nombre !== "" &&
+                    this.ItemUsuario.apellido !== "" &&
+                    this.ItemUsuario.correo !== "" &&
+                    this.ItemUsuario.contraseña  !== "" &&
+                    this.ItemUsuario.rol  > 0 &&
+                    this.ItemUsuario.carreras  > 0 ) {
+                    await this.AgregarUsuario(this.ItemUsuario);
+                    await this.AgregarUsuarioCarreras(this.ItemUsuario);
+                    this.cerrarDialog();
+                    this.limpiarCampos();
+                    this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+                } else {
+                    this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+                }
             } catch (error) {
                 console.error('Error al agregar usuario:', error);
             }

@@ -67,9 +67,9 @@ export default {
             try {
                 const datosCarpeta = new FormData();
                 const rutaC = path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase();
-                //console.log('RUTAC'+rutaC);
+                console.log('RUTAC'+rutaC);
                 const aux = rutaC.indexOf('.');
-                //console.log('Aux'+aux);
+                console.log('Aux'+aux);
                 console.log('Aux '+datos.ApeEst);
                 if (aux < 0) {
                     if( datos.ApeEst == '' ){
@@ -83,9 +83,9 @@ export default {
                     datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
                     datosCarpeta.append('nombreDirectorio', oldPath);
                 }
-                //console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                //console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                //console.log('OLD ' + oldPath);
+                console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
+                console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
+                console.log('OLD ' + oldPath);
 
                 const setting = {
                     method: 'POST',

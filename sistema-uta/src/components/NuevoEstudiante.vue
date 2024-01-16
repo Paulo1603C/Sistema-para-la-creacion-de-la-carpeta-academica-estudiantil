@@ -51,7 +51,7 @@ export default {
     props: {
         dialog: Boolean,
         ItemEstudiante: {},
-        auxItemsPlan:[],
+        auxItemsPlan: [],
     },
 
     data: () => ({
@@ -66,43 +66,48 @@ export default {
     methods: {
         ...mapActions('Carreras', ['cargarCarreras']),
         ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['crearCarpeta','crearSubCarpeta']),
-        ...mapActions('Plantillas', ['cargarPlantillas','cargarItemsPlantillas']),
+        ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
+        ...mapActions('Plantillas', ['cargarPlantillas', 'cargarItemsPlantillas']),
         ...mapMutations('Dialogo', ['setDialogFolder']),
 
         agregar: async function () {
             try {
-                //console.log(this.ItemEstudiante);
-                this.rutaNueva();
-                console.log(this.path);
-                const storedUser = JSON.parse(localStorage.getItem('user'));
-                this.idUser = storedUser.IdUser;
-                //console.log(this.ItemEstudiante);
-                if(this.itemsBread.length<3){
-                    await this.AgregarEstudiante(this.ItemEstudiante);
-                    await this.crearCarpeta({datos:this.ItemEstudiante, path:this.path, oldPath:this.rutaAnterior });
-                    if( this.ItemEstudiante.IdEst == 0 ){
-                        await this.crearSubDirectorios( this.ItemEstudiante, this.path );
+                if (this.ItemEstudiante.Cedula !== "" &&
+                    this.ItemEstudiante.NomEst !== "" &&
+                    this.ItemEstudiante.ApeEst !== "" &&
+                    this.ItemEstudiante.idPlanPer > 0) {
+                    this.rutaNueva();
+                    console.log(this.path);
+                    const storedUser = JSON.parse(localStorage.getItem('user'));
+                    this.idUser = storedUser.IdUser;
+                    if (this.itemsBread.length < 3) {
+                        await this.AgregarEstudiante(this.ItemEstudiante);
+                        await this.crearCarpeta({ datos: this.ItemEstudiante, path: this.path, oldPath: this.rutaAnterior });
+                        if (this.ItemEstudiante.IdEst == 0) {
+                            await this.crearSubDirectorios(this.ItemEstudiante, this.path);
+                        }
+                        await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
+                    } else {
+                        await this.crearCarpeta({ datos: this.ItemEstudiante, path: this.path, oldPath: this.rutaAnterior });
+                        await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     }
-                    await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser});
-                }else{
-                    await this.crearCarpeta({datos:this.ItemEstudiante, path:this.path, oldPath:this.rutaAnterior });
-                    await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
-                }
                     this.$alertify.success(this.ItemEstudiante.IdEst == 0 ? "Estudiantre creado" : "Estudiante Actualizado");
-                this.cerrarDialog();
-                this.path='';
+                    this.cerrarDialog();
+                    this.path = '';
+                } else {
+                    this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+                }
             } catch (error) {
                 console.error('Error al agregar estudiante:', error);
             }
         },
 
-        crearSubDirectorios:async function(datosEst, ruta){
+        crearSubDirectorios: async function (datosEst, ruta) {
             await this.cargarItemsPlantillas(datosEst);
             const cadenaDeItems = this.getItemsPlantillas[0].Items;
             const auxItemsPlan = cadenaDeItems.split(',');
-            for( let i=0; i< auxItemsPlan.length; i++ ){
-                await this.crearSubCarpeta({datos:datosEst, path:ruta, nombre:auxItemsPlan[i] });
+            for (let i = 0; i < auxItemsPlan.length; i++) {
+                await this.crearSubCarpeta({ datos: datosEst, path: ruta, nombre: auxItemsPlan[i] });
             }
         },
 
@@ -121,7 +126,7 @@ export default {
     },
     computed: {
         ...mapGetters('Carreras', ['getCarreras']),
-        ...mapGetters('Plantillas', ['getPlantillas','getItemsPlantillas']),
+        ...mapGetters('Plantillas', ['getPlantillas', 'getItemsPlantillas']),
         ...mapState('Dialogo', ['itemsBread']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),

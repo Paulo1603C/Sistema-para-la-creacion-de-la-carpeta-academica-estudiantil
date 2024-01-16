@@ -165,9 +165,9 @@ export default {
           const json = await data.text();
           if (json.startsWith('{')) {
             const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-            dispatch('cargarPlantillas');
+            //dispatch('cargarPlantillas');
           } else {
-            dispatch('cargarPlantillas');
+            //dispatch('cargarPlantillas');
           }
         } catch (error) {
           console.error('Error en la solicitud:', error);
@@ -198,9 +198,9 @@ export default {
           const json = await data.text();
           if (json.startsWith('{')) {
             const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-            dispatch('cargarPlantillas');
+            //dispatch('cargarPlantillas');
           } else {
-            dispatch('cargarPlantillas');
+            //dispatch('cargarPlantillas');
           }
         } catch (error) {
           console.error('Error en la solicitud:', error);

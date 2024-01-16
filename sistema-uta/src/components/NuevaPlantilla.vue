@@ -69,28 +69,32 @@ export default {
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
-        ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios']),
+        ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios', 'cargarPlantillas']),
         ...mapActions('SubCarpetas', ['actualizarSubCapeta']),
 
         agregar: async function () {
-            console.log(this.ItemPlantilla);
-            await this.AgregarPlantilla(this.ItemPlantilla);
-            await this.AgregarItemsSubDirectorios(this.ItemPlantilla);
-            await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: '' });
-            this.$alertify.success(this.ItemPlantilla.idPlan == 0 ? "Plantilla creada" : "Plantilla Actualizada");
-            this.cerrarDialog();
+            if ( this.ItemPlantilla.nomPlan != "" || this.ItemPlantilla.items > 0 ) {
+                await this.AgregarPlantilla(this.ItemPlantilla);
+                await this.AgregarItemsSubDirectorios(this.ItemPlantilla);
+                await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: '' });
+                this.$alertify.success(this.ItemPlantilla.idPlan == 0 ? "Plantilla creada" : "Plantilla Actualizada");
+                this.cargarPlantillas();
+                this.cerrarDialog();
+            }else{
+                this.$alertify.success("No existen datos");
+            }
         },
 
         cerrarDialog() {
             this.setDialogPlantilla(false);
         },
 
-        agrgarItem:async function() {
+        agrgarItem: async function () {
             // Comprobar si el valor en el campo de texto ha sido modificado
             if (this.aux != this.item) {
-                if(this.ItemPlantilla.idPlan != 0){
+                if (this.ItemPlantilla.idPlan != 0) {
                     console.log("actualizar valor en base de datos");
-                    await this.actualizarSubCapeta({  nomItem:this.aux, nuevoItem:this.item });
+                    await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
                 }
                 // Buscar y eliminar el valor antiguo en la lista de items
                 const foundItemIndex = this.ItemPlantilla.items.indexOf(this.aux);
@@ -101,6 +105,7 @@ export default {
                 this.ItemPlantilla.items.push(this.item);
             }
             console.log(this.ItemPlantilla.items);
+
             this.item = ''; // Limpiar el campo de texto después de agregar
         },
 

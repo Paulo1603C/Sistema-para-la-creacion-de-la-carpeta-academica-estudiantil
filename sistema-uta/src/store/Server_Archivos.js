@@ -8,12 +8,18 @@ export default {
 
     state: {
         listArchivos: null,
+        dataObsArch: {},
+        observacion: '',
 
     },
 
     getters: {
         getArchivos(state) {
             return state.listArchivos;
+        },
+
+        getObs(state) {
+            return state.observacion;
         },
     },
 
@@ -22,6 +28,13 @@ export default {
             state.listArchivos = Archivos;
         },
 
+        cargarObs(state, sms) {
+            state.observacion = sms;
+        },
+
+        setObsArch(state, value) {
+            this.state = value;
+        }
     },
 
     actions: {
@@ -34,8 +47,32 @@ export default {
                 const url = '';
                 const data = await fetch(url, setting);
                 const json = await data.json();
-                commit('llenarlista', json);
+                commit('cargarObs', json);
 
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+
+        },
+
+        cargarObsArchivos: async function ({ commit }, { rutaObs }) {
+
+            try {
+                const datosEST = new FormData();
+                datosEST.append('rutaObs', rutaObs);
+                const setting = {
+                    method: 'POST',
+                    body: datosEST,
+                };
+                const url = 'http://localhost/Apis-UTA/obsArchSelect.php';
+                const data = await fetch(url, setting);
+                const json = await data.json();
+
+                if (data.ok) {
+                    commit('cargarObs', json);
+                } else {
+                    commit('cargarObs', 'La respuesta no es un JSON válido:');
+                }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
             }
@@ -67,16 +104,44 @@ export default {
 
         },
 
-        descargarArchivo: async function ({ commit }, {ruta, nombre}) {
+        crearObsArchivos: async function ({ commit, dispatch }, { ruta, observacion, idEstPer }) {
             try {
-                console.log('RUTA '+ruta);
-                console.log('NOMBRE00 '+nombre);
-                const datosArchivos = new FormData();
-                datosArchivos.append('rutaRemota', ruta );
-                
+                console.log(observacion);
+                console.log(ruta);
+                const datosObsArchivos = new FormData();
+                datosObsArchivos.append('RutaArchivo', ruta);
+                datosObsArchivos.append('Observacion', observacion);
+                datosObsArchivos.append('IdEstPer', idEstPer);
+
                 const setting = {
                     method: 'POST',
-                    body:datosArchivos,
+                    body: datosObsArchivos,
+                }
+                const url = "http://localhost/Apis-UTA/insertarObsArch.php";
+                const data = await fetch(url, setting);
+                const json = await data.text();
+                if (json.startsWith('{')) {
+                    const jsonData = JSON.parse(json);
+                    //dispatch('cargarArchivos');
+                } else {
+                    //dispatch('cargarArchivos');
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+
+        },
+
+        descargarArchivo: async function ({ commit }, { ruta, nombre }) {
+            try {
+                console.log('RUTA ' + ruta);
+                console.log('NOMBRE00 ' + nombre);
+                const datosArchivos = new FormData();
+                datosArchivos.append('rutaRemota', ruta);
+
+                const setting = {
+                    method: 'POST',
+                    body: datosArchivos,
                 }
                 const url = "http://localhost/Apis-UTA/descargarDir_Arch.php";
                 const response = await fetch(url, setting);

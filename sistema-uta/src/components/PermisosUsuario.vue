@@ -8,7 +8,7 @@
 
                 <v-card-text>
                     <v-data-table style="max-height:200px; overflow-y: auto;" dense :headers="Cabecera"
-                        :items="getPermisosSubDir_User" hide-default-footer >
+                        :items="getPermisosSubDir_User" hide-default-footer>
                         <template v-slot:item="{ item }">
                             <tr class="myStyle">
                                 <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
@@ -95,23 +95,28 @@ export default {
         ...mapActions('Permisos', ['cargarPermisos']),
         ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
         ...mapMutations('Dialogo', ['setDialogPermisos']),
-        ...mapActions('Permisos', ['AgregarUsuarioPermisos','eliminarPermisosSub_User','cargarPermisosSubDir_User']),
+        ...mapActions('Permisos', ['AgregarUsuarioPermisos', 'eliminarPermisosSub_User', 'cargarPermisosSubDir_User']),
 
         agregar: async function () {
-            console.log('Gaurdado');
-            console.log(this.PermisosUsario);
-            await this.AgregarUsuarioPermisos(this.PermisosUsario);
-            this.cerrarDialog();
-            this.$alertify.success(this.PermisosUsario.IdRelacion == 0 ? "Permisos Insertados" : "Permisos Actualizados");
+            if ( this.PermisosUsario.IdItemSubPer  > 0 &&
+                    this.PermisosUsario.IdPerPer  > 0 ) {
+                console.log('Gaurdado');
+                console.log(this.PermisosUsario);
+                await this.AgregarUsuarioPermisos(this.PermisosUsario);
+                this.cerrarDialog();
+                this.$alertify.success(this.PermisosUsario.IdRelacion == 0 ? "Permisos Insertados" : "Permisos Actualizados");
+            } else {
+                this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+            }
         },
 
         cerrarDialog() {
             this.setDialogPermisos(false);
         },
 
-        eliminarItem:async function(item){
-            await this.eliminarPermisosSub_User( {idUser:item.IdUser, idPer:item.IdPer, idItem:item.IdItem} );
-            await this.cargarPermisosSubDir_User( { idUser:item.IdUser } );
+        eliminarItem: async function (item) {
+            await this.eliminarPermisosSub_User({ idUser: item.IdUser, idPer: item.IdPer, idItem: item.IdItem });
+            await this.cargarPermisosSubDir_User({ idUser: item.IdUser });
             this.$alertify.success('Permiso ' + item.NomPer + ' eliminado para ' + item.NomItem);
         },
 

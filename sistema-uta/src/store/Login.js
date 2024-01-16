@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
+import { baseURL } from './config';
 
 export default {
     namespaced: true,
@@ -40,7 +41,8 @@ export default {
                     method: 'POST',
                     body: datosUser,
                 }
-                const url = "http://localhost/Apis-UTA/Login.php";
+                //const url = "http://localhost/Apis-UTA/Login.php";
+                const url = `${baseURL}Login.php`;
                 const data = await fetch(url, setting)
                 if (data.ok) {
                     const json = await data.json();

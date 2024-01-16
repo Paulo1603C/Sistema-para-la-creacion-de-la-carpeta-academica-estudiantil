@@ -2,7 +2,7 @@
     <div>
         <NuevoEstudiante :dialog="dialogFolder" :ItemEstudiante="dataEst"></NuevoEstudiante>
         <NuevaCarpeta :dialog="dailogCarpeta" :ItemCarpeta="dataCarpeta"></NuevaCarpeta>
-        <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="itemSeleccionado"></SubirArchivo>
+        <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="dataObsArch"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
         <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataPlan"></NuevaPlantilla>
         <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
@@ -54,7 +54,7 @@ export default {
             fecha: "",
             path: '',
             idUser: 0,
-            nomUser:'',
+            nomUser: '',
             showMenu: false,
             dialogFile: false,
             estudianteSelect: {},
@@ -72,8 +72,9 @@ export default {
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapMutations('Plantillas', ['setPlan']),
         ...mapMutations('Server_Carpetas', ['setCarpeta']),
+        ...mapMutations('Server_Archivos', ['setObsArch']),
         ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['crearCarpeta','crearSubCarpeta']),
+        ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
         ...mapActions('Plantillas', ['cargarItemsPlantillas']),
 
         optionSelected(option) {
@@ -102,8 +103,8 @@ export default {
 
         nuevaCarpeta() {
             const storedUser = JSON.parse(localStorage.getItem('user'));
-            let nomUser = storedUser.NomUser+' '+storedUser.ApeUser;
-            console.log(storedUser.NomUser+' '+storedUser.ApeUser);
+            let nomUser = storedUser.NomUser + ' ' + storedUser.ApeUser;
+            console.log(storedUser.NomUser + ' ' + storedUser.ApeUser);
             console.log(nomUser);
 
             if (this.tablaEst == true) {
@@ -118,7 +119,7 @@ export default {
                     IdPlanPer: 0,
                     NomModificador: nomUser,
                 }
-                console.log("Item Est"+this.estudianteSelect);
+                console.log("Item Est" + this.estudianteSelect);
                 this.setEst(this.estudianteSelect);
                 this.setDialogFolder(true);
             } else {
@@ -170,40 +171,50 @@ export default {
             this.rutaNueva();
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.idUser = storedUser.IdUser;
-            this.nomUser = storedUser.NomUser +' ' +storedUser.ApeUser;
+            this.nomUser = storedUser.NomUser + ' ' + storedUser.ApeUser;
             let input = document.getElementById("archivoExcel");
-            readXlsFile(input.files[0]).then( async (rows) => {
-                this.items = rows;
-                this.fechaActual();
-                for (let i = 1; i < this.items.length; i++) {
-                    const row = this.items[i];
-                    console.log(row);
-                    const datos = {
-                        IdEst: row[0],
-                        NomEst: row[1],
-                        ApeEst: row[2],
-                        Cedula: row[3],
-                        Fecha: this.fecha,
-                        NomModificador: this.nomUser,
-                        NomCar: this.idCarreraSelect,
-                        idPlanPer: row[4],
-                    };
-                    await this.AgregarEstudiante(datos);
-                    await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
-                    await this.crearSubDirectorios( datos, this.path );
-                }
-                await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
-                this.$alertify.success("Estudiantes Insertados");
-                input.value = null;
-            });
+            console.log('Nuevo importacion');
+            console.log('INPUT ' + input.files[0].name);
+            const fileName = input.files[0].name;
+            const fileExtension = fileName.split('.').pop();
+            if (fileExtension.trim() == "xlsx") {
+
+                readXlsFile(input.files[0]).then(async (rows) => {
+                    this.items = rows;
+                    this.fechaActual();
+                    for (let i = 1; i < this.items.length; i++) {
+                        const row = this.items[i];
+                        console.log(row);
+                        const datos = {
+                            IdEst: row[0],
+                            NomEst: row[1],
+                            ApeEst: row[2],
+                            Cedula: row[3],
+                            Fecha: this.fecha,
+                            NomModificador: this.nomUser,
+                            NomCar: this.idCarreraSelect,
+                            idPlanPer: row[4],
+                        };
+                        await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
+                        await this.AgregarEstudiante(datos);
+                        console.log('Datos ' + datos.NomEst);
+                        console.log('DaPATH ' + this.path);
+                        console.log('AOLD ' + this.rutaAnterior);
+                        await this.crearSubDirectorios(datos, this.path);
+                    }
+                    await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
+                    this.$alertify.success("Estudiantes Insertados");
+                    input.value = null;
+                });
+            }
         },
 
-        crearSubDirectorios:async function(datosEst, ruta){
+        crearSubDirectorios: async function (datosEst, ruta) {
             await this.cargarItemsPlantillas(datosEst);
             const cadenaDeItems = this.getItemsPlantillas[0].Items;
             const auxItemsPlan = cadenaDeItems.split(',');
-            for( let i=0; i< auxItemsPlan.length; i++ ){
-                await this.crearSubCarpeta({datos:datosEst, path:ruta, nombre:auxItemsPlan[i] });
+            for (let i = 0; i < auxItemsPlan.length; i++) {
+                await this.crearSubCarpeta({ datos: datosEst, path: ruta, nombre: auxItemsPlan[i] });
             }
         },
 
@@ -231,13 +242,14 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta','itemsBread']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta', 'itemsBread']),
         ...mapState('Usuarios', ['dataUsuario']),
-        ...mapState('Estudiantes', ['dataEst']),
+        ...mapState('Estudiantes', ['dataEst','idEst']),
         ...mapState('Plantillas', ['dataPlan']),
         ...mapState('Carreras', ['idCarreraSelect']),
-        ...mapState('Server_Carpetas', ['dataCarpeta','rutaAnterior']),
-        ...mapGetters('Plantillas', ['getPlantillas','getItemsPlantillas']),
+        ...mapState('Server_Carpetas', ['dataCarpeta', 'rutaAnterior']),
+        ...mapState('Server_Archivos', ['dataObsArch']),
+        ...mapGetters('Plantillas', ['getPlantillas', 'getItemsPlantillas']),
     }
 };
 

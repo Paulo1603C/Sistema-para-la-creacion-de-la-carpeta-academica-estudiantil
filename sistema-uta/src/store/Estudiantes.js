@@ -10,6 +10,9 @@ export default {
     Items: [],
     dataEst: {},
 
+    //almacena el id del usario para insertar so obs
+    idEst:'',
+
   },
   getters: {
     getItems(state) {
@@ -26,22 +29,18 @@ export default {
       state.dataEst = data;
     },
 
+    setIdEst(state, data) {
+      state.idEst = data;
+    },
+
   },
   actions: {
     cargarEstudiantes: async function ({ commit,  rootState }, { idCar,idUser }) {
-      // Acceder a idCarreraSelect del módulo carreras
-      /*const idCarrera = rootState.carreras.idCarreraSelect;
-      console.log('idCarreraSelect:', this.idCarrera);*/
 
       try {
         const datosEST = new FormData();
         datosEST.append('IdUser', idUser);
         datosEST.append('IdCar', idCar);
-
-        //console.log(idUser);
-        //console.log(this.idCar);
-
-
         const setting = {
           method: 'POST',
           body: datosEST,

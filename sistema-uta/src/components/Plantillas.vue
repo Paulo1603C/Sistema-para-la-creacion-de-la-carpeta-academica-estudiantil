@@ -10,7 +10,7 @@
             </v-card-title>
 
             <v-card-actions>
-                <v-btn color="error darken-2" @click="eliminar">
+                <v-btn color="error darken-2" @click="eliminar" style="display: none;">
                     <template>
                         <v-icon>mdi-delete</v-icon>
                     </template>
