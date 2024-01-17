@@ -141,24 +141,32 @@ export default {
             if (this.verificarSiPadre(item)) {
                 localStorage.setItem('padreActual', item.nombre.trim());
             }
-            //console.log("Item selected" + item.nombre);
-            this.setBreadcrumbs(item.nombre);
+            this.verificarSiArchivo(item);
             this.rutaNueva();
             console.log(this.ruta);
             this.cargarCarpetas(this.path);
             this.path = '';
         },
+        
+        verificarSiArchivo(item){
+            if (item.tipo === 'Archivo') {
+                this.rutaNueva();
+                this.descargarItem(this.path, item);
+                this.path='';
+            }else{
+                this.setBreadcrumbs(item.nombre);
+            }
+        },
 
-        descargarItem: async function (item, ruta) {
+        descargarItem: async function ( ruta, item) {
             //this.rutaNueva();
-            console.log(item.nombre);
-            console.log(ruta);
+            console.log(ruta+item.nombre);
             await this.descargarArchivo({ ruta: ruta + item.nombre, nombre: item.nombre });
             this.$alertify.success('Archivo Descargado');
             //this.path = '';
         },
 
-        descargarDirectorio: async function (item, ruta) {
+        descargarDirectorio: async function ( ruta, item ) {
             //this.rutaNueva();
             console.log(item.nombre);
             console.log(item);
@@ -179,9 +187,9 @@ export default {
         descargarDatos(item) {
             this.rutaNueva();
             if (item.tipo === 'Archivo') {
-                this.descargarItem(item, this.path);
+                this.descargarItem(this.path, item);
             } else {
-                this.descargarDirectorio(item, this.path);
+                this.descargarDirectorio( this.path, item );
             }
             this.path = '';
 

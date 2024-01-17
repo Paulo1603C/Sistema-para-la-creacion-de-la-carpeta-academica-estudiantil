@@ -81,7 +81,7 @@ export default {
             this.setVentanaCarreras(false);
             setTimeout(() => {
                 this.setVentanaEst(true);
-            }, 3000);
+            }, 6000);
         },
 
         descargarDirectorio: async function (item) {
