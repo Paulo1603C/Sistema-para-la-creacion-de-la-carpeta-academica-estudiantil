@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ObsArch :dialog="dialogObs"  @dialog="dialogObs = $event" ></ObsArch>
+        <ObsArch :dialog="dialogObs" @dialog="dialogObs = $event"></ObsArch>
 
         <template>
             <v-card v-show="show">
@@ -10,8 +10,12 @@
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
                     </v-text-field>
                     <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="descargarAll()">Descargar Todo
+                        <v-icon right>mdi-menu-down</v-icon>
+                    </v-btn>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" :search="search" class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" :search="search"
+                    class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle" v-if="verificarPermisos(item)">
                             <td>
@@ -47,7 +51,7 @@
                                 </v-tooltip>
                                 <v-tooltip bottom style="margin-right: 15px;">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="30" @click.stop="descargarItem(item)"
+                                        <v-icon color="black darken-2" size="30" @click.stop="descargarDatos(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-download
                                         </v-icon>
@@ -88,18 +92,18 @@ export default {
         return {
             search: '',
             path: '',
-            search:'',
+            search: '',
             selectedItems: [],
             carpetaSelecionada: {},
             rutaActual: '',
-            dialogObs:false,
+            dialogObs: false,
         }
     },
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta']),
-        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta']),
-        ...mapActions('Server_Archivos', ['descargarArchivo','cargarObsArchivos']),
+        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
+        ...mapActions('Server_Archivos', ['descargarArchivo', 'cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
 
         editarItem(item) {
@@ -145,13 +149,42 @@ export default {
             this.path = '';
         },
 
-        descargarItem: async function (item) {
-            this.rutaNueva();
+        descargarItem: async function (item, ruta) {
+            //this.rutaNueva();
             console.log(item.nombre);
-            console.log(this.path);
-            await this.descargarArchivo({ ruta: this.path + item.nombre, nombre: item.nombre });
+            console.log(ruta);
+            await this.descargarArchivo({ ruta: ruta + item.nombre, nombre: item.nombre });
             this.$alertify.success('Archivo Descargado');
+            //this.path = '';
+        },
+
+        descargarDirectorio: async function (item, ruta) {
+            //this.rutaNueva();
+            console.log(item.nombre);
+            console.log(item);
+            await this.descargarCarpeta({ ruta: ruta, nombre: item.nombre });
+            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+            //this.path = '';
+        },
+
+
+        descargarAll: async function () {
+            this.rutaNueva();
+            const nom = '';
+            await this.descargarCarpeta({ ruta: this.path, nombre: nom });
+            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
             this.path = '';
+        },
+
+        descargarDatos(item) {
+            this.rutaNueva();
+            if (item.tipo === 'Archivo') {
+                this.descargarItem(item, this.path);
+            } else {
+                this.descargarDirectorio(item, this.path);
+            }
+            this.path = '';
+
         },
 
         rutaNueva() {
@@ -231,10 +264,11 @@ export default {
         verObservacion(item) {
             this.dialogObs = true;
             this.rutaNueva();
-            this.cargarObsArchivos( {rutaObs:this.path+item.nombre.trim()} );
-            console.log(this.path+item.nombre);
-            this.path='';
+            this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
+            console.log(this.path + item.nombre);
+            this.path = '';
         },
+
     },
 
     components: {

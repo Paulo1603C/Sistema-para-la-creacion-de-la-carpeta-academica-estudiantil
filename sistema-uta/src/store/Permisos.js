@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default {
   namespaced: true,
 
@@ -60,7 +60,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = 'http://localhost/Apis-UTA/permisos.php';
+        const url = `${baseURL}Apis-UTA/permisos.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarPermisos', json);
@@ -79,7 +79,7 @@ export default {
           method: 'POST',
           body: datosPerDir,
         }
-        const url = 'http://localhost/Apis-UTA/permisosDirectorios.php';
+        const url = `${baseURL}Apis-UTA/permisosDirectorios.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarPermisosDirectorios', json);
@@ -97,7 +97,7 @@ export default {
           method: 'POST',
           body: datosPerDir,
         }
-        const url = 'http://localhost/Apis-UTA/permisosSubDirectorios_User.php';
+        const url = `${baseURL}Apis-UTA/permisosSubDirectorios_User.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarPermisosSubDir_User', json);
@@ -122,9 +122,9 @@ export default {
           }
           var url = "";
           if (datos.IdRelacion == 0) {
-            url = 'http://localhost/Apis-UTA/insertarPermisosUser.php';
+            url = `${baseURL}Apis-UTA/insertarPermisosUser.php`;
           } else {
-            url = 'http://localhost/Apis-UTA/actualizarPermisosUser.php';
+            url = `${baseURL}Apis-UTA/actualizarPermisosUser.php`;
           }
           const data = await fetch(url, setting);
           const json = await data.text();
@@ -153,7 +153,7 @@ export default {
           method: 'POST',
           body: datosPermisos,
         }
-        const url = "http://localhost/Apis-UTA/eliminarPermisosSub_User.php";
+        const url = `${baseURL}Apis-UTA/eliminarPermisosSub_User.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {

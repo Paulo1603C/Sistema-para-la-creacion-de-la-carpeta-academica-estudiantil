@@ -12,6 +12,7 @@ export default {
     dailogPlantilla:false, // Estado del diálogo
     dailogCarpeta:false, // Estado del diálogo
     dailogPermisos:false, // Estado del diálogo
+    dailogProgres:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
@@ -39,6 +40,10 @@ export default {
 
     setDialogPermisos(state, value) {
       state.dailogPermisos = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDialogProgres(state, value) {
+      state.dailogProgres = value; // Mutación para actualizar el estado del diálogo
     },
 
     setVentanaEst(state, value) {

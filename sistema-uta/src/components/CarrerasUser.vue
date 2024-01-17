@@ -8,6 +8,9 @@
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
                     </v-text-field>-->
                     <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="descargarAll()">Descargar Todo
+                        <v-icon right>mdi-menu-down</v-icon>
+                    </v-btn>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items" :items-per-page="5">
                     <template v-slot:item="{ item }">
@@ -18,7 +21,7 @@
                             <td>
                                 <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="30" @click.stop="descargarItem(item)"
+                                        <v-icon color="black darken-2" size="30" @click.stop="descargarDirectorio(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-download
                                         </v-icon>
@@ -62,6 +65,7 @@ export default {
         //...mapActions('Server_Carpetas', ['cargarCarpetas']),
         ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
+        ...mapActions('Server_Carpetas', ['descargarCarpeta']),
 
         abrirVentana(item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
@@ -80,7 +84,20 @@ export default {
             }, 3000);
         },
 
+        descargarDirectorio: async function (item) {
+            this.rutaNueva();
+            await this.descargarCarpeta({ ruta: this.path, nombre: item.nomCar  });
+            this.$alertify.success('Archivo Descargado en unidad /C:');
+            this.path = '';
+        },
 
+        descargarAll: async function () {
+            //this.rutaNueva();
+            const nom = '';
+            await this.descargarCarpeta({ ruta: this.itemsBread[0], nombre: nom });
+            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+            this.path = '';
+        },
 
         obtnerIdCarrera() {
             switch (this.itemsBread[1]) {
@@ -117,6 +134,15 @@ export default {
             const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
             localStorage.setItem('PermisosSubDirectorios', permission);
             console.log(this.permisosDirectorios);
+        },
+
+        rutaNueva() {
+            //metodo para obtener la ruta
+            for (let i = 0; i < this.itemsBread.length; i++) {
+                console.log(this.itemsBread[i]);
+                this.path += this.itemsBread[i] + "/";
+            }
+            //console.log(this.path);
         },
 
     },

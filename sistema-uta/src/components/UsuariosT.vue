@@ -82,10 +82,12 @@ export default {
         ...mapMutations('Permisos', ['setPermisosUsuario']),
         ...mapActions('Usuarios', ['eliminarUsuario']),
         ...mapActions('Permisos', ['cargarPermisosSubDir_User']),
+        ...mapActions('Carreras', ['cargarCarrerasUser']),
 
-        editar(item) {
+        editar:async function(item) {
             this.setDialog(true);
-            // Asigna los datos del card a la variable itemSeleccionadoUsuario
+            //console.log("ID user "+this.id);
+            await this.cargarCarrerasUser(this.id);
             this.itemSeleccionadoUsuario = {
                 id: this.id,
                 correo: this.correo,
@@ -93,12 +95,22 @@ export default {
                 nombre: this.nombre,
                 apellido: this.apellido,
                 rol: this.idRol,
-                carreras: [this.idCarreras[0], this.idCarreras[1], this.idCarreras[2], this.idCarreras[3], this.idCarreras[4],],
+                carreras: this.devolverCarreras(),
                 //permisos: [this.idPermisos[0],this.idPermisos[1],this.idPermisos[2],this.idPermisos[3],this.idPermisos[5],],
                 urlDw: this.urlDw,
             };
-            console.log('Datos del card seleccionado:', this.itemSeleccionadoUsuario);
+            //console.log('Datos del card seleccionado:', this.devolverCarreras());
             this.setUser(this.itemSeleccionadoUsuario);
+        },
+
+        devolverCarreras(){
+            const carreras = [];
+            for( let i=0;i<this.idCarreras.length;i++ ){
+                if( this.idCarreras[i] !== ',' ){
+                    carreras.push(this.idCarreras[i]);
+                }
+            }
+            return carreras;
         },
 
         eliminar() {

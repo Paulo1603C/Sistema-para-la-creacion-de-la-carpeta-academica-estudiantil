@@ -8,6 +8,9 @@
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
                     </v-text-field>
                     <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="descargarAll()">Descargar Todo
+                        <v-icon right>mdi-menu-down</v-icon>
+                    </v-btn>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" :search="search"  class="elevation-1">
                     <template v-slot:item="{ item }">
@@ -125,10 +128,16 @@ export default {
 
         descargarItem: async function (item) {
             this.rutaNueva();
-            //console.log(item.nombre);
-            //console.log(this.path);
             await this.descargarCarpeta({ ruta: this.path, nombre: item.NomEst + " " + item.ApeEst  });
-            this.$alertify.success('Archivo Descargado en unidad /C:');
+            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+            this.path = '';
+        },
+
+        descargarAll: async function () {
+            this.rutaNueva();
+            const nom = '';
+            await this.descargarCarpeta({ ruta: this.path, nombre: nom });
+            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
             this.path = '';
         },
 
@@ -150,10 +159,6 @@ export default {
         handleDirChange(event) {
             // Obtener la ruta seleccionada por el usuario
             this.customDir = this.$refs.customDirInput.files[0]?.path;
-        },
-
-        downloadDirectory() {
-            console.log(this.customDir);
         },
 
         rutaNueva() {

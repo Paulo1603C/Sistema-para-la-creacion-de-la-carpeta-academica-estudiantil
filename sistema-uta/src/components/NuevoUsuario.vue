@@ -75,31 +75,71 @@ export default {
     methods: {
 
         ...mapActions('Carreras', ['cargarCarreras']),
-        ...mapActions('Usuarios', ['AgregarUsuario', 'AgregarUsuarioCarreras']),
+        ...mapActions('Usuarios', ['AgregarUsuario', 'AgregarUsuarioCarreras', 'eliminarCarrerasSecre']),
         ...mapActions('Roles', ['cargarRoles']),
         ...mapActions('Permisos', ['cargarPermisos']),
         ...mapMutations('Dialogo', ['setDialog']),
 
         agregar: async function () {
+
             try {
                 if (this.ItemUsuario.nombre !== "" &&
                     this.ItemUsuario.apellido !== "" &&
                     this.ItemUsuario.correo !== "" &&
-                    this.ItemUsuario.contraseña  !== "" &&
-                    this.ItemUsuario.rol  > 0 &&
-                    this.ItemUsuario.carreras  > 0 ) {
+                    this.ItemUsuario.contraseña !== "") {
                     await this.AgregarUsuario(this.ItemUsuario);
-                    await this.AgregarUsuarioCarreras(this.ItemUsuario);
+                    await this.actualizarCarrerasUsuario();
+                    //await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: this.ItemUsuario.carreras });
                     this.cerrarDialog();
                     this.limpiarCampos();
                     this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
-                } else {
-                    this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+                }else{
+                    this.$alertify.error( "Complete los campos requeridos");
+
                 }
             } catch (error) {
                 console.error('Error al agregar usuario:', error);
             }
         },
+
+        devolverCarreras() {
+            const carreras = [];
+            for (let i = 0; i < this.getCarrerasUser.length; i++) {
+                carreras.push(this.getCarrerasUser[i].idCar);
+            }
+            return carreras;
+        },
+
+        actualizarCarrerasUsuario: async function () {
+            const carrerasAntiguas = this.devolverCarreras();
+            const carrerasNuevas = this.ItemUsuario.carreras;
+
+            // Identificar carreras que deben eliminarse
+            const carrerasEliminar = carrerasAntiguas.filter(carrera => !carrerasNuevas.includes(carrera));
+
+            // Identificar carreras que deben agregarse
+            const carrerasAgregar = carrerasNuevas.filter(carrera => !carrerasAntiguas.includes(carrera));
+
+            // Actualizar carreras solo si hay cambios
+            if (carrerasEliminar.length > 0 || carrerasAgregar.length > 0) {
+                console.log('Realizando actualización de carreras');
+
+                // Eliminar carreras que ya no están en la lista nueva
+                if (carrerasEliminar.length > 0) {
+                    for (const carreraEliminar of carrerasEliminar) {
+                        await this.eliminarCarrerasSecre({ id: this.ItemUsuario.id, idCar: carreraEliminar });
+                    }
+                }
+                // Agregar carreras nuevas que no estaban en la lista antigua
+                if (carrerasAgregar.length > 0) {
+                    await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: carrerasAgregar });
+                }
+                console.log('Actualización completa');
+            } else {
+                console.log('No hay cambios en las carreras');
+            }
+        },
+
 
         cerrarDialog() {
             this.setDialog(false);
@@ -118,7 +158,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters('Carreras', ['getCarreras']),
+        ...mapGetters('Carreras', ['getCarreras', 'getCarrerasUser']),
         ...mapGetters('Roles', ['getRoles']),
         ...mapGetters('Permisos', ['getPermisos']),
     },

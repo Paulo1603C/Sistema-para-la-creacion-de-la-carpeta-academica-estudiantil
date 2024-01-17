@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default {
   namespaced: true,
 
@@ -57,7 +57,7 @@ export default {
         const setting = {
           method: 'GET',
         };
-        const url = 'http://localhost/Apis-UTA/plantillasSelect.php';
+        const url = `${baseURL}Apis-UTA/plantillasSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -81,7 +81,7 @@ export default {
           method: 'POST',
           body:datosPlantilla,
         };
-        const url = 'http://localhost/Apis-UTA/plantillasSelect.php';
+        const url = `${baseURL}Apis-UTA/plantillasSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -105,7 +105,7 @@ export default {
           method: 'POST',
           body:datosPlantilla,
         };
-        const url = 'http://localhost/Apis-UTA/estudiantesPlantillaSelect.php';
+        const url = `${baseURL}Apis-UTA/estudiantesPlantillaSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -132,9 +132,9 @@ export default {
         }
         var url = "";
         if (datos.idPlan == 0) {
-          url = 'http://localhost/Apis-UTA/insetarPlantilla.php';
+          url = `${baseURL}Apis-UTA/insetarPlantilla.php`;
         } else {
-          url = 'http://localhost/Apis-UTA/actualizarEstudiante.php';
+          url = `${baseURL}Apis-UTA/actualizarEstudiante.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -160,7 +160,7 @@ export default {
             method: 'POST',
             body: datosItem,
           }
-          const url = 'http://localhost/Apis-UTA/insertarItemsSubdirectorios.php';
+          const url = `${baseURL}Apis-UTA/insertarItemsSubdirectorios.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -190,9 +190,9 @@ export default {
           }
           var url = "";
           if (datos.idPlan == 0) {
-            url = 'http://localhost/Apis-UTA/insertarItemDirectorio.php';
+            url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
           } else {
-            url = 'http://localhost/Apis-UTA/actualizarCarrerasSecre.php';
+            url = `${baseURL}Apis-UTA/actualizarCarrerasSecre.php`;
           }
           const data = await fetch(url, setting);
           const json = await data.text();
@@ -219,7 +219,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = "http://localhost/Apis-UTA/eliminarEstudiante.php";
+        const url = `${baseURL}Apis-UTA/eliminarEstudiante.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {

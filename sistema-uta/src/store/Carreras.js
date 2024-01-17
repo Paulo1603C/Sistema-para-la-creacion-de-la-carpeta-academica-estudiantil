@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default{
   namespaced:true,
   
@@ -48,7 +48,7 @@ export default{
         const setting ={
           methods:'GET',
         }
-        const url = 'http://localhost/Apis-UTA/carreras.php';
+        const url = `${baseURL}Apis-UTA/carreras.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarCarreras', json); 
@@ -69,7 +69,7 @@ export default{
           method:'POST',
           body:datosUser,
         }
-        const url = 'http://localhost/Apis-UTA/carrerasUsuarios.php';
+        const url = `${baseURL}Apis-UTA/carrerasUsuarios.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         //console.log(json);

@@ -42,7 +42,7 @@ export default {
                     body: datosUser,
                 }
                 //const url = "http://localhost/Apis-UTA/Login.php";
-                const url = `${baseURL}Login.php`;
+                const url = `${baseURL}Apis-UTA/Login.php`;
                 const data = await fetch(url, setting)
                 if (data.ok) {
                     const json = await data.json();

@@ -74,8 +74,7 @@ export default {
             try {
                 if (this.ItemEstudiante.Cedula !== "" &&
                     this.ItemEstudiante.NomEst !== "" &&
-                    this.ItemEstudiante.ApeEst !== "" &&
-                    this.ItemEstudiante.idPlanPer > 0) {
+                    this.ItemEstudiante.ApeEst !== "" ) {
                     this.rutaNueva();
                     console.log(this.path);
                     const storedUser = JSON.parse(localStorage.getItem('user'));

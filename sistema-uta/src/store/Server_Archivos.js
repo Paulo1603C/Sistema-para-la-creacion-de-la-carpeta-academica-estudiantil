@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default {
     namespaced: true,
 
@@ -64,7 +64,7 @@ export default {
                     method: 'POST',
                     body: datosEST,
                 };
-                const url = 'http://localhost/Apis-UTA/obsArchSelect.php';
+                const url = `${baseURL}Apis-UTA/obsArchSelect.php`;
                 const data = await fetch(url, setting);
                 const json = await data.json();
 
@@ -89,7 +89,7 @@ export default {
                     method: 'POST',
                     body: datosArchivos,
                 }
-                const url = "http://localhost/Apis-UTA/crearArchivos.php";
+                const url = `${baseURL}Apis-UTA/crearArchivos.php`;
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -117,7 +117,7 @@ export default {
                     method: 'POST',
                     body: datosObsArchivos,
                 }
-                const url = "http://localhost/Apis-UTA/insertarObsArch.php";
+                const url = `${baseURL}Apis-UTA/insertarObsArch.php`;
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -134,8 +134,8 @@ export default {
 
         descargarArchivo: async function ({ commit }, { ruta, nombre }) {
             try {
-                console.log('RUTA ' + ruta);
-                console.log('NOMBRE00 ' + nombre);
+                //console.log('RUTA ' + ruta);
+                //console.log('NOMBRE00 ' + nombre);
                 const datosArchivos = new FormData();
                 datosArchivos.append('rutaRemota', ruta);
 
@@ -143,7 +143,7 @@ export default {
                     method: 'POST',
                     body: datosArchivos,
                 }
-                const url = "http://localhost/Apis-UTA/descargarDir_Arch.php";
+                const url = `${baseURL}Apis-UTA/descargarDir_Arch.php`;
                 const response = await fetch(url, setting);
                 //const json = await response.text();
                 if (response.ok) {

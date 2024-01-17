@@ -88,7 +88,6 @@ export default {
             } else {
                 this.navegacion = [
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
-                    { icon: 'view-dashboard', text: 'Plantillas', route: '/Plantillas' },
                 ]
             }
         },

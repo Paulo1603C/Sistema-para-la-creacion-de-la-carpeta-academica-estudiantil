@@ -66,7 +66,7 @@ export default {
                     this.cerrarDialog();
                     this.path = '';
                 }else{
-                    this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+                    this.$alertify.error("Complete todos campos para llevar acabo el proceso");
                 }
             } catch (error) {
                 console.error('Error al agregar estudiante:', error);

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default {
   namespaced: true,
 
@@ -30,7 +30,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = 'http://localhost/Apis-UTA/subCarpetasSelect.php';
+        const url = `${baseURL}Apis-UTA/subCarpetasSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarSubCarpetas', json);
@@ -50,7 +50,7 @@ export default {
           method: 'POST',
           body: datosPantilla,
         }
-        var url = 'http://localhost/Apis-UTA/actualizarItemSubDir.php';
+        var url = `${baseURL}Apis-UTA/actualizarItemSubDir.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {

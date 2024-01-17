@@ -5,6 +5,7 @@
         <SubirArchivo :dialog="dialogFile" @dialog="dialogFile = $event" :ItemArchivo="dataObsArch"></SubirArchivo>
         <NuevaUsuario :dialog="dialogUser" :ItemUsuario="dataUsuario"></NuevaUsuario>
         <NuevaPlantilla :dialog="dailogPlantilla" :ItemPlantilla="dataPlan"></NuevaPlantilla>
+        <progres :dialog="dailogProgres" :message="sms"></progres>
         <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
         <v-container class="mt-5">
             <v-menu v-model="showMenu" offset-y>
@@ -39,7 +40,7 @@ import NuevaUsuario from './NuevoUsuario.vue';
 import NuevaPlantilla from './NuevaPlantilla.vue';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
 import readXlsFile from "read-excel-file";
-import moment from 'moment';
+import progres from './progresCircular.vue';
 
 export default {
 
@@ -57,6 +58,7 @@ export default {
             nomUser: '',
             showMenu: false,
             dialogFile: false,
+            sms: "Importando datos, por favor espere...",
             estudianteSelect: {},
             carpetaSelect: {},
             itemSeleccionado: {},
@@ -67,7 +69,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder', 'setDialogPlantilla', 'setDialogCarpeta']),
+        ...mapMutations('Dialogo', ['setDialog', 'setDialogFolder', 'setDialogPlantilla', 'setDialogCarpeta', 'setDialogProgres']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Estudiantes', ['setEst']),
         ...mapMutations('Plantillas', ['setPlan']),
@@ -173,16 +175,14 @@ export default {
             this.idUser = storedUser.IdUser;
             this.nomUser = storedUser.NomUser + ' ' + storedUser.ApeUser;
             let input = document.getElementById("archivoExcel");
-            console.log('Nuevo importacion');
-            console.log('INPUT ' + input.files[0].name);
             const fileName = input.files[0].name;
             const fileExtension = fileName.split('.').pop();
             if (fileExtension.trim() == "xlsx") {
-
                 readXlsFile(input.files[0]).then(async (rows) => {
                     this.items = rows;
                     this.fechaActual();
                     for (let i = 1; i < this.items.length; i++) {
+                        this.setDialogProgres(true);
                         const row = this.items[i];
                         console.log(row);
                         const datos = {
@@ -197,15 +197,20 @@ export default {
                         };
                         await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
                         await this.AgregarEstudiante(datos);
-                        console.log('Datos ' + datos.NomEst);
+                        /*console.log('Datos ' + datos.NomEst);
                         console.log('DaPATH ' + this.path);
-                        console.log('AOLD ' + this.rutaAnterior);
+                        console.log('AOLD ' + this.rutaAnterior);*/
                         await this.crearSubDirectorios(datos, this.path);
+                        if (i == this.items.length-1) {
+                            this.setDialogProgres(false);
+                        }
                     }
                     await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     this.$alertify.success("Estudiantes Insertados");
                     input.value = null;
                 });
+            } else {
+                this.alertify.error('Por favor, seleccione un archivo con extensión xlsx.');
             }
         },
 
@@ -239,12 +244,13 @@ export default {
         SubirArchivo,
         NuevaPlantilla,
         NuevaCarpeta,
+        progres,
     },
 
     computed: {
-        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta', 'itemsBread']),
+        ...mapState('Dialogo', ['dialogUser', 'dialogFolder', 'dailogPlantilla', 'tablaEst', 'tablaArch', 'dailogCarpeta', 'itemsBread', 'dailogProgres']),
         ...mapState('Usuarios', ['dataUsuario']),
-        ...mapState('Estudiantes', ['dataEst','idEst']),
+        ...mapState('Estudiantes', ['dataEst', 'idEst']),
         ...mapState('Plantillas', ['dataPlan']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['dataCarpeta', 'rutaAnterior']),
@@ -254,4 +260,5 @@ export default {
 };
 
 </script>
+
   

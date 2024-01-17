@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default {
   namespaced: true,
 
@@ -45,7 +45,7 @@ export default {
           method: 'POST',
           body: datosEST,
         };
-        const url = 'http://localhost/Apis-UTA/estudiantesSelect.php';
+        const url = `${baseURL}Apis-UTA/estudiantesSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -77,13 +77,11 @@ export default {
           method: 'POST',
           body: datosUser,
         }
-        //console.log("datossss");
-        //console.log(datos);
         var url = "";
         if (datos.IdEst == 0) {
-          url = 'http://localhost/Apis-UTA/insertarEstudiantes.php';
+          url = `${baseURL}Apis-UTA/insertarEstudiantes.php`;
         } else {
-          url = 'http://localhost/Apis-UTA/actualizarEstudiante.php';
+          url = `${baseURL}Apis-UTA/actualizarEstudiante.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -107,7 +105,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = "http://localhost/Apis-UTA/eliminarEstudiante.php";
+        const url = `${baseURL}Apis-UTA/eliminarEstudiante.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {

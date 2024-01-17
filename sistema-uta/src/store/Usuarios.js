@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default {
   namespaced: true,
 
@@ -33,7 +33,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = 'http://localhost/Apis-UTA/usuariosSelect.php';
+        const url = `${baseURL}Apis-UTA/usuariosSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarItems', json);
@@ -61,9 +61,9 @@ export default {
         console.log(datos);
         var url = "";
         if (datos.id == 0) {
-          url = 'http://localhost/Apis-UTA/insetarUsuario.php';
+          url = `${baseURL}Apis-UTA/insetarUsuario.php`;
         } else {
-          url = 'http://localhost/Apis-UTA/actualizarUsuario.php';
+          url = `${baseURL}Apis-UTA/actualizarUsuario.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -79,24 +79,18 @@ export default {
     },
 
     //insetar carreras para los usaurios-> se pasa un arreglo;
-    AgregarUsuarioCarreras: async function ({ commit, dispatch }, datos) {
-      var aux = 0;
-      while (aux < datos.carreras.length) {
+    AgregarUsuarioCarreras: async function ({ commit, dispatch }, {idU, cars}) {
+      for (let i= 0; i < cars.length; i++) {
         try {
           const datosUser = new FormData();
-          datosUser.append('userPer', datos.id);
-          datosUser.append('carPer', datos.carreras[aux]);
+          datosUser.append('userPer', idU);
+          datosUser.append('carNew', cars[i]);
 
           const setting = {
             method: 'POST',
             body: datosUser,
           }
-          var url = "";
-          if (datos.id == 0) {
-            url = 'http://localhost/Apis-UTA/insertCarrerasSecre.php';
-          } else {
-            url = 'http://localhost/Apis-UTA/actualizarCarrerasSecre.php';
-          }
+          var url = `${baseURL}Apis-UTA/insertCarrerasSecre.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -109,7 +103,6 @@ export default {
         } catch (error) {
           console.error('Error en la solicitud:', error);
         }
-        aux++;
       }
     },
 
@@ -123,7 +116,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = "http://localhost/Apis-UTA/eliminarUsuario.php";
+        const url = `${baseURL}Apis-UTA/eliminarUsuario.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {
@@ -132,6 +125,30 @@ export default {
           dispatch('cargarUsuarios');
         } else {
           //console.log('La respuesta no es JSON:', data);
+          dispatch('cargarUsuarios');
+        }
+      } catch (error) {
+        console.log("Error de eliminción " + error);
+      }
+
+    },
+
+    eliminarCarrerasSecre: async function ({ commit, dispatch }, { id, idCar }) {
+      try {
+        const idUser = new FormData();
+        idUser.append('id', id);
+        idUser.append('idCar', idCar);
+        const setting = {
+          method: 'POST',
+          body: idUser,
+        }
+        const url = `${baseURL}Apis-UTA/eliminarCarreraSecre.php`;
+        const data = await fetch(url, setting);
+        const json = await data.text();
+        if (json.startsWith('{')) {
+          const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
+          dispatch('cargarUsuarios');
+        } else {
           dispatch('cargarUsuarios');
         }
       } catch (error) {

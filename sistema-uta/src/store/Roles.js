@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
+import { baseURL } from './config';
 export default{
   namespaced:true,
   
@@ -26,7 +26,7 @@ export default{
         const setting ={
           methods:'GET',
         }
-        const url = 'http://localhost/Apis-UTA/roles.php';
+        const url = `${baseURL}Apis-UTA/roles.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarRoles', json); 
