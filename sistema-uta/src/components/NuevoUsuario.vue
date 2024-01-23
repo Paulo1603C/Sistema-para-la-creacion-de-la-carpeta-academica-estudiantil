@@ -17,8 +17,8 @@
                                     v-model="ItemUsuario.apellido" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Email*" :rules="controles().controlCor" @change="validarC()"
-                                    v-model="ItemUsuario.correo" required></v-text-field>
+                                <v-text-field label="Email*" type="email" :rules="controles().controlCor"
+                                    @change="validarC()" v-model="ItemUsuario.correo" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
                                 <v-text-field label="Password*" type="password" :rules="controles().controlCon"
@@ -75,6 +75,7 @@ export default {
         this.cargarCarreras();
         this.cargarRoles();
         this.cargarPermisos();
+        this.ItemUsuario.correo = '';
     },
 
     methods: {
@@ -132,14 +133,28 @@ export default {
         },
 
         validarC: async function () {
-            const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
-            if (correoValido) {
-                this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () =>
-                    this.$alertify.warning('alerta cerrada')
+            let c = this.ItemUsuario.correo;
+            let partes = c.split("@").filter(Boolean);
+            if (partes[partes.length - 1] == "uta.edu.ec") {
+                const correoValido = await this.validarCorreo({ correo: c });
+                if (correoValido) {
+                    this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () =>{
+                        this.ItemUsuario.correo = '';
+                        console.log('limpiar   ');
+                        resolve(); 
+                    }
+                    );
+                }
+            } else {
+                this.$alertify.alert('Correo Incorrecto', 'Ingrese un correo válido', () =>{
+                    this.ItemUsuario.correo = '';
+                    console.log('limpiar');
+                    resolve(); 
+                }
                 );
-                this.ItemUsuario.correo = '';
             }
         },
+
 
         insertarUsuario: async function () {
             try {

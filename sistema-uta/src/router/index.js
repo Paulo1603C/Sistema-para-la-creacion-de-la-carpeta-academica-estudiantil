@@ -6,6 +6,7 @@ import EstudiantesView from '../views/EstudiantesView.vue'
 import PlantillasView from '../views/PlantillasView.vue'
 import UsuariosView from '../views/UsuariosView.vue'
 import CarrerasView from '../views/CarrerasView.vue'
+import SinConexionView from '../views/SinConexionView.vue'
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,11 @@ const routes = [
     path: '/',
     //name: 'LogIn',
     component: logInView
+  },
+  {
+    path: '/SinConexion',
+    name: 'SinConexion',
+    component: SinConexionView
   },
   {
     path: '/Dashboard',

@@ -22,7 +22,7 @@
                                 <v-text-field label="Apellidos*" :rules="controles().controlApe"
                                     v-model="ItemEstudiante.ApeEst" required></v-text-field>
                             </v-col>
-                            <v-col cols="12">
+                            <v-col cols="12" v-if="ItemEstudiante.IdEst == 0" >
                                 <v-select :rules="controles().controlPlan" :items="getPlantillas" item-text="NomPlan"
                                     item-value="IdPlan" label="Plantillas*" v-model="ItemEstudiante.idPlanPer"
                                     required></v-select>
