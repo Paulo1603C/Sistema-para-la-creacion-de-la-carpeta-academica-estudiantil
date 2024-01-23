@@ -2,8 +2,8 @@
     <div>
         <div style="overflow: hidden;">
         </div>
-        <v-card class="mx-auto" max-width="344">
-            <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="200px" cover></v-img>
+        <v-card class="mx-auto" max-width="300">
+            <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="100px" cover></v-img>
 
             <v-card-title class="d-flex justify-center align-center">
                 {{ titulo }}
@@ -15,7 +15,7 @@
                         <v-icon>mdi-delete</v-icon>
                     </template>
                 </v-btn>
-                <v-btn color="primary darken-2" @click="editar()">
+                <v-btn color="primary darken-4" @click="editar()">
                     <template>
                         <v-icon>mdi-pencil</v-icon>
                     </template>
@@ -59,7 +59,7 @@ export default {
     data: () => ({
         show: false,
         words: [],
-        imgAux: require('../assets/user.png'),
+        imgAux: require('../assets/plantilla.png'),
 
     }),
 
@@ -81,7 +81,7 @@ export default {
                 items: this.words,
             }
             
-            console.log(this.words);
+            console.log(this.plantillaSelect);
             this.setPlan(this.plantillaSelect);
         },
 

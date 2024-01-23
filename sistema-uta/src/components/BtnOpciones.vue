@@ -16,7 +16,6 @@
                     </v-btn>
                 </template>
 
-                <!-- Contenido del menú desplegable -->
                 <v-list>
                     <v-list-item v-for="item in links" :key="item.text" @click="optionSelected(item.text)">
                         <v-list-item-icon>
@@ -97,43 +96,43 @@ export default {
                 case "Crear Plantilla":
                     this.crearPlantilla();
                     break;
+                case "Crear Estudiante":
+                    this.nuevoEstudiante();
+                    break;
                 default:
                     alert('Opción seleccionada: ' + option);
                     break;
             }
         },
 
-        nuevaCarpeta() {
+        nuevoEstudiante() {
             const storedUser = JSON.parse(localStorage.getItem('user'));
             let nomUser = storedUser.NomUser + ' ' + storedUser.ApeUser;
-            console.log(storedUser.NomUser + ' ' + storedUser.ApeUser);
-            console.log(nomUser);
-
-            if (this.tablaEst == true) {
-                this.fechaActual();
-                this.estudianteSelect = {
-                    IdEst: 0,
-                    Cedula: '',
-                    NomEst: '',
-                    ApeEst: '',
-                    NomCar: this.idCarreraSelect,
-                    Fecha: this.fecha,
-                    IdPlanPer: 0,
-                    NomModificador: nomUser,
-                }
-                console.log("Item Est" + this.estudianteSelect);
-                this.setEst(this.estudianteSelect);
-                this.setDialogFolder(true);
-            } else {
-                this.carpetaSelect = {
-                    IdEst: 0,
-                    NomEst: '',
-                    ApeEst: '',
-                };
-                //console.log("Item Car"+this.carpetaSelect.IdEst);
-                this.setCarpeta(this.carpetaSelect);
-                this.setDialogCarpeta(true);
+            this.fechaActual();
+            this.estudianteSelect = {
+                IdEst: 0,
+                Cedula: '',
+                NomEst: '',
+                ApeEst: '',
+                NomCar: this.idCarreraSelect,
+                Fecha: this.fecha,
+                IdPlanPer: 0,
+                NomModificador: nomUser,
             }
+            console.log("Item Est" + this.estudianteSelect);
+            this.setEst(this.estudianteSelect);
+            this.setDialogFolder(true);
+        },
+
+        nuevaCarpeta() {
+            this.carpetaSelect = {
+                IdEst: 0,
+                NomEst: '',
+                ApeEst: '',
+            };
+            //console.log("Item Car"+this.carpetaSelect.IdEst);
+            this.setCarpeta(this.carpetaSelect);
+            this.setDialogCarpeta(true);
         },
 
         nuevoUsuario() {
@@ -177,7 +176,8 @@ export default {
             let input = document.getElementById("archivoExcel");
             const fileName = input.files[0].name;
             const fileExtension = fileName.split('.').pop();
-            if (fileExtension.trim() == "xlsx") {
+            console.log(fileExtension)
+            if (fileExtension === "xlsx") {
                 readXlsFile(input.files[0]).then(async (rows) => {
                     this.items = rows;
                     this.fechaActual();
@@ -197,20 +197,18 @@ export default {
                         };
                         await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
                         await this.AgregarEstudiante(datos);
-                        /*console.log('Datos ' + datos.NomEst);
-                        console.log('DaPATH ' + this.path);
-                        console.log('AOLD ' + this.rutaAnterior);*/
                         await this.crearSubDirectorios(datos, this.path);
-                        if (i == this.items.length-1) {
+                        if (i == this.items.length - 1) {
                             this.setDialogProgres(false);
                         }
                     }
+                    this.path = '';
                     await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     this.$alertify.success("Estudiantes Insertados");
                     input.value = null;
                 });
             } else {
-                this.alertify.error('Por favor, seleccione un archivo con extensión xlsx.');
+                this.$alertify.error('Selecione solo archivos excel para poder importar los datos');
             }
         },
 

@@ -9,6 +9,7 @@ export default {
   state: {
     Items: [],
     dataEst: {},
+    buscarEst:"",
 
     //almacena el id del usario para insertar so obs
     idEst:'',
@@ -17,6 +18,10 @@ export default {
   getters: {
     getItems(state) {
       return state.Items;
+    },
+
+    getEstCed(state) {
+      return state.buscarEst;
     },
 
   },
@@ -31,6 +36,10 @@ export default {
 
     setIdEst(state, data) {
       state.idEst = data;
+    },
+
+    setBuscarEst(state, data) {
+      state.buscarEst = data;
     },
 
   },
@@ -59,6 +68,35 @@ export default {
       }
 
     },
+
+    buscarEstCedula: async function ({ commit,  rootState }, { cedula }) {
+      try {
+        const datosEST = new FormData();
+        datosEST.append('cedEst', cedula);
+        const setting = {
+          method: 'POST',
+          body: datosEST,
+        };
+        const url = `${baseURL}Apis-UTA/buscarEstCedula.php`;
+        const data = await fetch(url, setting);
+        
+        if (data.ok) {
+          const json = await data.json();
+          //console.log(json);
+          if(  json == "existe" ){
+            return true;
+          }else{
+            return false;
+          }
+        } else {
+          console.log('La respuesta no es un JSON válido:', await data.text());
+          return false;
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    },
+
 
     AgregarEstudiante: async function ({ commit, dispatch }, datos) {
       console.log(datos);

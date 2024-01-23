@@ -44,6 +44,7 @@ export default {
     },
 
     AgregarUsuario: async function ({ commit, dispatch }, datos) {
+      console.log(datos);
       try {
         const datosUser = new FormData();
         datosUser.append('id', datos.id);

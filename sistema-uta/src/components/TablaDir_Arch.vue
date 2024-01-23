@@ -11,7 +11,7 @@
                     </v-text-field>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" @click="descargarAll()">Descargar Todo
-                        <v-icon right>mdi-menu-down</v-icon>
+                        <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" :search="search"
@@ -29,46 +29,51 @@
                             <td>{{ item.fecha_creacion }}</td>
                             <td>{{ item.tipo }}</td>
                             <td>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="primary darken-2" size="30" class="me-2" v-if="mostrarEditar(item)"
-                                            @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
-                                            mdi-pencil
-                                        </v-icon>
-                                        <v-icon v-else size="35">mdi-alpha-x</v-icon>
-                                    </template>
-                                    <span>Editar</span>
-                                </v-tooltip>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)"
-                                            v-if="mostrarEliminar(item)" v-bind="attrs" v-on="on">
-                                            mdi-delete
-                                        </v-icon>
-                                        <v-icon v-else size="35">mdi-alpha-x</v-icon>
-                                    </template>
-                                    <span>Eliminar</span>
-                                </v-tooltip>
-                                <v-tooltip bottom style="margin-right: 15px;">
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="30" @click.stop="descargarDatos(item)"
-                                            v-bind="attrs" v-on="on">
-                                            mdi-download
-                                        </v-icon>
-                                    </template>
-                                    <span>Descargar</span>
-                                </v-tooltip>
-                            </td>
-                            <td>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="yellow darken-2" size="30" class="me-2" v-if="true"
-                                            @click.stop="verObservacion(item)" v-bind="attrs" v-on="on">
-                                            mdi-eye-circle
-                                        </v-icon>
-                                    </template>
-                                    <span>Observacion</span>
-                                </v-tooltip>
+                                <div class="flex">
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-icon color="primary darken-2" size="30" class="me-2"
+                                                v-if="mostrarEditar(item)" @click.stop="editarItem(item)" v-bind="attrs"
+                                                v-on="on">
+                                                mdi-pencil
+                                            </v-icon>
+                                            <v-icon v-else size="35">mdi-alpha-x</v-icon>
+                                        </template>
+                                        <span>Editar</span>
+                                    </v-tooltip>
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-icon color="error darken-2" size="30" @click.stop="eliminarItem(item)"
+                                                v-if="mostrarEliminar(item)" v-bind="attrs" v-on="on">
+                                                mdi-delete
+                                            </v-icon>
+                                            <v-icon v-else size="35">mdi-alpha-x</v-icon>
+                                        </template>
+                                        <span>Eliminar</span>
+                                    </v-tooltip>
+                                    <div>
+                                        <v-tooltip bottom style="margin-right: 15px;">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-icon color="black darken-2" size="30" @click.stop="descargarDatos(item)"
+                                                    v-bind="attrs" v-on="on">
+                                                    mdi-download
+                                                </v-icon>
+                                            </template>
+                                            <span>Descargar</span>
+                                        </v-tooltip>
+                                    </div>
+                                    <div v-if="mostrarVista(item)">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-icon color="yellow darken-2" size="30" class="me-2"
+                                                    @click.stop="verObservacion(item)" v-bind="attrs" v-on="on">
+                                                    mdi-eye-circle
+                                                </v-icon>
+                                            </template>
+                                            <span>Observacion</span>
+                                        </v-tooltip>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </template>
@@ -101,7 +106,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta']),
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Server_Archivos', ['descargarArchivo', 'cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
@@ -127,8 +132,8 @@ export default {
             this.$alertify.confirm(
                 'Deseas eliminar el estudiante: ' + item.nombre,
                 () => {
-                    this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre });
-                    console.log('Ruta Borrar ' + this.path);
+                    console.log('Ruta Borrar ' + this.path + item.nombre);
+                    this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre, tipo: item.tipo });
                     //this.cargarCarpetas(this.path);
                     this.path = '';
                     this.$alertify.success('Carpeta ' + item.nombre + ' Eliminada');
@@ -137,36 +142,113 @@ export default {
             );
         },
 
-        hacerAlgoAlHacerClic(item) {
+        async hacerAlgoAlHacerClic(item) {
             if (this.verificarSiPadre(item)) {
-                localStorage.setItem('padreActual', item.nombre.trim());
+                localStorage.setItem('padreActual', item.nombre.trim().toLowerCase());
             }
             this.verificarSiArchivo(item);
             this.rutaNueva();
-            console.log(this.ruta);
-            this.cargarCarpetas(this.path);
+            this.setCtlSubirArch(true);
+            this.setCtlfolder(true);
+            await this.cargarCarpetasAsync(this.path);
             this.path = '';
         },
-        
-        verificarSiArchivo(item){
-            if (item.tipo === 'Archivo') {
+
+        async cargarCarpetasAsync(path) {
+            this.cargarCarpetas(path);
+        },
+
+        verificarSiArchivo(item) {
+            if (item.tipo == 'Archivo') {
                 this.rutaNueva();
                 this.descargarItem(this.path, item);
-                this.path='';
-            }else{
+                this.path = '';
+            } else {
                 this.setBreadcrumbs(item.nombre);
             }
         },
 
-        descargarItem: async function ( ruta, item) {
+        verificarSiPadre(item) {
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+            console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
+            return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
+        },
+
+        // Función para recuperar permisos
+        recuperarPermisos() {
+            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            return new Map(JSON.parse(recuperarPermisos));
+        },
+
+        // Verificar permisos genérico
+        verificarPermisosGenerico(item, permiso) {
+            const permisosSubdirectorio = this.recuperarPermisos();
+            const nombreTrim = item.nombre.trim().toLowerCase();
+
+            if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
+                localStorage.setItem('padreActual', '');
+            }
+
+            if (permisosSubdirectorio.get(nombreTrim) != null) {
+                return true;
+            }
+
+            const padreActual = localStorage.getItem('padreActual');
+            const auxPermisos = permisosSubdirectorio.get(padreActual);
+            return auxPermisos != null;
+        },
+
+        // Mostrar editar genérico
+        mostrarEditarGenerico(item, permiso) {
+            const permisosSubdirectorio = this.recuperarPermisos();
+            const nombreTrim = item.nombre.trim().toLowerCase();
+
+            if (permisosSubdirectorio.get(nombreTrim) != null) {
+                return permisosSubdirectorio.get(nombreTrim).includes(permiso);
+            }
+
+            const padreActual = localStorage.getItem('padreActual');
+            const aux = permisosSubdirectorio.get(padreActual.trim());
+            return aux != null && aux.includes(permiso);
+        },
+
+        // Verificar permisos
+        verificarPermisos(item) {
+            return this.verificarPermisosGenerico(item);
+        },
+
+        // Mostrar editar
+        mostrarEditar(item) {
+            return this.mostrarEditarGenerico(item, 'Editar');
+        },
+
+        // Mostrar eliminar
+        mostrarEliminar(item) {
+            return this.mostrarEditarGenerico(item, 'Eliminar');
+        },
+
+        mostrarVista(item) {
+            return item.tipo === 'Archivo' ? true : false;
+        },
+
+        verObservacion(item) {
+            this.dialogObs = true;
+            this.rutaNueva();
+            this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
+            console.log(this.path + item.nombre);
+            this.path = '';
+        },
+
+        descargarItem: async function (ruta, item) {
             //this.rutaNueva();
-            console.log(ruta+item.nombre);
+            console.log(ruta + item.nombre);
             await this.descargarArchivo({ ruta: ruta + item.nombre, nombre: item.nombre });
             this.$alertify.success('Archivo Descargado');
             //this.path = '';
         },
 
-        descargarDirectorio: async function ( ruta, item ) {
+        descargarDirectorio: async function (ruta, item) {
             //this.rutaNueva();
             console.log(item.nombre);
             console.log(item);
@@ -189,7 +271,7 @@ export default {
             if (item.tipo === 'Archivo') {
                 this.descargarItem(this.path, item);
             } else {
-                this.descargarDirectorio( this.path, item );
+                this.descargarDirectorio(this.path, item);
             }
             this.path = '';
 
@@ -203,79 +285,6 @@ export default {
             //console.log(this.path);
         },
 
-        verificarPermisos(item) {
-            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            //console.log("nuevos permiso"+permisosSubdirectorio.get(item.nombre.trim()));
-            if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
-                return true;
-            } else {
-                const padreActual = localStorage.getItem('padreActual');
-                const auxPermisos = permisosSubdirectorio.get(padreActual);
-                if (auxPermisos != null) {
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        verificarSiPadre(item) {
-            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            return permisosSubdirectorio.get(item.nombre.trim()) != null ? true : false;
-        },
-
-        mostrarEditar(item) {
-            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            console.log(`Carpeta ${item.nombre} permisos ${permisosSubdirectorio.get(item.nombre.trim())} `);
-            if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
-                const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Editar');
-                if (found == true) {
-                    return true;
-                }
-            } else {
-                const padreActual = localStorage.getItem('padreActual');
-                const aux = permisosSubdirectorio.get(padreActual.trim());
-                const found = aux.includes('Editar');
-                if (found == true) {
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        mostrarEliminar(item) {
-            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            console.log(`Carpeta ${item.nombre} permisos ${permisosSubdirectorio.get(item.nombre.trim())} `);
-            if (permisosSubdirectorio.get(item.nombre.trim()) != null) {
-                const found = permisosSubdirectorio.get(item.nombre.trim()).includes('Eliminar');
-                if (found == true) {
-                    return true;
-                }
-            } else {
-                const padreActual = localStorage.getItem('padreActual');
-                const aux = permisosSubdirectorio.get(padreActual.trim());
-                const found = aux.includes('Eliminar');
-                if (found == true) {
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        mostrarVista(item) {
-            return item.tipo === 'Archivo' ? true : false;
-        },
-
-        verObservacion(item) {
-            this.dialogObs = true;
-            this.rutaNueva();
-            this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
-            console.log(this.path + item.nombre);
-            this.path = '';
-        },
 
     },
 
@@ -287,6 +296,7 @@ export default {
         //...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Dialogo', ['itemsBread']),
         ...mapState('Permisos', ['permisosSubDirectorios']),
+        ...mapGetters('SubCarpetas', ['getSubCarpetas']),
     },
 
     watch: {
@@ -300,5 +310,11 @@ export default {
 
 .linea:hover {
     text-decoration: underline;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 </style>

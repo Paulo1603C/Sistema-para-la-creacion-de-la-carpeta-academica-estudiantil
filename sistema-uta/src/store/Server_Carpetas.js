@@ -67,10 +67,7 @@ export default {
             try {
                 const datosCarpeta = new FormData();
                 const rutaC = path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase();
-                //console.log('RUTAC'+rutaC);
                 const aux = rutaC.indexOf('.');
-                //console.log('Aux'+aux);
-                //console.log('Aux '+datos.ApeEst);
                 if (aux < 0) {
                     if( datos.ApeEst == '' ){
                         console.log('just folder');
@@ -83,10 +80,6 @@ export default {
                     datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
                     datosCarpeta.append('nombreDirectorio', oldPath);
                 }
-                //console.log('RUTA->' + path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                //console.log('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + " " + datos.ApeEst.toUpperCase());
-                //console.log('OLD ' + oldPath);
-
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,
@@ -123,9 +116,7 @@ export default {
                     method: 'POST',
                     body: datosCarpeta,
                 }
-                //console.log("ID" + datos.IdEst);
                 const url = `${baseURL}Apis-UTA/crearCarpetas.php`;
-
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -142,11 +133,15 @@ export default {
 
         },
 
-        eliminarCarpeta: async function ({ commit, dispatch }, { ruta1, ruta2 }) {
+        eliminarCarpeta: async function ({ commit, dispatch }, { ruta1, ruta2, tipo }) {
             try {
+                console.log('Server'+ruta2.toUpperCase())
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
-                //console.log(ruta.toUpperCase());
+                if( tipo == 'Archivo' ){
+                    datosCarpeta.append('rutaServidor', ruta2);
+                }else{
+                    datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
+                }
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,

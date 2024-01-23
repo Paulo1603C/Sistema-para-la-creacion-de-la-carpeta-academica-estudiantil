@@ -3,10 +3,7 @@
         <div style="overflow: hidden;">
             <PermisosUser :dialog="dailogPermisos"  :PermisosUsario="dataPermisosUsuario"></PermisosUser>
         </div>
-        <v-card class="mx-auto" max-width="344">
-            <v-card-title class="d-flex justify-center align-center">
-                ID: {{ id }}
-            </v-card-title>
+        <v-card class="mx-auto" max-width="244">
 
             <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="100px" cover></v-img>
 
@@ -16,7 +13,7 @@
 
             <v-card-text class="d-flex justify-center align-center">
                 <v-btn color="primary" @click="asignarPermisos()" >Permisos
-                    <v-icon right>mdi-menu-down</v-icon>
+                    <v-icon right>mdi-folder-settings</v-icon>
                 </v-btn>
             </v-card-text>
 

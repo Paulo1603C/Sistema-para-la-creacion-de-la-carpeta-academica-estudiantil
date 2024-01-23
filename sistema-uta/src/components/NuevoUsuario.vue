@@ -9,20 +9,23 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Nombre*" v-model="ItemUsuario.nombre" required></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Apellido*" v-model="ItemUsuario.apellido" required></v-text-field>
-                            </v-col>
-                            <v-col cols="12">
-                                <v-text-field label="Email*" v-model="ItemUsuario.correo" required></v-text-field>
-                            </v-col>
-                            <v-col cols="12">
-                                <v-text-field label="Password*" type="password" v-model="ItemUsuario.contraseña"
+                                <v-text-field label="Nombre*" :rules="controles().controlNom" v-model="ItemUsuario.nombre"
                                     required></v-text-field>
                             </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field label="Apellido*" :rules="controles().controlApe" v-model="ItemUsuario.apellido"
+                                    required></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field label="Email*" :rules="controles().controlCor" v-model="ItemUsuario.correo"
+                                    required></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field label="Password*" type="password" :rules="controles().controlCon"
+                                    v-model="ItemUsuario.contraseña" required></v-text-field>
+                            </v-col>
                             <v-col cols="12" sm="4">
-                                <v-select :items="getRoles" item-text="NomRol" item-value="IdRol" label="Roles*"
+                                <v-select :rules="controles().controlRol" :items="getRoles" item-text="NomRol" item-value="IdRol" label="Roles*"
                                     v-model="ItemUsuario.rol" required></v-select>
                             </v-col>
                             <v-col cols="12" sm="4" style="display:none;">
@@ -30,7 +33,7 @@
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
                             <v-col cols="12" sm="4">
-                                <v-autocomplete :items="getCarreras" item-text="NomCar" item-value="IdCar" label="Carreras*"
+                                <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar" item-value="IdCar" label="Carreras*"
                                     multiple v-model="ItemUsuario.carreras"></v-autocomplete>
                             </v-col>
                         </v-row>
@@ -53,6 +56,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex';
+import CryptoJS from 'crypto-js';
 
 export default {
 
@@ -80,6 +84,47 @@ export default {
         ...mapActions('Permisos', ['cargarPermisos']),
         ...mapMutations('Dialogo', ['setDialog']),
 
+        controles() {
+            return {
+                controlNom: [
+                    value => {
+                        if (value) return true;
+                        return 'Ingresar los nombres de usuario';
+                    },
+                ],
+                controlApe: [
+                    value => {
+                        if (value) return true;
+                        return 'Ingresar los apellidos de usuario';
+                    },
+                ],
+                controlCor: [
+                    value => {
+                        if (value) return true;
+                        return 'Ingresar el correo';
+                    },
+                ],
+                controlCon: [
+                    value => {
+                        if (value) return true;
+                        return 'Ingresar una contraseña';
+                    },
+                ],
+                controlRol: [
+                    value => {
+                        if (value) return true;
+                        return 'Selecione un rol';
+                    },
+                ],
+                controlCar: [
+                    value => {
+                        if (value) return true;
+                        return 'Selecione almenos una carrera';
+                    },
+                ],
+            };
+        },
+
         agregar: async function () {
 
             try {
@@ -87,14 +132,16 @@ export default {
                     this.ItemUsuario.apellido !== "" &&
                     this.ItemUsuario.correo !== "" &&
                     this.ItemUsuario.contraseña !== "") {
+                    let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
+                    this.ItemUsuario.contraseña = contraseñaHash;
                     await this.AgregarUsuario(this.ItemUsuario);
                     await this.actualizarCarrerasUsuario();
                     //await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: this.ItemUsuario.carreras });
                     this.cerrarDialog();
                     this.limpiarCampos();
                     this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
-                }else{
-                    this.$alertify.error( "Complete los campos requeridos");
+                } else {
+                    this.$alertify.error("Complete los campos requeridos");
 
                 }
             } catch (error) {

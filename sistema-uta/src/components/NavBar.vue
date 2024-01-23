@@ -1,11 +1,19 @@
 <template lang="">
+
     <nav>
+        <div>
+            <CambioPass :dialog="dailogContra"  :ItemPass="datosPass"> </CambioPass>
+        </div>
+
         <v-app-bar app color="red darken-4" dark>
         <v-app-bar-nav-icon  @click.stop="drawer = !drawer">
         </v-app-bar-nav-icon>
             <v-spacer></v-spacer>
         <v-btn text>
-            <span class="mr-2" style="font-size: 24px;">UNIVERSIDAD TECNICA DE AMBATO</span>
+            <div class="flex" style="display:flex;flex-direction: column;padding:10px; font-size:100%">
+                <span class="mr-2" >UNIVERSIDAD TECNICA DE AMBATO</span>
+                <span class="mr-2" >FACULTAD DE INGENIERÍA EN SISTEMAS, ELECTRÓNICA E INDUSTRIAL</span>
+            </div>
             <v-img :src="logo" alt="logo UTA" contain height="60"></v-img>
         </v-btn>
       </v-app-bar>
@@ -17,7 +25,26 @@
                     <v-avatar color="surface-variant " size="70" class="mt-2 mx-auto">
                        <v-img :src="(imgUser != null) ? imgUser : imgAux" alt="John" style="background-color:white" ></v-img>
                     </v-avatar>
-                    <v-card-text class="text-center" style="font-size: 24px;">{{nombreUser}}</v-card-text>
+                    <v-card-text class="text-center" style="font-size: 24px;">
+                        <v-menu v-model="showMenu" offset-y>
+                            <template v-slot:activator="{ on }">
+                                <v-btn v-on="on" color="red darken-4">{{nombreUser}}
+                                    <v-icon right>mdi-cog</v-icon>
+                                </v-btn>
+                            </template>
+
+                            <v-list style=" height:65px" >
+                                <v-list-item v-for="item in btnOP" :key="item.text" @click="openChangePass()">
+                                    <v-list-item-icon>
+                                        <v-icon color="blue darken-4">mdi-{{ item.icon }}</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content>
+                                        <div>{{ item.text }}</div>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </v-card-text>
                 </v-layout>
             </v-list-item>
         </v-card>
@@ -37,7 +64,7 @@
 
         <template v-slot:append>
           <div class="pa-2">
-            <v-btn @click="salir()" block>
+            <v-btn @click.stop="salir()" block>
                 <span class="mr-2">Salir</span>
                 <v-icon  >mdi-exit-to-app</v-icon>
             </v-btn>
@@ -47,7 +74,8 @@
     </nav>
 </template>
 <script>
-
+import CambioPass from './cambioContrasena.vue';
+import { mapMutations, mapState } from 'vuex';
 export default {
     name: "NavBar",
 
@@ -57,9 +85,15 @@ export default {
         return {
             drawer: true,
             rolUser: null,
+            showMenu:false,
             logo: require("../assets/logo2.png"),
             imgAux: require('../assets/user.png'),
             navegacion: [],
+            btnOP: [
+                { icon: "key-change", text: "Cambiar contraseña", show: "true" },
+                //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
+            ],
+            datosPass:{},
         }
     },
 
@@ -73,6 +107,8 @@ export default {
     },
 
     methods: {
+        ...mapMutations('Dialogo', ['setDailogContra']),
+
         salir() {
             localStorage.removeItem('user');
             localStorage.removeItem('Authentication');
@@ -82,6 +118,7 @@ export default {
             if (this.rolUser == 1) {
                 this.navegacion = [
                     { icon: 'account-circle ', text: 'Usuarios', route: '/Usuarios' },
+                    { icon: 'school', text: 'Carreras', route: '/Carreras' },
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
                     { icon: 'view-dashboard', text: 'Plantillas', route: '/Plantillas' },
                 ]
@@ -91,12 +128,41 @@ export default {
                 ]
             }
         },
+
+        openChangePass(){
+            this.datosPass={
+                contra1:'',
+                contra2:'',
+            }
+            this.setDailogContra(true);
+        },
+    },
+
+    computed:{
+        ...mapState('Dialogo', ['dailogContra']),
+    },
+
+    components:{
+        CambioPass,
     }
 }
 </script>
 
 <style>
-    .opNav:hover{
-        backdrop-filter:blur(10px);
+.opNav:hover {
+    backdrop-filter: blur(10px);
+}
+
+.flex {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+@media only screen and (max-width : 900px) {
+    .flex>span {
+        font-size: 12px;
+        padding: 10px;
     }
+}
 </style>

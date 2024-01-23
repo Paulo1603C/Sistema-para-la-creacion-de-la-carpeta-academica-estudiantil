@@ -4,12 +4,9 @@
             <v-card v-show="show">
                 <v-card-title>
                     {{ Titulo }}
-                    <!--<v-spacer></v-spacer>
-                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
-                    </v-text-field>-->
                     <v-spacer></v-spacer>
                     <v-btn color="primary" @click="descargarAll()">Descargar Todo
-                        <v-icon right>mdi-menu-down</v-icon>
+                        <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items" :items-per-page="5">
@@ -81,12 +78,12 @@ export default {
             this.setVentanaCarreras(false);
             setTimeout(() => {
                 this.setVentanaEst(true);
-            }, 6000);
+            }, 2000);
         },
 
         descargarDirectorio: async function (item) {
             this.rutaNueva();
-            await this.descargarCarpeta({ ruta: this.path, nombre: item.nomCar  });
+            await this.descargarCarpeta({ ruta: this.path, nombre: item.nomCar });
             this.$alertify.success('Archivo Descargado en unidad /C:');
             this.path = '';
         },
@@ -123,18 +120,24 @@ export default {
         },
 
         obtenerPermisosDirectorios: async function () {
-            //console.log('Metodo tienePermisoEnCarpeta lanzado');
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            const idUser = storedUser.IdUser;
-            for (const item of this.getSubCarpetas) {
-                await this.cargarPermisosDirectorios({ idUser: idUser, nomItem: item.NomItem });
-                this.permisosDirectorios.set(item.NomItem, this.getPermisosDirectorios[0].NomPer);
-                console.dir(`Peermisos ${item.NomItem}  -> ${this.getPermisosDirectorios[0].NomPer}`);
+            try {
+                const storedUser = JSON.parse(localStorage.getItem('user'));
+                const idUser = storedUser.IdUser;
+
+                await Promise.all(this.getSubCarpetas.map(async (item) => {
+                    await this.cargarPermisosDirectorios({ idUser, nomItem: item.NomItem });
+                    this.permisosDirectorios.set(item.NomItem.toLowerCase(), this.getPermisosDirectorios[0].NomPer);
+                    //console.dir(`Permisos ${item.NomItem} -> ${this.getPermisosDirectorios[0].NomPer}`);
+                }));
+                const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
+                localStorage.setItem('PermisosSubDirectorios', permission);
+                console.log(this.permisosDirectorios);
+            } catch (error) {
+                console.error('Error al obtener permisos de directorios:', error);
+                throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
             }
-            const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
-            localStorage.setItem('PermisosSubDirectorios', permission);
-            console.log(this.permisosDirectorios);
         },
+
 
         rutaNueva() {
             //metodo para obtener la ruta

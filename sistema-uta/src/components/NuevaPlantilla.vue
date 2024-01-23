@@ -10,12 +10,13 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field label="Nombre Plantilla*" v-model="ItemPlantilla.nomPlan"
-                                    required></v-text-field>
+                                <v-text-field label="Nombre Plantilla*" :rules="controles().controlNom"
+                                    v-model="ItemPlantilla.nomPlan" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
                                 <v-input>
-                                    <v-text-field label="Nombre Subcarpeta*" v-model="item" required></v-text-field>
+                                    <v-text-field label="Nombre Subcarpeta*" :rules="controles().controlItem" v-model="item"
+                                        required></v-text-field>
                                     <v-tooltip bottom style="margin-right: 100px;">
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-icon color="black darken-2" size="30" @click.stop="agrgarItem()"
@@ -64,26 +65,58 @@ export default {
             item: '',
             auxItem: '',
             aux: '',
+            auxArray: [],
         }
     },
 
+
     methods: {
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
-        ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios', 'cargarPlantillas']),
+        ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarMasItemsDirectorios', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios', 'cargarPlantillas']),
         ...mapActions('SubCarpetas', ['actualizarSubCapeta']),
 
-        agregar: async function () {
-            if ( this.ItemPlantilla.nomPlan != "" || this.ItemPlantilla.items > 0 ) {
-                await this.AgregarPlantilla(this.ItemPlantilla);
-                await this.AgregarItemsSubDirectorios(this.ItemPlantilla);
-                await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: '' });
-                this.$alertify.success(this.ItemPlantilla.idPlan == 0 ? "Plantilla creada" : "Plantilla Actualizada");
-                this.cargarPlantillas();
-                this.cerrarDialog();
-            }else{
-                this.$alertify.success("No existen datos");
+
+        controles() {
+            return {
+                controlNom: [
+                    value => {
+                        if (value) return true
+                        return 'Ingrese un nombre'
+                    },
+                ],
+                controlItem: [
+                    value => {
+                        if (value) return true
+                        return 'Ingrese un nombre para agregar a la lista'
+                    },
+                ],
             }
         },
+
+        agregar: async function () {
+            try {
+                if (this.ItemPlantilla.nomPlan !== "" || this.ItemPlantilla.items > 0) {
+                    await Promise.all([
+                        this.AgregarPlantilla(this.ItemPlantilla),
+                        this.AgregarItemsSubDirectorios(this.ItemPlantilla)
+                    ]);
+                    if (this.ItemPlantilla.idPlan > 0) {
+                        await this.AgregarMasItemsDirectorios({ datos: this.auxArray, idPlan: this.ItemPlantilla.idPlan });
+                    } else {
+                        await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
+                    }
+                    this.cargarPlantillas();
+                    this.$alertify.success(this.ItemPlantilla.idPlan === 0 ? "Plantilla creada" : "Plantilla Actualizada");
+                    this.cerrarDialog();
+                } else {
+                    this.$alertify.error("No existen datos");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.$alertify.error("Ocurrió un error al procesar la solicitud");
+            }
+        },
+
 
         cerrarDialog() {
             this.setDialogPlantilla(false);
@@ -104,7 +137,10 @@ export default {
                 // Agregar el valor modificado a la lista de items
                 this.ItemPlantilla.items.push(this.item);
             }
-            console.log(this.ItemPlantilla.items);
+            if (this.ItemPlantilla.idPlan > 0) {
+                this.auxArray.push(this.item);
+            }
+            //console.log('sef'+this.auxArray);
 
             this.item = ''; // Limpiar el campo de texto después de agregar
         },

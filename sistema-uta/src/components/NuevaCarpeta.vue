@@ -10,7 +10,8 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field label="Nombre*" v-model="ItemCarpeta.NomEst" required></v-text-field>
+                                <v-text-field label="Nombre*" :rules="controles().controlNom" v-model="ItemCarpeta.NomEst"
+                                    required></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -53,19 +54,37 @@ export default {
         ...mapMutations('Dialogo', ['setDialogCarpeta']),
         ...mapActions('Plantillas', ['AgregarItemsSubDirectorios', 'AgregarItemsDirectorios']),
 
+        controles() {
+            return {
+                controlNom: [
+                    value => {
+                        if (value) return true
+                        return 'Ingrese un nombre'
+                    },
+                ],
+            }
+        },
+
         agregar: async function () {
             try {
-                if ( this.ItemCarpeta.NomEst != "" ) {
+                if (this.ItemCarpeta.NomEst != "") {
                     this.rutaNueva();
-                    //console.log("CARGAR " + this.path);
-                    await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
-                    await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
-                    //await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
-                    this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
+                    if (this.ItemCarpeta.IdEst == 0) {
+                        await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
+                        await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
+                        this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
+                    } else {
+                        if (this.ctlSubirArch == true || this.ctlfolder == true) {
+                            await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
+                            this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Archivo Actualizado");
+                        } else {
+                            this.$alertify.error("NO PUEDES CAMBIAR LOS NOMBRES DE ESTAS CARPETAS");
+                        }
+                    }
                     await this.cargarCarpetas(this.path);
                     this.cerrarDialog();
                     this.path = '';
-                }else{
+                } else {
                     this.$alertify.error("Complete todos campos para llevar acabo el proceso");
                 }
             } catch (error) {
@@ -111,7 +130,7 @@ export default {
 
     },
     computed: {
-        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Dialogo', ['itemsBread', 'ctlSubirArch', 'ctlfolder']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
         ...mapState('Plantillas', ['idEstPlan']),
         ...mapGetters('Plantillas', ['getEstudinates_Plantillas']),

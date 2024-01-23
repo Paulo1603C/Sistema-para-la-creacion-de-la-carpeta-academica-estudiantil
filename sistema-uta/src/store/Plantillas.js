@@ -192,8 +192,35 @@ export default {
           if (datos.idPlan == 0) {
             url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
           } else {
-            url = `${baseURL}Apis-UTA/actualizarCarrerasSecre.php`;
+            url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
           }
+          const data = await fetch(url, setting);
+          const json = await data.text();
+          if (json.startsWith('{')) {
+            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
+            //dispatch('cargarPlantillas');
+          } else {
+            //dispatch('cargarPlantillas');
+          }
+        } catch (error) {
+          console.error('Error en la solicitud:', error);
+        }
+        aux++;
+      }
+    },
+
+    AgregarMasItemsDirectorios: async function ({ commit, dispatch }, {datos, idPlan }) {
+      var aux = 0;
+      while (aux < datos.length) {
+        try {
+          const datosItem = new FormData();
+          datosItem.append('NomItem', datos[aux].toUpperCase());
+          datosItem.append('IdPlan', idPlan);
+          const setting = {
+            method: 'POST',
+            body: datosItem,
+          }
+          var url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {

@@ -13,9 +13,13 @@ export default {
     dailogCarpeta:false, // Estado del diálogo
     dailogPermisos:false, // Estado del diálogo
     dailogProgres:false, // Estado del diálogo
+    dailogCarreras:false, // Estado del diálogo
+    dailogContra:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
+    ctlSubirArch:false,
+    ctlfolder:false,//servira para poder modificar las carpetas creadas en donde se puede subir archivos
 
     itemsBread:['CARRERAS',],
     
@@ -46,6 +50,14 @@ export default {
       state.dailogProgres = value; // Mutación para actualizar el estado del diálogo
     },
 
+    setDialogCarreras(state, value) {
+      state.dailogCarreras = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogContra(state, value) {
+      state.dailogContra = value; // Mutación para actualizar el estado del diálogo
+    },
+
     setVentanaEst(state, value) {
       state.tablaEst = value; // Mutación para actualizar el estado del diálogo
     },
@@ -55,6 +67,14 @@ export default {
 
     setVentanaCarreras(state, value) {
       state.carreras = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setCtlSubirArch(state, value) {
+      state.ctlfolder = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setCtlfolder(state, value) {
+      state.ctlSubirArch = value; // Mutación para actualizar el estado del diálogo
     },
 
     setBreadcrumbs(state, value) {

@@ -10,18 +10,22 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field label="Cedula*" v-model="ItemEstudiante.Cedula" :counter="10"
+                                <v-text-field label="Cedula*" :rules="controles().controlCed"
+                                    @change="buscarEstudianteCed()" v-model="ItemEstudiante.Cedula" :counter="10"
                                     required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Nombre*" v-model="ItemEstudiante.NomEst" required></v-text-field>
+                                <v-text-field label="Nombres*" :rules="controles().controlNom"
+                                    v-model="ItemEstudiante.NomEst" required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Apellido*" v-model="ItemEstudiante.ApeEst" required></v-text-field>
+                                <v-text-field label="Apellidos*" :rules="controles().controlApe"
+                                    v-model="ItemEstudiante.ApeEst" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-select :items="getPlantillas" item-text="NomPlan" item-value="IdPlan" label="Plantillas*"
-                                    v-model="ItemEstudiante.idPlanPer" required></v-select>
+                                <v-select :rules="controles().controlPlan" :items="getPlantillas" item-text="NomPlan"
+                                    item-value="IdPlan" label="Plantillas*" v-model="ItemEstudiante.idPlanPer"
+                                    required></v-select>
                             </v-col>
                             {{ auxItemsPlan }}
                         </v-row>
@@ -65,16 +69,45 @@ export default {
 
     methods: {
         ...mapActions('Carreras', ['cargarCarreras']),
-        ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes']),
+        ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes', 'buscarEstCedula']),
         ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
         ...mapActions('Plantillas', ['cargarPlantillas', 'cargarItemsPlantillas']),
         ...mapMutations('Dialogo', ['setDialogFolder']),
+
+        controles() {
+            return {
+                controlCed: [
+                    value => {
+                        if (value) return true
+                        return 'Ingrese la cedula del estudiante'
+                    },
+                ],
+                controlNom: [
+                    value => {
+                        if (value) return true
+                        return 'Ingrese los nombres del estudiante'
+                    },
+                ],
+                controlApe: [
+                    value => {
+                        if (value) return true
+                        return 'Ingrese los apellidos del estudiante'
+                    },
+                ],
+                controlPlan: [
+                    value => {
+                        if (value) return true
+                        return 'Seleccione una plantilla'
+                    },
+                ],
+            }
+        },
 
         agregar: async function () {
             try {
                 if (this.ItemEstudiante.Cedula !== "" &&
                     this.ItemEstudiante.NomEst !== "" &&
-                    this.ItemEstudiante.ApeEst !== "" ) {
+                    this.ItemEstudiante.ApeEst !== "") {
                     this.rutaNueva();
                     console.log(this.path);
                     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -94,7 +127,7 @@ export default {
                     this.cerrarDialog();
                     this.path = '';
                 } else {
-                    this.$alertify.success("Complete todos campos para llevar acabo el proceso");
+                    this.$alertify.error("Complete todos campos para llevar acabo el proceso");
                 }
             } catch (error) {
                 console.error('Error al agregar estudiante:', error);
@@ -121,6 +154,23 @@ export default {
         cerrarDialog() {
             this.setDialogFolder(false);
         },
+
+        buscarEstudianteCed: async function () {
+            let buscar = await this.buscarEstCedula({ cedula: this.ItemEstudiante.Cedula });
+            if (buscar) {
+                this.$alertify.confirm(
+                    `El estudinate con cedula ${this.ItemEstudiante.Cedula} ya existe, Deseas crear el mismo estudiante otra vez?`,
+                    () => {
+                        this.$alertify.success('Prosiga')
+                    },
+                    () => {
+                        this.cerrarDialog(),
+                            this.ItemEstudiante.Cedula = '',
+                            this.$alertify.error('Cancelado')
+                    }
+                );
+            }
+        }
 
     },
     computed: {

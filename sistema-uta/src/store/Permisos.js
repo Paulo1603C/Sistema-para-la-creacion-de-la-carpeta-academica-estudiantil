@@ -11,7 +11,7 @@ export default {
     //se usara para conocer los permisos que tiene un usuarios en cada directorio
     permisosDirectorios: [],
     //amacena los usarios,permios,subdirectios
-    permisosSubDir_User:[],
+    permisosSubDir_User: [],
     //se usara para almacenar los subdirectiro y sus permisos
     permisosSubDirectorios: new Map(),
     //
@@ -78,16 +78,21 @@ export default {
         const setting = {
           method: 'POST',
           body: datosPerDir,
-        }
+        };
         const url = `${baseURL}Apis-UTA/permisosDirectorios.php`;
-        const data = await fetch(url, setting);
-        const json = await data.json();
+        const response = await fetch(url, setting);
+        if (!response.ok) {
+          throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
+        const json = await response.json();
         commit('llenarPermisosDirectorios', json);
       } catch (error) {
         console.error('Error en la solicitud:', error);
+        throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
       }
     },
-    
+
+
     cargarPermisosSubDir_User: async function ({ commit }, { idUser }) {
       try {
         const datosPerDir = new FormData();
@@ -142,7 +147,7 @@ export default {
       }
     },
 
-    eliminarPermisosSub_User: async function ({ commit, dispatch }, {idUser, idPer, idItem}) {
+    eliminarPermisosSub_User: async function ({ commit, dispatch }, { idUser, idPer, idItem }) {
       try {
         const datosPermisos = new FormData();
         datosPermisos.append('userPer', idUser);

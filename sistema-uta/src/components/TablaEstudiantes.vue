@@ -9,7 +9,7 @@
                     </v-text-field>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" @click="descargarAll()">Descargar Todo
-                        <v-icon right>mdi-menu-down</v-icon>
+                        <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
                 <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" :search="search"  class="elevation-1">
