@@ -81,7 +81,7 @@ export default {
                 items: this.words,
             }
             
-            console.log(this.plantillaSelect);
+            //console.log(this.plantillaSelect);
             this.setPlan(this.plantillaSelect);
         },
 

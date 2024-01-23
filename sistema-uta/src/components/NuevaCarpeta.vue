@@ -1,5 +1,6 @@
 <template>
     <v-row justify="center">
+        <progres2 :dialog="dailogCarpetas" :message="sms2"></progres2>
         <v-dialog v-model="dialog" persistent width="400">
             <v-card>
                 <v-card-title>
@@ -32,7 +33,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
-
+import progres2 from './progresCircular.vue';
 export default {
 
     name: "nuevo",
@@ -44,6 +45,8 @@ export default {
 
     data: () => ({
         path: '',
+        sms2: 'Creando carpetas...',
+        permisosDirectorios: new Map(),
     }),
 
     created() {
@@ -51,8 +54,11 @@ export default {
 
     methods: {
         ...mapActions('Server_Carpetas', ['crearCarpeta', 'cargarCarpetas', 'crearSubCarpeta']),
-        ...mapMutations('Dialogo', ['setDialogCarpeta']),
+        ...mapMutations('Dialogo', ['setDialogCarpeta', 'setDailogCarpetas']),
         ...mapActions('Plantillas', ['AgregarItemsSubDirectorios', 'AgregarItemsDirectorios']),
+        ...mapActions('Carreras', ['cargarCarreras']),
+        ...mapActions('Permisos', ['AgregarUsuarioPermisosCarpeta','cargarPermisosDirectorios']),
+        ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
 
         controles() {
             return {
@@ -70,8 +76,21 @@ export default {
                 if (this.ItemCarpeta.NomEst != "") {
                     this.rutaNueva();
                     if (this.ItemCarpeta.IdEst == 0) {
-                        await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
-                        await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
+                        //dependiendo la ruta se creara la carpeta
+                        let partes = this.path.split('/').filter(Boolean);
+                        let ultimoValor = partes[partes.length - 2]
+                        //si igual a uno de los padres se crear subcarpetas, caso contrario es padre
+                        if (this.getCarreras.some(({ NomCar }) => NomCar.toLowerCase() === ultimoValor.toLowerCase())) {
+                            //console.log("PADRE "+ultimoValor);
+                            await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
+                            await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
+                            await this.agregarPermisos(this.ItemCarpeta.NomEst);
+                            await this.cargarSubCarpetas();
+                            this.obtenerPermisosDirectorios();
+                        } else {
+                            //console.log("HIJA "+ultimoValor);
+                            await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
+                        }
                         this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
                     } else {
                         if (this.ctlSubirArch == true || this.ctlfolder == true) {
@@ -92,17 +111,29 @@ export default {
             }
         },
 
+        agregarPermisos: async function ( nomCar ) {
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            const idUser = storedUser.IdUser;
+            let permisos = {
+                IdUserPer: idUser,
+                IdPerPer: 1,
+                IdItemSubPer: nomCar,
+            };
+            let res = await this.AgregarUsuarioPermisosCarpeta(permisos);
+            return res ? this.$alertify.error("Permiso insertado"): this.$alertify.error("No se pudo insetar el permiso");
+        },
+
         insertarItemSubCarpta: async function (nombre) {
             const ItemsSubDir = {
                 idPlan: 0,
                 items: [nombre],
             };
             await this.AgregarItemsSubDirectorios(ItemsSubDir);
-            await this.AgregarItemsDirectorios({ datos: ItemsSubDir, idPlan: this.idEstPlan });
         },
 
         //este metodo creara el subdirectior  nuevo en todos los estudiante que tengan la misma plantilla
         crearSubDirectorios: async function (ruta, nomSub) {
+            this.setDailogCarpetas(true);
             for (let i = 0; i < this.getEstudinates_Plantillas.length; i++) {
                 const row = (this.getEstudinates_Plantillas[i]);
                 let partes = ruta.split('/').filter(Boolean);
@@ -114,6 +145,7 @@ export default {
                 //console.log(nuevaCadena2 +"/"+ row.NomCar+ "/"+ row.NomEst + " " + row.ApeEst+"/"+nomSub);
                 await this.crearSubCarpeta({ datos: row, path: nuevaCadena2 + "/" + row.NomCar + "/", nombre: nomSub });
             }
+            this.setDailogCarpetas(false);
         },
 
         rutaNueva() {
@@ -128,12 +160,39 @@ export default {
             this.setDialogCarpeta(false);
         },
 
+        obtenerPermisosDirectorios: async function () {
+            try {
+                const storedUser = JSON.parse(localStorage.getItem('user'));
+                const idUser = storedUser.IdUser;
+
+                await Promise.all(this.getSubCarpetas.map(async (item) => {
+                    await this.cargarPermisosDirectorios({ idUser, nomItem: item.NomItem });
+                    this.permisosDirectorios.set(item.NomItem.toLowerCase(), this.getPermisosDirectorios[0].NomPer);
+                    //console.dir(`Permisos ${item.NomItem} -> ${this.getPermisosDirectorios[0].NomPer}`);
+                }));
+                const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
+                localStorage.setItem('PermisosSubDirectorios', permission);
+                console.log(this.permisosDirectorios);
+            } catch (error) {
+                console.error('Error al obtener permisos de directorios:', error);
+                throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
+            }
+        },
+
     },
+
+    components: {
+        progres2,
+    },
+
     computed: {
-        ...mapState('Dialogo', ['itemsBread', 'ctlSubirArch', 'ctlfolder']),
+        ...mapState('Dialogo', ['itemsBread', 'ctlSubirArch', 'ctlfolder', 'dailogCarpetas']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
         ...mapState('Plantillas', ['idEstPlan']),
         ...mapGetters('Plantillas', ['getEstudinates_Plantillas']),
+        ...mapGetters('SubCarpetas', ['getSubCarpetas']),
+        ...mapGetters('Carreras', ['getCarreras']),
+        ...mapGetters('Permisos', ['getPermisosDirectorios']),
     },
 }
 </script>       

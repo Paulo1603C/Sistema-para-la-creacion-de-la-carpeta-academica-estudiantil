@@ -13,28 +13,29 @@
                                     required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Apellido*" :rules="controles().controlApe" v-model="ItemUsuario.apellido"
-                                    required></v-text-field>
+                                <v-text-field label="Apellido*" :rules="controles().controlApe"
+                                    v-model="ItemUsuario.apellido" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Email*" :rules="controles().controlCor" v-model="ItemUsuario.correo"
-                                    required></v-text-field>
+                                <v-text-field label="Email*" :rules="controles().controlCor" @change="validarC()"
+                                    v-model="ItemUsuario.correo" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
                                 <v-text-field label="Password*" type="password" :rules="controles().controlCon"
                                     v-model="ItemUsuario.contraseña" required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="4">
-                                <v-select :rules="controles().controlRol" :items="getRoles" item-text="NomRol" item-value="IdRol" label="Roles*"
-                                    v-model="ItemUsuario.rol" required></v-select>
+                                <v-select :rules="controles().controlRol" :items="getRoles" item-text="NomRol"
+                                    item-value="IdRol" label="Roles*" v-model="ItemUsuario.rol" required></v-select>
                             </v-col>
                             <v-col cols="12" sm="4" style="display:none;">
                                 <v-autocomplete :items="getPermisos" item-text="nomPer" item-value="IdPer" label="Permisos*"
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
                             <v-col cols="12" sm="4">
-                                <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar" item-value="IdCar" label="Carreras*"
-                                    multiple v-model="ItemUsuario.carreras"></v-autocomplete>
+                                <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar"
+                                    item-value="IdCar" label="Carreras*" multiple
+                                    v-model="ItemUsuario.carreras"></v-autocomplete>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -83,6 +84,7 @@ export default {
         ...mapActions('Roles', ['cargarRoles']),
         ...mapActions('Permisos', ['cargarPermisos']),
         ...mapMutations('Dialogo', ['setDialog']),
+        ...mapActions('Login', ['validarCorreo']),
 
         controles() {
             return {
@@ -125,8 +127,21 @@ export default {
             };
         },
 
-        agregar: async function () {
+        agregar() {
+            this.insertarUsuario();
+        },
 
+        validarC: async function () {
+            const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
+            if (correoValido) {
+                this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () =>
+                    this.$alertify.warning('alerta cerrada')
+                );
+                this.ItemUsuario.correo = '';
+            }
+        },
+
+        insertarUsuario: async function () {
             try {
                 if (this.ItemUsuario.nombre !== "" &&
                     this.ItemUsuario.apellido !== "" &&
@@ -136,7 +151,6 @@ export default {
                     this.ItemUsuario.contraseña = contraseñaHash;
                     await this.AgregarUsuario(this.ItemUsuario);
                     await this.actualizarCarrerasUsuario();
-                    //await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: this.ItemUsuario.carreras });
                     this.cerrarDialog();
                     this.limpiarCampos();
                     this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
@@ -160,17 +174,13 @@ export default {
         actualizarCarrerasUsuario: async function () {
             const carrerasAntiguas = this.devolverCarreras();
             const carrerasNuevas = this.ItemUsuario.carreras;
-
             // Identificar carreras que deben eliminarse
             const carrerasEliminar = carrerasAntiguas.filter(carrera => !carrerasNuevas.includes(carrera));
-
             // Identificar carreras que deben agregarse
             const carrerasAgregar = carrerasNuevas.filter(carrera => !carrerasAntiguas.includes(carrera));
-
             // Actualizar carreras solo si hay cambios
             if (carrerasEliminar.length > 0 || carrerasAgregar.length > 0) {
                 console.log('Realizando actualización de carreras');
-
                 // Eliminar carreras que ya no están en la lista nueva
                 if (carrerasEliminar.length > 0) {
                     for (const carreraEliminar of carrerasEliminar) {

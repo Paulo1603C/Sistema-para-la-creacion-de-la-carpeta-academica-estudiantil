@@ -15,6 +15,8 @@ export default {
     dailogProgres:false, // Estado del diálogo
     dailogCarreras:false, // Estado del diálogo
     dailogContra:false, // Estado del diálogo
+    dailogCarpetas:false, // Estado del diálogo
+    mostrarCrear:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
     carreras: true, // Estado del diálogo
@@ -56,6 +58,14 @@ export default {
 
     setDailogContra(state, value) {
       state.dailogContra = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogCarpetas(state, value) {
+      state.dailogCarpetas = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setMostrarCrear(state, value) {
+      state.mostrarCrear = value; // Mutación para actualizar el estado del diálogo
     },
 
     setVentanaEst(state, value) {

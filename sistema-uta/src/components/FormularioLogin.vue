@@ -83,7 +83,7 @@ export default {
             this.$alertify.promptWithTitle(
                 'Cambio de contraseña',
                 'Digite su correo para poder seguir con el proceso',
-                'correo',
+                ' ',
                 async (evt, value) => {
                     try {
                         if ( value != '' ) {

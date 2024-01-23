@@ -147,6 +147,33 @@ export default {
       }
     },
 
+    //insetar permisos cuando se crear una nueva carpeta...-> lectura
+    AgregarUsuarioPermisosCarpeta: async function ({ commit, dispatch }, datos) {
+      try {
+        const datosPermisos = new FormData();
+        datosPermisos.append('userPer', datos.IdUserPer);
+        datosPermisos.append('perPer', datos.IdPerPer);
+        datosPermisos.append('itemSub', datos.IdItemSubPer);
+
+        const setting = {
+          method: 'POST',
+          body: datosPermisos,
+        }
+        var url = `${baseURL}Apis-UTA/insertarPermisosNew.php`;
+        const data = await fetch(url, setting);
+        if ( data.ok ) {
+          const json = await data.json();
+          if (json == 'Permiso Insertado...') {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    },
+
     eliminarPermisosSub_User: async function ({ commit, dispatch }, { idUser, idPer, idItem }) {
       try {
         const datosPermisos = new FormData();

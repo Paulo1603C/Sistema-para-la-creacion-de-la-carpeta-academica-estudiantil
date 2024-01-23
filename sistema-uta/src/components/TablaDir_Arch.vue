@@ -106,7 +106,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder']),
+        ...mapMutations('Dialogo', ['setMostrarCrear','setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Server_Archivos', ['descargarArchivo', 'cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
@@ -220,12 +220,20 @@ export default {
 
         // Mostrar editar
         mostrarEditar(item) {
+            this.mostrarCrear(item);
             return this.mostrarEditarGenerico(item, 'Editar');
         },
 
         // Mostrar eliminar
         mostrarEliminar(item) {
             return this.mostrarEditarGenerico(item, 'Eliminar');
+        },
+
+        // Mostrar eliminar
+        mostrarCrear(item) {
+            let crear = this.mostrarEditarGenerico(item, 'Crear');
+            console.log(crear);
+            this.setMostrarCrear(crear);
         },
 
         mostrarVista(item) {
@@ -236,7 +244,6 @@ export default {
             this.dialogObs = true;
             this.rutaNueva();
             this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
-            console.log(this.path + item.nombre);
             this.path = '';
         },
 

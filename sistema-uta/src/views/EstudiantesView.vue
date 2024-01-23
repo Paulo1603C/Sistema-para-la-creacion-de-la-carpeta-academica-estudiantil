@@ -94,14 +94,20 @@ export default {
         ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
 
-
+        controlArchFolder: async function (ruta) {
+            let partes = ruta.split('/').filter(Boolean);
+            let ultimoValor = partes[partes.length - 1]
+            //si igual a uno de los padres se crear subcarpetas, caso contrario es padre
+            if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === ultimoValor.toLowerCase())) {
+                this.setCtlSubirArch(false);
+                this.setCtlfolder(false);
+            }
+        },
 
         acciones(item) {
             //console.log(item);
             this.rutaNueva();
-            this.setCtlSubirArch(false);
-            this.setCtlfolder(false);
-            //console.log(this.path);
+            this.controlArchFolder(this.path);
             if (item == this.itemsBread[0]) {
                 //console.log('Mijas de pan');
                 this.setVentanaCarreras(true);
@@ -178,23 +184,31 @@ export default {
             }
         },
 
+
     },
     watch: {
         tablaEst: {
             handler(newVal, oldVal) {
                 console.log('Nueva tablaEst:', newVal);
                 if (newVal) {
-                    console.log('tablaEst es verdadero');
                     this.btnOP = [
                         { icon: "folder-plus", text: "Crear Estudiante", show: "true" },
                         { icon: "import", text: "Importar Datos", show: "true" },
                     ];
                 } else {
-                    this.btnOP = [
-                        { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
-                        //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
-                    ];
-                    console.log('tablaEst es falso');
+                    const storedUser = JSON.parse(localStorage.getItem('user'));
+                    const idUser = storedUser.IdRolPer;
+                    if ( idUser == 1 ) {
+                        this.btnOP = [
+                            { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
+                            //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
+                        ];
+                    }else{
+                        this.btnOP = [
+                            { icon: "alpha-x", text: "Sin permisos", show: "true" },
+                        ];
+
+                    }
                 }
             },
             immediate: true, // Si deseas que el watcher se ejecute inmediatamente al montar el componente
@@ -205,8 +219,9 @@ export default {
                 if (newVal) {
                     this.btnOP = [
                         { icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
-                        //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
+                        { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
                     ];
+
                 } else {
                     this.btnOP = [
                         { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
@@ -219,9 +234,9 @@ export default {
 
     computed: {
         ...mapGetters('Estudiantes', ['getItems']),
-        ...mapGetters('Carreras', ['getCarrerasUser']),
+        ...mapGetters('Carreras', ['getCarrerasUser', 'getCarreras']),
         ...mapGetters('Server_Carpetas', ['getCarpetas']),
-        ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras', 'itemsBread', 'ctlSubirArch']),
+        ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras', 'itemsBread', 'ctlSubirArch', 'mostrarCrear']),
         ...mapState('Carreras', ['carreraSelecionada', 'idCarreraSelect']),
         ...mapGetters('Permisos', ['getPermisosDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),

@@ -15,8 +15,7 @@
                             </v-col>
                             <v-col cols="12">
                                 <v-input>
-                                    <v-text-field label="Nombre Subcarpeta*" :rules="controles().controlItem" v-model="item"
-                                        required></v-text-field>
+                                    <v-text-field label="Nombre Subcarpeta*" v-model="item" required></v-text-field>
                                     <v-tooltip bottom style="margin-right: 100px;">
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-icon color="black darken-2" size="30" @click.stop="agrgarItem()"
@@ -72,7 +71,7 @@ export default {
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
-        ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarMasItemsDirectorios', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios', 'cargarPlantillas']),
+        ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarMasItemsDirectorios', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios', 'cargarPlantillas', 'AgregarItemsPalntilla', 'cargarItemsPlantillasTiene']),
         ...mapActions('SubCarpetas', ['actualizarSubCapeta']),
 
 
@@ -98,6 +97,7 @@ export default {
                 if (this.ItemPlantilla.nomPlan !== "" || this.ItemPlantilla.items > 0) {
                     await Promise.all([
                         this.AgregarPlantilla(this.ItemPlantilla),
+                        this.AgregarItemsPalntilla(this.ItemPlantilla),
                         this.AgregarItemsSubDirectorios(this.ItemPlantilla)
                     ]);
                     if (this.ItemPlantilla.idPlan > 0) {
@@ -123,25 +123,32 @@ export default {
         },
 
         agrgarItem: async function () {
+            //servira para controlar la actualizacion
+            if (this.ItemPlantilla.idPlan > 0) {
+                //console.log(this.ItemPlantilla.idPlan)
+                await this.cargarItemsPlantillasTiene({ idPlan: this.ItemPlantilla.idPlan });
+            }
             // Comprobar si el valor en el campo de texto ha sido modificado
             if (this.aux != this.item) {
-                if (this.ItemPlantilla.idPlan != 0) {
-                    console.log("actualizar valor en base de datos");
-                    await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
-                }
-                // Buscar y eliminar el valor antiguo en la lista de items
-                const foundItemIndex = this.ItemPlantilla.items.indexOf(this.aux);
-                if (foundItemIndex !== -1) {
-                    this.ItemPlantilla.items.splice(foundItemIndex, 1);
-                }
-                // Agregar el valor modificado a la lista de items
-                this.ItemPlantilla.items.push(this.item);
-            }
+                 if (this.ItemPlantilla.idPlan != 0) {
+                     console.log("actualizar valor en base de datos");
+                     await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
+                 }
+                 // Buscar y eliminar el valor antiguo en la lista de items
+                 const foundItemIndex = this.ItemPlantilla.items.indexOf(this.aux);
+                 if (foundItemIndex !== -1) {
+                     this.ItemPlantilla.items.splice(foundItemIndex, 1);
+                 }
+                 // Agregar el valor modificado a la lista de items
+                 this.ItemPlantilla.items.push(this.item);
+             }
             if (this.ItemPlantilla.idPlan > 0) {
-                this.auxArray.push(this.item);
+                const currentItem = this.item;
+                if (this.getItemsPlantillasTiene.some(({ NomItem }) => NomItem.toLowerCase() != currentItem.toLowerCase())) {
+                    this.auxArray.push(currentItem);
+                }
             }
-            //console.log('sef'+this.auxArray);
-
+            //console.log(this.auxArray);
             this.item = ''; // Limpiar el campo de texto después de agregar
         },
 
@@ -150,6 +157,10 @@ export default {
             this.aux = this.auxItem;
         },
     },
+
+    computed: {
+        ...mapGetters('Plantillas', ['getItemsPlantillasTiene']),
+    }
 
 }
 </script>

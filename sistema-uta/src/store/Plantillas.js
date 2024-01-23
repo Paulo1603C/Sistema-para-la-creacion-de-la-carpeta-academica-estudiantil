@@ -9,6 +9,7 @@ export default {
   state: {
     Plantillas: [],
     ItemsPlantilla:[],
+    ItemsPlantillaTiene:[],
     dataPlan: {},
     estudinates_Plantillas:[],
     //alamcenara el id de la plantilla del estudiante seleccionado
@@ -24,6 +25,10 @@ export default {
       return state.ItemsPlantilla;
     },
 
+    getItemsPlantillasTiene(state) {
+      return state.ItemsPlantillaTiene;
+    },
+
     getEstudinates_Plantillas(state) {
       return state.estudinates_Plantillas;
     },
@@ -36,6 +41,10 @@ export default {
 
     llenarItemsPlantillas(state, data) {
       state.ItemsPlantilla = data;
+    },
+
+    llenarItemsPlantillasTiene(state, data) {
+      state.ItemsPlantillaTiene = data;
     },
 
     llenarEstudinates_Plantillas(state, data) {
@@ -87,6 +96,30 @@ export default {
 
         if (data.ok) {
           commit('llenarItemsPlantillas', json);
+        } else {
+          console.log('La respuesta no es un JSON válido:', await data.text());
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+
+    },
+
+    cargarItemsPlantillasTiene: async function ( { commit }, {idPlan} ) {
+      try {
+        const datosPlantilla = new FormData();
+        datosPlantilla.append('IdPlan', idPlan );
+
+        const setting = {
+          method: 'POST',
+          body:datosPlantilla,
+        };
+        const url = `${baseURL}Apis-UTA/ItemsPlantillaTiene.php`;
+        const data = await fetch(url, setting);
+        const json = await data.json();
+
+        if (data.ok) {
+          commit('llenarItemsPlantillasTiene', json);
         } else {
           console.log('La respuesta no es un JSON válido:', await data.text());
         }
@@ -161,6 +194,32 @@ export default {
             body: datosItem,
           }
           const url = `${baseURL}Apis-UTA/insertarItemsSubdirectorios.php`;
+          const data = await fetch(url, setting);
+          const json = await data.text();
+          if (json.startsWith('{')) {
+            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
+            //dispatch('cargarPlantillas');
+          } else {
+            //dispatch('cargarPlantillas');
+          }
+        } catch (error) {
+          console.error('Error en la solicitud:', error);
+        }
+        aux++;
+      }
+    },
+
+    AgregarItemsPalntilla: async function ({ commit, dispatch }, datos) {
+      var aux = 0;
+      while (aux < datos.items.length) {
+        try {
+          const datosItem = new FormData();
+          datosItem.append('NomSubDirectorio', datos.items[aux].toUpperCase());
+          const setting = {
+            method: 'POST',
+            body: datosItem,
+          }
+          const url = `${baseURL}Apis-UTA/insertarItemsPlantilla.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
