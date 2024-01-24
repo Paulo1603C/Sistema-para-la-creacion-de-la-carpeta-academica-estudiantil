@@ -51,13 +51,15 @@ export default {
           body: datosPantilla,
         }
         var url = `${baseURL}Apis-UTA/actualizarItemSubDir.php`;
-        const data = await fetch(url, setting);
-        const json = await data.text();
-        if (json.startsWith('{')) {
-          const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-          dispatch('cargarSubCarpetas');
-        } else {
-          dispatch('cargarSubCarpetas');
+        const response = await fetch(url, setting);
+        if ( response.ok ) {
+          const json = await response.json();
+          if( json.message == "SubCarpeta Actualizado" ){
+            dispatch('cargarSubCarpetas');
+            return true;
+          }else{
+            return false;
+          }
         }
       } catch (error) {
         console.error('Error en la solicitud:', error);

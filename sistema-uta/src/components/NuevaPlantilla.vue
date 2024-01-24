@@ -64,6 +64,7 @@ export default {
             item: '',
             auxItem: '',
             aux: '',
+            auxModify:false,
             auxArray: [],
         }
     },
@@ -100,10 +101,11 @@ export default {
                         this.AgregarItemsPalntilla(this.ItemPlantilla),
                         this.AgregarItemsSubDirectorios(this.ItemPlantilla)
                     ]);
-                    if (this.ItemPlantilla.idPlan > 0) {
+                    if ( !this.auxModify ) {
                         let aux = this.obtenerNoRepetidos(this.auxArray);
                         await this.AgregarMasItemsDirectorios({ datos: aux, idPlan: this.ItemPlantilla.idPlan });
-                    } else {
+                    }
+                    if( this.ItemPlantilla.idPlan == 0 ){
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
                     }
                     await this.cargarPlantillas();
@@ -131,7 +133,7 @@ export default {
                 // Comprobar si el valor en el campo de texto ha sido modificado
                 if (this.aux != this.item) {
                     if (this.ItemPlantilla.idPlan > 0) {
-                        await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
+                        this.auxModify = await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
                     }
                     // Buscar y eliminar el valor antiguo en la lista de items
                     const foundItemIndex = this.ItemPlantilla.items.indexOf(this.aux);
