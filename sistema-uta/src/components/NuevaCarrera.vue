@@ -59,17 +59,22 @@ export default {
 
         agregar: async function () {
 
-            if (this.ItemCarrera.nomCar != '') {
-                let insertSer = await this.crearCarpetaCarrera({ path: this.itemsBread[0], datos: this.ItemCarrera, oldPath: this.rutaAnterior });
-                if (insertSer) {
-                    await this.agregarCarrera(this.ItemCarrera);
-                    this.$alertify.success(`Carrera ${this.ItemCarrera.nomCar} insertada`);
+            try {
+                if (this.ItemCarrera.nomCar != '') {
+                    let insertSer = await this.crearCarpetaCarrera({ path: this.itemsBread[0], datos: this.ItemCarrera, oldPath: this.rutaAnterior });
+                    if (insertSer) {
+                        await this.agregarCarrera(this.ItemCarrera);
+                        this.$alertify.success(`Carrera ${this.ItemCarrera.nomCar} insertada`);
+                    } else {
+                        this.$alertify.error(`No se pudo insertar la carrera ${this.ItemCarrera.nomCar}`);
+                    }
+                    this.cerrarDialog();
                 } else {
-                    this.$alertify.error(`No se pudo insertar la carrera ${this.ItemCarrera.nomCar}`);
+                    this.$alertify.error("Complete los campos para continuar");
                 }
-                this.cerrarDialog();
-            } else {
-                this.$alertify.error("Complete los campos para continuar");
+            } catch (error) {
+                console.error('Error al agregar carrera:', error);
+                this.$alertify.error("Error al realizar la operación " +error);
             }
 
         },

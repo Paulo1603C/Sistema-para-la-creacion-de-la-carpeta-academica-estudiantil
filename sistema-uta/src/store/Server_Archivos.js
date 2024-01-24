@@ -106,8 +106,8 @@ export default {
 
         crearObsArchivos: async function ({ commit, dispatch }, { ruta, observacion, idEstPer }) {
             try {
-                console.log(observacion);
-                console.log(ruta);
+                //console.log(observacion);
+                //console.log(ruta);
                 const datosObsArchivos = new FormData();
                 datosObsArchivos.append('RutaArchivo', ruta);
                 datosObsArchivos.append('Observacion', observacion);

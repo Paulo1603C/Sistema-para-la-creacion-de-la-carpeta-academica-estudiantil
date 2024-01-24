@@ -67,7 +67,7 @@ export default {
         abrirVentana(item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            console.log("nuevos permiso" + permisosSubdirectorio.get("CEDULA"));
+            //console.log("nuevos permiso" + permisosSubdirectorio.get("CEDULA"));
             this.obtenerPermisosDirectorios();
 
             this.setBreadcrumbs(item.nomCar.toUpperCase());
@@ -131,7 +131,7 @@ export default {
                 }));
                 const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
                 localStorage.setItem('PermisosSubDirectorios', permission);
-                console.log(this.permisosDirectorios);
+                //console.log(this.permisosDirectorios);
             } catch (error) {
                 console.error('Error al obtener permisos de directorios:', error);
                 throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
@@ -142,7 +142,7 @@ export default {
         rutaNueva() {
             //metodo para obtener la ruta
             for (let i = 0; i < this.itemsBread.length; i++) {
-                console.log(this.itemsBread[i]);
+                //console.log(this.itemsBread[i]);
                 this.path += this.itemsBread[i] + "/";
             }
             //console.log(this.path);

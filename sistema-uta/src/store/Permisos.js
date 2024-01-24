@@ -161,8 +161,10 @@ export default {
         }
         var url = `${baseURL}Apis-UTA/insertarPermisosNew.php`;
         const data = await fetch(url, setting);
+        console.log("DATA "+data);
         if ( data.ok ) {
           const json = await data.json();
+          console.log("Josn "+json);
           if (json == 'Permiso Insertado...') {
             return true;
           } else {
@@ -195,7 +197,7 @@ export default {
           dispatch('cargarPermisosSubDir_User', idUser);
         }
       } catch (error) {
-        console.log("Error de eliminción " + error);
+        console.error("Error de eliminción " + error);
       }
 
     }

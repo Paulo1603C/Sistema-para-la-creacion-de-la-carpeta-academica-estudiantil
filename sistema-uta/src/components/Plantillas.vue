@@ -72,17 +72,20 @@ export default {
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
 
         editar() {
-            this.setDialogPlantilla(true);
-            this.words = [this.items];
-            this.words = this.items.split(",");
-            this.plantillaSelect = {
-                idPlan: this.idPlan,
-                nomPlan: this.titulo,
-                items: this.words,
+            try {
+                this.setDialogPlantilla(true);
+                this.words = [this.items];
+                this.words = this.items.split(",");
+                this.plantillaSelect = {
+                    idPlan: this.idPlan,
+                    nomPlan: this.titulo,
+                    items: this.words,
+                }
+                //console.log(this.plantillaSelect);
+                this.setPlan(this.plantillaSelect);
+            } catch (error) {
+                this.$alertify.error('Error al editar:', error);
             }
-            
-            //console.log(this.plantillaSelect);
-            this.setPlan(this.plantillaSelect);
         },
 
         eliminar() {

@@ -7,8 +7,8 @@
                 </v-card-title>
 
                 <v-card-text>
-                    <v-data-table  v-if="getPermisosSubDir_User.length != 0" style="max-height:200px; overflow-y: auto;" dense :headers="Cabecera"
-                        :items="getPermisosSubDir_User" hide-default-footer>
+                    <v-data-table v-if="getPermisosSubDir_User.length != 0" style="max-height:200px; overflow-y: auto;"
+                        dense :headers="Cabecera" :items="getPermisosSubDir_User" hide-default-footer>
                         <template v-slot:item="{ item }">
                             <tr class="myStyle">
                                 <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
@@ -37,12 +37,14 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" sm="6">
-                                <v-select :items="getSubCarpetas" item-text="NomItem" item-value="IdItem"
-                                    label="SubCarpetas*" v-model="PermisosUsario.IdItemSubPer" required></v-select>
+                                <v-select :items="getSubCarpetas" :rules="controles().controlCar" item-text="NomItem"
+                                    item-value="IdItem" label="SubCarpetas*" v-model="PermisosUsario.IdItemSubPer"
+                                    required></v-select>
                             </v-col>
                             <v-col cols="12" sm="6">
-                                <v-autocomplete :items="getPermisos" item-text="nomPer" item-value="IdPer" label="Permisos*"
-                                    v-model="PermisosUsario.IdPerPer" multiple></v-autocomplete>
+                                <v-autocomplete :items="getPermisos" :rules="controles().controlPer" item-text="nomPer"
+                                    item-value="IdPer" label="Permisos*" v-model="PermisosUsario.IdPerPer"
+                                    multiple></v-autocomplete>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -97,17 +99,32 @@ export default {
         ...mapMutations('Dialogo', ['setDialogPermisos']),
         ...mapActions('Permisos', ['AgregarUsuarioPermisos', 'eliminarPermisosSub_User', 'cargarPermisosSubDir_User']),
 
+        controles() {
+            return {
+                controlCar: [
+                    value => {
+                        if (value) return true;
+                        return 'Seleccione una carpeta';
+                    },
+                ],
+                controlPer: [
+                    value => {
+                        if (value) return true;
+                        return 'Seleccione almenos un permiso';
+                    },
+                ],
+            }
+        },
+
         agregar: async function () {
-            //if ( this.PermisosUsario.IdItemSubPer  > 0 &&
-                   // this.PermisosUsario.IdPerPer  > 0 ) {
-                //console.log('Gaurdado');
-                console.log(this.PermisosUsario);
+            try {
                 await this.AgregarUsuarioPermisos(this.PermisosUsario);
                 this.cerrarDialog();
                 this.$alertify.success(this.PermisosUsario.IdRelacion == 0 ? "Permisos Insertados" : "Permisos Actualizados");
-            /*} else {
-                this.$alertify.success("Complete todos campos para llevar acabo el proceso");
-            }*/
+            } catch (error) {
+                this.$alertify.error("Error en la solicitud agregar Permisos " + error);
+            }
+
         },
 
         cerrarDialog() {
@@ -115,9 +132,13 @@ export default {
         },
 
         eliminarItem: async function (item) {
-            await this.eliminarPermisosSub_User({ idUser: item.IdUser, idPer: item.IdPer, idItem: item.IdItem });
-            await this.cargarPermisosSubDir_User({ idUser: item.IdUser });
-            this.$alertify.success('Permiso ' + item.NomPer + ' eliminado para ' + item.NomItem);
+            try {
+                await this.eliminarPermisosSub_User({ idUser: item.IdUser, idPer: item.IdPer, idItem: item.IdItem });
+                await this.cargarPermisosSubDir_User({ idUser: item.IdUser });
+                this.$alertify.success('Permiso ' + item.NomPer + ' eliminado para ' + item.NomItem);
+            } catch (error) {
+                this.$alertify.error('Fallo en la solicitud eliminar Item ' +error);
+            }
         },
 
     },

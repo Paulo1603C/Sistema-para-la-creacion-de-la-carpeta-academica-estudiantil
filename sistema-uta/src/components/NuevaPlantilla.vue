@@ -101,11 +101,12 @@ export default {
                         this.AgregarItemsSubDirectorios(this.ItemPlantilla)
                     ]);
                     if (this.ItemPlantilla.idPlan > 0) {
-                        await this.AgregarMasItemsDirectorios({ datos: this.auxArray, idPlan: this.ItemPlantilla.idPlan });
+                        let aux = this.obtenerNoRepetidos(this.auxArray);
+                        await this.AgregarMasItemsDirectorios({ datos: aux, idPlan: this.ItemPlantilla.idPlan });
                     } else {
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
                     }
-                    this.cargarPlantillas();
+                    await this.cargarPlantillas();
                     this.$alertify.success(this.ItemPlantilla.idPlan === 0 ? "Plantilla creada" : "Plantilla Actualizada");
                     this.cerrarDialog();
                 } else {
@@ -113,7 +114,7 @@ export default {
                 }
             } catch (error) {
                 console.error('Error:', error);
-                this.$alertify.error("Ocurrió un error al procesar la solicitud");
+                this.$alertify.error("Ocurrió un error al procesar la solicitud agregar Plantilla " + error);
             }
         },
 
@@ -123,33 +124,47 @@ export default {
         },
 
         agrgarItem: async function () {
-            //servira para controlar la actualizacion
-            if (this.ItemPlantilla.idPlan > 0) {
-                //console.log(this.ItemPlantilla.idPlan)
-                await this.cargarItemsPlantillasTiene({ idPlan: this.ItemPlantilla.idPlan });
+            try {
+                if (this.ItemPlantilla.idPlan > 0) {
+                    await this.cargarItemsPlantillasTiene({ idPlan: this.ItemPlantilla.idPlan });
+                }
+                // Comprobar si el valor en el campo de texto ha sido modificado
+                if (this.aux != this.item) {
+                    if (this.ItemPlantilla.idPlan > 0) {
+                        await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
+                    }
+                    // Buscar y eliminar el valor antiguo en la lista de items
+                    const foundItemIndex = this.ItemPlantilla.items.indexOf(this.aux);
+                    if (foundItemIndex !== -1) {
+                        this.ItemPlantilla.items.splice(foundItemIndex, 1);
+                    }
+                    // Agregar el valor modificado a la lista de items
+                    this.ItemPlantilla.items.push(this.item);
+                }
+                if (this.ItemPlantilla.idPlan > 0) {
+                    const currentItem = this.item;
+                    if (this.getItemsPlantillasTiene.some(({ NomItem }) => NomItem.toLowerCase() != currentItem.toLowerCase())) {
+                        this.auxArray.push(currentItem);
+                    }
+                }
+                this.item = '';
+            } catch (error) {
+                this.$alertify.error("Error al realizar la operación agregar Plantilla " + error);
             }
-            // Comprobar si el valor en el campo de texto ha sido modificado
-            if (this.aux != this.item) {
-                 if (this.ItemPlantilla.idPlan != 0) {
-                     console.log("actualizar valor en base de datos");
-                     await this.actualizarSubCapeta({ nomItem: this.aux, nuevoItem: this.item });
-                 }
-                 // Buscar y eliminar el valor antiguo en la lista de items
-                 const foundItemIndex = this.ItemPlantilla.items.indexOf(this.aux);
-                 if (foundItemIndex !== -1) {
-                     this.ItemPlantilla.items.splice(foundItemIndex, 1);
-                 }
-                 // Agregar el valor modificado a la lista de items
-                 this.ItemPlantilla.items.push(this.item);
-             }
-            if (this.ItemPlantilla.idPlan > 0) {
-                const currentItem = this.item;
-                if (this.getItemsPlantillasTiene.some(({ NomItem }) => NomItem.toLowerCase() != currentItem.toLowerCase())) {
-                    this.auxArray.push(currentItem);
+        },
+
+        obtenerNoRepetidos(arr) {
+            let nuevoArray = [];
+            const contador = {};
+            for ( const valor of arr) {
+                contador[valor] = (contador[valor] || 0) + 1;
+            }
+            for ( const aux in contador) {
+                if (contador[aux] <= 1) {
+                    nuevoArray.push(aux);
                 }
             }
-            //console.log(this.auxArray);
-            this.item = ''; // Limpiar el campo de texto después de agregar
+            return nuevoArray;
         },
 
         cambiarValor() {

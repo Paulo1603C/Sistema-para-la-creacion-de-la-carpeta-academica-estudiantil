@@ -1,5 +1,6 @@
 <template>
     <v-row justify="center">
+        <progres :dialog="dailogCrearEst" :message="sms"></progres>
         <v-dialog v-model="dialog" persistent width="400">
             <v-card>
                 <v-card-title>
@@ -15,14 +16,14 @@
                                     required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Nombres*" :rules="controles().controlNom"
+                                <v-text-field label="Nombres Completos*" :rules="controles().controlNom"
                                     v-model="ItemEstudiante.NomEst" required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Apellidos*" :rules="controles().controlApe"
+                                <v-text-field label="Apellidos Comletos*" :rules="controles().controlApe"
                                     v-model="ItemEstudiante.ApeEst" required></v-text-field>
                             </v-col>
-                            <v-col cols="12" v-if="ItemEstudiante.IdEst == 0" >
+                            <v-col cols="12" v-if="ItemEstudiante.IdEst == 0">
                                 <v-select :rules="controles().controlPlan" :items="getPlantillas" item-text="NomPlan"
                                     item-value="IdPlan" label="Plantillas*" v-model="ItemEstudiante.idPlanPer"
                                     required></v-select>
@@ -47,7 +48,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
-
+import progres from './progresCircular.vue';
 export default {
 
     name: "nuevo",
@@ -60,6 +61,7 @@ export default {
 
     data: () => ({
         path: '',
+        sms:'Creando las carpetas para el estudiante...'
     }),
 
     created() {
@@ -72,7 +74,7 @@ export default {
         ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes', 'buscarEstCedula']),
         ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
         ...mapActions('Plantillas', ['cargarPlantillas', 'cargarItemsPlantillas']),
-        ...mapMutations('Dialogo', ['setDialogFolder']),
+        ...mapMutations('Dialogo', ['setDialogFolder','setDailogCrearEst']),
 
         controles() {
             return {
@@ -109,7 +111,7 @@ export default {
                     this.ItemEstudiante.NomEst !== "" &&
                     this.ItemEstudiante.ApeEst !== "") {
                     this.rutaNueva();
-                    console.log(this.path);
+                    //console.log(this.path);
                     const storedUser = JSON.parse(localStorage.getItem('user'));
                     this.idUser = storedUser.IdUser;
                     if (this.itemsBread.length < 3) {
@@ -130,16 +132,22 @@ export default {
                     this.$alertify.error("Complete todos campos para llevar acabo el proceso");
                 }
             } catch (error) {
-                console.error('Error al agregar estudiante:', error);
+                this.$alertify.error('Error al agregar estudiante:', error);
             }
         },
 
         crearSubDirectorios: async function (datosEst, ruta) {
-            await this.cargarItemsPlantillas(datosEst);
-            const cadenaDeItems = this.getItemsPlantillas[0].Items;
-            const auxItemsPlan = cadenaDeItems.split(',');
-            for (let i = 0; i < auxItemsPlan.length; i++) {
-                await this.crearSubCarpeta({ datos: datosEst, path: ruta, nombre: auxItemsPlan[i] });
+            this.setDailogCrearEst(true);
+            try {
+                await this.cargarItemsPlantillas(datosEst);
+                const cadenaDeItems = this.getItemsPlantillas[0].Items;
+                const auxItemsPlan = cadenaDeItems.split(',');
+                for (let i = 0; i < auxItemsPlan.length; i++) {
+                    await this.crearSubCarpeta({ datos: datosEst, path: ruta, nombre: auxItemsPlan[i] });
+                }
+                this.setDailogCrearEst(false);
+            } catch (error) {
+                this.$alertify.error('Error al intentar crear una carpeta:', error);
             }
         },
 
@@ -173,10 +181,15 @@ export default {
         }
 
     },
+
+    components:{
+        progres,
+    },
+
     computed: {
         ...mapGetters('Carreras', ['getCarreras']),
         ...mapGetters('Plantillas', ['getPlantillas', 'getItemsPlantillas']),
-        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Dialogo', ['itemsBread','dailogCrearEst']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
     },

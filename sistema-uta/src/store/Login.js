@@ -62,12 +62,12 @@ export default {
                         localStorage.setItem('Authentication', true);
                         localStorage.setItem('user', JSON.stringify(firstObject));
                     } else {
-                        console.log("No se encontro el usuario...");
+                        //console.log("No se encontro el usuario...");
                         commit('setSms', 'incorrecto');
                     }
                 } else {
                     commit('setSms', 'incorrecto');
-                    console.log(" Not found => Error 400 ");
+                    //console.log(" Not found => Error 400 ");
                 }
             } catch (error) {
                 console.log("Error de Autenticacion:" + error);
@@ -114,7 +114,7 @@ export default {
                 const response = await fetch(url, setting);
                 if (response.ok) {
                     const json = await response.json();
-                    console.log(json);
+                    //console.log(json);
                     if( json.message == 'contraseña Actualizada' ){
                         return true;
                     }else{

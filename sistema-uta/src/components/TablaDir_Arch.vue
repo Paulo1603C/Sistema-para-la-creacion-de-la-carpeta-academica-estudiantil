@@ -106,7 +106,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setMostrarCrear','setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder']),
+        ...mapMutations('Dialogo', ['setMostrarCrear', 'setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Server_Archivos', ['descargarArchivo', 'cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
@@ -126,20 +126,23 @@ export default {
         },
 
 
-        eliminarItem(item) {
-            console.log('Borrar Items');
-            this.rutaNueva();
-            this.$alertify.confirm(
-                'Deseas eliminar el estudiante: ' + item.nombre,
-                () => {
-                    console.log('Ruta Borrar ' + this.path + item.nombre);
-                    this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre, tipo: item.tipo });
-                    //this.cargarCarpetas(this.path);
-                    this.path = '';
-                    this.$alertify.success('Carpeta ' + item.nombre + ' Eliminada');
-                },
-                () => this.$alertify.error('Cancelado')
-            );
+        eliminarItem: async function (item) {
+            try {
+                this.rutaNueva();
+                this.$alertify.confirm(
+                    'Deseas eliminar el estudiante: ' + item.nombre,
+                    async () => {
+                        //console.log('Ruta Borrar ' + this.path + item.nombre);
+                        await this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre, tipo: item.tipo });
+                        //this.cargarCarpetas(this.path);
+                        this.path = '';
+                        this.$alertify.success('Carpeta ' + item.nombre + ' Eliminada');
+                    },
+                    () => this.$alertify.error('Cancelado')
+                );
+            } catch (error) {
+                this.$alertify.error('Error al eliminar carpeta ' + error);
+            }
         },
 
         async hacerAlgoAlHacerClic(item) {
@@ -169,10 +172,14 @@ export default {
         },
 
         verificarSiPadre(item) {
-            const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-            console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
-            return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
+            try {
+                const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+                const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
+                console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
+                return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
+            } catch (error) {
+                this.$alertify.error('Error al verificar Carpeta Padre ' + error);
+            }
         },
 
         // Función para recuperar permisos
@@ -183,34 +190,39 @@ export default {
 
         // Verificar permisos genérico
         verificarPermisosGenerico(item, permiso) {
-            const permisosSubdirectorio = this.recuperarPermisos();
-            const nombreTrim = item.nombre.trim().toLowerCase();
-
-            if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
-                localStorage.setItem('padreActual', '');
+            try {
+                const permisosSubdirectorio = this.recuperarPermisos();
+                const nombreTrim = item.nombre.trim().toLowerCase();
+                if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
+                    localStorage.setItem('padreActual', '');
+                }
+                if (permisosSubdirectorio.get(nombreTrim) != null) {
+                    return true;
+                }
+                const padreActual = localStorage.getItem('padreActual');
+                const auxPermisos = permisosSubdirectorio.get(padreActual);
+                return auxPermisos != null;
+            } catch (error) {
+                this.$alertify.error('Error al verificar permisos ' + error);
             }
-
-            if (permisosSubdirectorio.get(nombreTrim) != null) {
-                return true;
-            }
-
-            const padreActual = localStorage.getItem('padreActual');
-            const auxPermisos = permisosSubdirectorio.get(padreActual);
-            return auxPermisos != null;
         },
 
         // Mostrar editar genérico
         mostrarEditarGenerico(item, permiso) {
-            const permisosSubdirectorio = this.recuperarPermisos();
-            const nombreTrim = item.nombre.trim().toLowerCase();
+            try {
+                const permisosSubdirectorio = this.recuperarPermisos();
+                const nombreTrim = item.nombre.trim().toLowerCase();
 
-            if (permisosSubdirectorio.get(nombreTrim) != null) {
-                return permisosSubdirectorio.get(nombreTrim).includes(permiso);
+                if (permisosSubdirectorio.get(nombreTrim) != null) {
+                    return permisosSubdirectorio.get(nombreTrim).includes(permiso);
+                }
+
+                const padreActual = localStorage.getItem('padreActual');
+                const aux = permisosSubdirectorio.get(padreActual.trim());
+                return aux != null && aux.includes(permiso);
+            } catch (error) {
+                this.$alertify.error('Error al verificar permisos individuales ' +error);
             }
-
-            const padreActual = localStorage.getItem('padreActual');
-            const aux = permisosSubdirectorio.get(padreActual.trim());
-            return aux != null && aux.includes(permiso);
         },
 
         // Verificar permisos
@@ -232,7 +244,6 @@ export default {
         // Mostrar eliminar
         mostrarCrear(item) {
             let crear = this.mostrarEditarGenerico(item, 'Crear');
-            console.log(crear);
             this.setMostrarCrear(crear);
         },
 
@@ -248,29 +259,38 @@ export default {
         },
 
         descargarItem: async function (ruta, item) {
-            //this.rutaNueva();
-            console.log(ruta + item.nombre);
-            await this.descargarArchivo({ ruta: ruta + item.nombre, nombre: item.nombre });
-            this.$alertify.success('Archivo Descargado');
-            //this.path = '';
+            try {
+                //this.rutaNueva();
+                await this.descargarArchivo({ ruta: ruta + item.nombre, nombre: item.nombre });
+                this.$alertify.success('Archivo Descargado');
+                //this.path = '';
+            } catch (error) {
+                this.$alertify.error('Error al descargar el archivo ' + error);
+            }
         },
 
         descargarDirectorio: async function (ruta, item) {
-            //this.rutaNueva();
-            console.log(item.nombre);
-            console.log(item);
-            await this.descargarCarpeta({ ruta: ruta, nombre: item.nombre });
-            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
-            //this.path = '';
+            try {
+                //this.rutaNueva();
+                await this.descargarCarpeta({ ruta: ruta, nombre: item.nombre });
+                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                //this.path = '';
+            } catch (error) {
+                this.$alertify.error('Error al descargar carpeta ' + error);
+            }
         },
 
 
         descargarAll: async function () {
-            this.rutaNueva();
-            const nom = '';
-            await this.descargarCarpeta({ ruta: this.path, nombre: nom });
-            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
-            this.path = '';
+            try {
+                this.rutaNueva();
+                const nom = '';
+                await this.descargarCarpeta({ ruta: this.path, nombre: nom });
+                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                this.path = '';
+            } catch (error) {
+                this.$alertify.error('Error al descargar las carpetas ' + error);
+            }
         },
 
         descargarDatos(item) {

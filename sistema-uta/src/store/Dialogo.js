@@ -16,6 +16,7 @@ export default {
     dailogCarreras:false, // Estado del diálogo
     dailogContra:false, // Estado del diálogo
     dailogCarpetas:false, // Estado del diálogo
+    dailogCrearEst:false, // Estado del diálogo
     mostrarCrear:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
@@ -66,6 +67,10 @@ export default {
 
     setMostrarCrear(state, value) {
       state.mostrarCrear = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogCrearEst(state, value) {
+      state.dailogCrearEst = value; // Mutación para actualizar el estado del diálogo
     },
 
     setVentanaEst(state, value) {

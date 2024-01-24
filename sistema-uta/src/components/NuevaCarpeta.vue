@@ -57,7 +57,7 @@ export default {
         ...mapMutations('Dialogo', ['setDialogCarpeta', 'setDailogCarpetas']),
         ...mapActions('Plantillas', ['AgregarItemsSubDirectorios', 'AgregarItemsDirectorios']),
         ...mapActions('Carreras', ['cargarCarreras']),
-        ...mapActions('Permisos', ['AgregarUsuarioPermisosCarpeta','cargarPermisosDirectorios']),
+        ...mapActions('Permisos', ['AgregarUsuarioPermisosCarpeta', 'cargarPermisosDirectorios']),
         ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
 
         controles() {
@@ -108,44 +108,57 @@ export default {
                 }
             } catch (error) {
                 console.error('Error al agregar estudiante:', error);
+                this.$alertify.error("Error al realizar la operación "+error);
             }
         },
 
-        agregarPermisos: async function ( nomCar ) {
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            const idUser = storedUser.IdUser;
-            let permisos = {
-                IdUserPer: idUser,
-                IdPerPer: 1,
-                IdItemSubPer: nomCar,
-            };
-            let res = await this.AgregarUsuarioPermisosCarpeta(permisos);
-            return res ? this.$alertify.error("Permiso insertado"): this.$alertify.error("No se pudo insetar el permiso");
+        agregarPermisos: async function (nomCar) {
+            try {
+                const storedUser = JSON.parse(localStorage.getItem('user'));
+                const idUser = storedUser.IdUser;
+                let permisos = {
+                    IdUserPer: idUser,
+                    IdPerPer: 1,
+                    IdItemSubPer: nomCar,
+                };
+                let res = await this.AgregarUsuarioPermisosCarpeta(permisos);
+                return res ? this.$alertify.success("Permiso insertado") : this.$alertify.error("No se pudo insetar el permiso");
+            } catch (error) {
+                this.$alertify.error("Error al realizar la operación " + error);
+            }
         },
 
         insertarItemSubCarpta: async function (nombre) {
-            const ItemsSubDir = {
-                idPlan: 0,
-                items: [nombre],
-            };
-            await this.AgregarItemsSubDirectorios(ItemsSubDir);
+            try {
+                const ItemsSubDir = {
+                    idPlan: 0,
+                    items: [nombre],
+                };
+                await this.AgregarItemsSubDirectorios(ItemsSubDir);
+            } catch (error) {
+                this.$alertify.error("Error al realizar la operación " + error);
+            }
         },
 
         //este metodo creara el subdirectior  nuevo en todos los estudiante que tengan la misma plantilla
         crearSubDirectorios: async function (ruta, nomSub) {
-            this.setDailogCarpetas(true);
-            for (let i = 0; i < this.getEstudinates_Plantillas.length; i++) {
-                const row = (this.getEstudinates_Plantillas[i]);
-                let partes = ruta.split('/').filter(Boolean);
-                partes.pop();
-                let nuevaCadena = partes.join('/');
-                let partes2 = nuevaCadena.split('/').filter(Boolean);
-                partes2.pop();
-                let nuevaCadena2 = partes2.join('/');
-                //console.log(nuevaCadena2 +"/"+ row.NomCar+ "/"+ row.NomEst + " " + row.ApeEst+"/"+nomSub);
-                await this.crearSubCarpeta({ datos: row, path: nuevaCadena2 + "/" + row.NomCar + "/", nombre: nomSub });
+            try {
+                this.setDailogCarpetas(true);
+                for (let i = 0; i < this.getEstudinates_Plantillas.length; i++) {
+                    const row = (this.getEstudinates_Plantillas[i]);
+                    let partes = ruta.split('/').filter(Boolean);
+                    partes.pop();
+                    let nuevaCadena = partes.join('/');
+                    let partes2 = nuevaCadena.split('/').filter(Boolean);
+                    partes2.pop();
+                    let nuevaCadena2 = partes2.join('/');
+                    //console.log(nuevaCadena2 +"/"+ row.NomCar+ "/"+ row.NomEst + " " + row.ApeEst+"/"+nomSub);
+                    await this.crearSubCarpeta({ datos: row, path: nuevaCadena2 + "/" + row.NomCar + "/", nombre: nomSub });
+                }
+                this.setDailogCarpetas(false);
+            } catch (error) {
+                this.$alertify.error("Error al realizar la operación " + error);
             }
-            this.setDailogCarpetas(false);
         },
 
         rutaNueva() {

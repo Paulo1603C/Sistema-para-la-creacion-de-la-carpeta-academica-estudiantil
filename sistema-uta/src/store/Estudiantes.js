@@ -99,7 +99,7 @@ export default {
 
 
     AgregarEstudiante: async function ({ commit, dispatch }, datos) {
-      console.log(datos);
+      //console.log(datos);
       try {
         const datosUser = new FormData();
         datosUser.append('IdEst', datos.IdEst);

@@ -89,7 +89,7 @@ export default {
                 nomCar:item.NomCar,
             };
             this.setDialogCarreras(true);
-            console.log(this.itemsBread[0] +'/'+ item.NomCar.trim())
+            //console.log(this.itemsBread[0] +'/'+ item.NomCar.trim())
             this.setRutaAnterior(this.itemsBread[0] +'/'+ item.NomCar.trim());
             this.path = '';
 
@@ -100,8 +100,8 @@ export default {
                 'Deseas eliminar la Carrera: ' + item.NomCar + ', Se borrara permanentemente los datos',
                 () => {
                     this.eliminarCarrera(item);
-                    this.eliminarCarpeta({ ruta1: '', ruta2: this.itemsBread[0] + '/' +item.NomCar });
-                    if (this.smsCar == 'eliminado') {
+                    let res = this.eliminarCarpeta({ ruta1: '', ruta2: this.itemsBread[0] + '/' +item.NomCar });
+                    if ( res ) {
                         this.$alertify.success('Carrera ' + item.NomCar + ' Eliminado');
                     } else {
                         this.$alertify.error('No se pudo eliminar la carrera ' + item.NomCar);

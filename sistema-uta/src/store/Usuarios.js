@@ -58,8 +58,8 @@ export default {
           method: 'POST',
           body: datosUser,
         }
-        console.log("datos");
-        console.log(datos);
+        //console.log("datos");
+        //console.log(datos);
         var url = "";
         if (datos.id == 0) {
           url = `${baseURL}Apis-UTA/insetarUsuario.php`;
@@ -111,7 +111,7 @@ export default {
     eliminarUsuario: async function ({ commit, dispatch }, datos) {
       try {
         const idUser = new FormData();
-        console.log('ID: ' + datos.id);
+        //console.log('ID: ' + datos.id);
         idUser.append('id', datos.id);
         const setting = {
           method: 'POST',

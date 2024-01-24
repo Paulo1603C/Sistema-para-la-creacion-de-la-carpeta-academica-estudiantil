@@ -133,25 +133,17 @@ export default {
         },
 
         validarC: async function () {
-            let c = this.ItemUsuario.correo;
-            let partes = c.split("@").filter(Boolean);
-            if (partes[partes.length - 1] == "uta.edu.ec") {
-                const correoValido = await this.validarCorreo({ correo: c });
-                if (correoValido) {
-                    this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () =>{
+            try {
+                let c = this.ItemUsuario.correo;
+                let partes = c.split("@").filter(Boolean);
+                if (partes[partes.length - 1] == "uta.edu.ec") {
+                } else {
+                    this.$alertify.alert('Correo Incorrecto', 'Ingrese un correo válido => @uta.edu.ec  ', () => {
                         this.ItemUsuario.correo = '';
-                        console.log('limpiar   ');
-                        resolve(); 
-                    }
-                    );
+                    });
                 }
-            } else {
-                this.$alertify.alert('Correo Incorrecto', 'Ingrese un correo válido', () =>{
-                    this.ItemUsuario.correo = '';
-                    console.log('limpiar');
-                    resolve(); 
-                }
-                );
+            } catch (error) {
+                this.$alertify.error('Error al validar un correo:', error);
             }
         },
 
@@ -162,19 +154,25 @@ export default {
                     this.ItemUsuario.apellido !== "" &&
                     this.ItemUsuario.correo !== "" &&
                     this.ItemUsuario.contraseña !== "") {
-                    let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
-                    this.ItemUsuario.contraseña = contraseñaHash;
-                    await this.AgregarUsuario(this.ItemUsuario);
-                    await this.actualizarCarrerasUsuario();
-                    this.cerrarDialog();
-                    this.limpiarCampos();
-                    this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+                    const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo  });
+                    if (correoValido) {
+                        this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () => {
+                            this.ItemUsuario.correo = '';
+                        });
+                    }else{
+                        let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
+                        this.ItemUsuario.contraseña = contraseñaHash;
+                        await this.AgregarUsuario(this.ItemUsuario);
+                        await this.actualizarCarrerasUsuario();
+                        this.cerrarDialog();
+                        this.limpiarCampos();
+                        this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+                    }
                 } else {
                     this.$alertify.error("Complete los campos requeridos");
-
                 }
             } catch (error) {
-                console.error('Error al agregar usuario:', error);
+                this.$alertify.error('Error al agregar usuario:' + error);
             }
         },
 
@@ -187,28 +185,32 @@ export default {
         },
 
         actualizarCarrerasUsuario: async function () {
-            const carrerasAntiguas = this.devolverCarreras();
-            const carrerasNuevas = this.ItemUsuario.carreras;
-            // Identificar carreras que deben eliminarse
-            const carrerasEliminar = carrerasAntiguas.filter(carrera => !carrerasNuevas.includes(carrera));
-            // Identificar carreras que deben agregarse
-            const carrerasAgregar = carrerasNuevas.filter(carrera => !carrerasAntiguas.includes(carrera));
-            // Actualizar carreras solo si hay cambios
-            if (carrerasEliminar.length > 0 || carrerasAgregar.length > 0) {
-                console.log('Realizando actualización de carreras');
-                // Eliminar carreras que ya no están en la lista nueva
-                if (carrerasEliminar.length > 0) {
-                    for (const carreraEliminar of carrerasEliminar) {
-                        await this.eliminarCarrerasSecre({ id: this.ItemUsuario.id, idCar: carreraEliminar });
+            try {
+                const carrerasAntiguas = this.devolverCarreras();
+                const carrerasNuevas = this.ItemUsuario.carreras;
+                // Identificar carreras que deben eliminarse
+                const carrerasEliminar = carrerasAntiguas.filter(carrera => !carrerasNuevas.includes(carrera));
+                // Identificar carreras que deben agregarse
+                const carrerasAgregar = carrerasNuevas.filter(carrera => !carrerasAntiguas.includes(carrera));
+                // Actualizar carreras solo si hay cambios
+                if (carrerasEliminar.length > 0 || carrerasAgregar.length > 0) {
+                    //console.log('Realizando actualización de carreras');
+                    // Eliminar carreras que ya no están en la lista nueva
+                    if (carrerasEliminar.length > 0) {
+                        for (const carreraEliminar of carrerasEliminar) {
+                            await this.eliminarCarrerasSecre({ id: this.ItemUsuario.id, idCar: carreraEliminar });
+                        }
                     }
+                    // Agregar carreras nuevas que no estaban en la lista antigua
+                    if (carrerasAgregar.length > 0) {
+                        await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: carrerasAgregar });
+                    }
+                    //console.log('Actualización completa');
+                } else {
+                    //console.log('No hay cambios en las carreras');
                 }
-                // Agregar carreras nuevas que no estaban en la lista antigua
-                if (carrerasAgregar.length > 0) {
-                    await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: carrerasAgregar });
-                }
-                console.log('Actualización completa');
-            } else {
-                console.log('No hay cambios en las carreras');
+            } catch (error) {
+                this.$alertify.error('Error al agregar un Usuario:', error);
             }
         },
 

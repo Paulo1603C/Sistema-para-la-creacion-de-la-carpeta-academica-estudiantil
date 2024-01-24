@@ -12,7 +12,8 @@
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" :search="search"  class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" :search="search"
+                    class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle">
                             <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
@@ -72,7 +73,7 @@ export default {
         return {
             search: '',
             path: '',
-            search:'',
+            search: '',
             customDir: null,
             selectedItems: [],
             estudianteSeleccionado: {},
@@ -81,11 +82,11 @@ export default {
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
-        ...mapMutations('Estudiantes', ['setEst','setIdEst']),
+        ...mapMutations('Estudiantes', ['setEst', 'setIdEst']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
         ...mapMutations('Plantillas', ['setIdEstPlan']),
         ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
-        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta','descargarCarpeta']),
+        ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Plantillas', ['cargarEstudinates_Plantillas']),
 
         editarItem(item) {
@@ -104,8 +105,6 @@ export default {
             this.setDialogFolder(true);
             this.setRutaAnterior(this.path + item.NomEst + " " + item.ApeEst);
             this.path = '';
-            //this.setRutaAnterior('');
-            //console.log(item.IdEst);
         },
 
 
@@ -114,7 +113,7 @@ export default {
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.idUser = storedUser.IdUser;
             this.$alertify.confirm(
-                'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst+', Se borran todos los datos',
+                'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst + ', Se borran todos los datos',
                 () => {
                     this.eliminarEstudiante(item);
                     this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.NomEst + " " + item.ApeEst });
@@ -127,25 +126,34 @@ export default {
         },
 
         descargarItem: async function (item) {
-            this.rutaNueva();
-            await this.descargarCarpeta({ ruta: this.path, nombre: item.NomEst + " " + item.ApeEst  });
-            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
-            this.path = '';
+            try {
+                this.rutaNueva();
+                await this.descargarCarpeta({ ruta: this.path, nombre: item.NomEst + " " + item.ApeEst });
+                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                this.path = '';
+            } catch (error) {
+                this.$alertify.error('Error al descargar un archivo ' +error);
+            }
         },
 
-        descargarAll: async function () {
-            this.rutaNueva();
-            const nom = '';
-            await this.descargarCarpeta({ ruta: this.path, nombre: nom });
-            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
-            this.path = '';
+        async descargarAll() {
+            try {
+                this.rutaNueva();
+                const nombre = '';
+                await this.descargarCarpeta({ ruta: this.path, nombre });
+                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                this.path = '';
+            } catch (error) {
+                console.error('Error al descargar carpeta:', error);
+                this.$alertify.error('Error al descargar carpeta ' +error);
+            }
         },
 
-        hacerAlgoAlHacerClic:async function(item) {
+        hacerAlgoAlHacerClic: async function (item) {
             localStorage.removeItem('padreActual');
             this.setIdEst(item.IdEst);
             this.setIdEstPlan(item.IdPlanPer);
-            await this.cargarEstudinates_Plantillas( {idPlan:item.IdPlanPer} );
+            await this.cargarEstudinates_Plantillas({ idPlan: item.IdPlanPer });
             this.setVentanaEst(false);
             this.setVentanaArch(true);
             this.setBreadcrumbs(item.NomEst.toUpperCase() + ' ' + item.ApeEst.toUpperCase());
@@ -174,7 +182,7 @@ export default {
 
     watch: {
         show() {
-            console.log('dfvb' + this.selectedItems);
+            //console.log('dfvb' + this.selectedItems);
         }
     },
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div style="overflow: hidden;">
-            <PermisosUser :dialog="dailogPermisos"  :PermisosUsario="dataPermisosUsuario"></PermisosUser>
+            <PermisosUser :dialog="dailogPermisos" :PermisosUsario="dataPermisosUsuario"></PermisosUser>
         </div>
         <v-card class="mx-auto" max-width="244">
 
@@ -12,7 +12,7 @@
             </v-card-title>
 
             <v-card-text class="d-flex justify-center align-center">
-                <v-btn color="primary" @click="asignarPermisos()" >Permisos
+                <v-btn color="primary" @click="asignarPermisos()">Permisos
                     <v-icon right>mdi-folder-settings</v-icon>
                 </v-btn>
             </v-card-text>
@@ -74,14 +74,14 @@ export default {
     ],
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialog','setDialogPermisos']),
+        ...mapMutations('Dialogo', ['setDialog', 'setDialogPermisos']),
         ...mapMutations('Usuarios', ['setUser']),
         ...mapMutations('Permisos', ['setPermisosUsuario']),
         ...mapActions('Usuarios', ['eliminarUsuario']),
         ...mapActions('Permisos', ['cargarPermisosSubDir_User']),
         ...mapActions('Carreras', ['cargarCarrerasUser']),
 
-        editar:async function(item) {
+        editar: async function (item) {
             this.setDialog(true);
             //console.log("ID user "+this.id);
             await this.cargarCarrerasUser(this.id);
@@ -100,10 +100,10 @@ export default {
             this.setUser(this.itemSeleccionadoUsuario);
         },
 
-        devolverCarreras(){
+        devolverCarreras() {
             const carreras = [];
-            for( let i=0;i<this.idCarreras.length;i++ ){
-                if( this.idCarreras[i] !== ',' ){
+            for (let i = 0; i < this.idCarreras.length; i++) {
+                if (this.idCarreras[i] !== ',') {
                     carreras.push(this.idCarreras[i]);
                 }
             }
@@ -127,18 +127,21 @@ export default {
             );
         },
 
-        asignarPermisos:async function(){
-            await this.cargarPermisosSubDir_User( {idUser:this.id} );
-            console.log("PERMISOS INIT");
-            this.permisoInit={
-                IdRelacion:0,
-                IdUserPer:this.id,
-                IdPerPer:[],
-                IdItemSubPer:0,
+        asignarPermisos: async function () {
+            try {
+                await this.cargarPermisosSubDir_User({ idUser: this.id });
+                //console.log("PERMISOS INIT");
+                this.permisoInit = {
+                    IdRelacion: 0,
+                    IdUserPer: this.id,
+                    IdPerPer: [],
+                    IdItemSubPer: 0,
+                }
+                this.setPermisosUsuario(this.permisoInit);
+                this.setDialogPermisos(true);
+            } catch (error) {
+                this.$alertify.error('Error en la solicitud asignar permisos ' + error);
             }
-            console.log(this.permisoInit);
-            this.setPermisosUsuario(this.permisoInit);
-            this.setDialogPermisos(true);
         },
 
     },
@@ -148,7 +151,7 @@ export default {
     },
 
     computed: {
-        ...mapState('Dialogo',['dailogPermisos']),
+        ...mapState('Dialogo', ['dailogPermisos']),
         ...mapState('Permisos', ['dataPermisosUsuario']),
     }
 }

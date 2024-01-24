@@ -119,7 +119,7 @@ export default {
                 IdPlanPer: 0,
                 NomModificador: nomUser,
             }
-            console.log("Item Est" + this.estudianteSelect);
+            //console.log("Item Est" + this.estudianteSelect);
             this.setEst(this.estudianteSelect);
             this.setDialogFolder(true);
         },

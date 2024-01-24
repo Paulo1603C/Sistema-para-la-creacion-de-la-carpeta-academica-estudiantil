@@ -42,7 +42,7 @@ export default {
     props: {
         dialog: Boolean,
     },
-    
+
     data() {
         return {
             ItemArchivo: {},
@@ -52,23 +52,29 @@ export default {
         }
     },
 
-    created(){
+    created() {
         //this.subirObsArchivo();
     },
 
     methods: {
 
-        ...mapActions('Server_Archivos', ['crearArchivos','crearObsArchivos']),
+        ...mapActions('Server_Archivos', ['crearArchivos', 'crearObsArchivos']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
 
         agregar: async function () {
-            this.rutaNueva();
-            await this.crearArchivos({ ruta: this.path, archivo: this.selectedFile });
-            await this.cargarCarpetas(this.path);
-            await this.crearObsArchivos({ruta:this.path+this.selectedFile.name , observacion:this.obsAux, idEstPer:this.idEst});
-            this.$alertify.success("Archivo Insertado");
-            this.cerrarDialog();
-            this.path = '';
+            try {
+                this.rutaNueva();
+                await Promise.all([
+                    this.crearArchivos({ ruta: this.path, archivo: this.selectedFile }),
+                    this.cargarCarpetas(this.path),
+                    this.crearObsArchivos({ ruta: this.path + this.selectedFile.name, observacion: this.obsAux, idEstPer: this.idEst })
+                ]);
+                this.$alertify.success("Archivo Insertado");
+                this.cerrarDialog();
+                this.path = '';
+            } catch (error) {
+                this.$alertify.success("Error al internar insertar un archivo " + error);
+            }
         },
 
         cerrarDialog() {
@@ -95,7 +101,7 @@ export default {
     computed: {
         ...mapState('Dialogo', ['itemsBread']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
-        ...mapState('Estudiantes', ['dataEst','idEst']),
+        ...mapState('Estudiantes', ['dataEst', 'idEst']),
     },
 }
 </script>       

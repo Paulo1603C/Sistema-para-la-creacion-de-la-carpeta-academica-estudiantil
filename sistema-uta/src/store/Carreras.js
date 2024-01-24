@@ -72,7 +72,6 @@ export default {
       try {
         const datosUser = new FormData();
         datosUser.append('IdUser', idUser);
-        //console.log(idUser);
 
         const setting = {
           method: 'POST',
@@ -81,7 +80,6 @@ export default {
         const url = `${baseURL}Apis-UTA/carrerasUsuarios.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
-        //console.log(json);
         commit('llenarCarrerasUser', json);
       } catch (error) {
         console.error('Error en la solicitud:', error);
@@ -90,7 +88,6 @@ export default {
     },
 
     agregarCarrera: async function ({ commit, dispatch }, datos) {
-      console.log(datos.nomCar);
       if (datos.nomCar != '') {
         try {
           const datosCar = new FormData();
