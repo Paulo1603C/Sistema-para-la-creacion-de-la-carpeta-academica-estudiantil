@@ -1,9 +1,9 @@
 <template>
     <div>
         <ObsArch :dialog="dialogObs" @dialog="dialogObs = $event"></ObsArch>
-
+        <progres2 :dialog="dailogEliminar" :message="sms"></progres2>
         <template>
-            <v-card v-show="show">
+            <v-card v-if="show">
                 <v-card-title>
                     {{ Titulo }}
                     <v-spacer></v-spacer>
@@ -14,8 +14,8 @@
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items.elementos" :item-per-page="5" :search="search"
-                    class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="ItemsArchivos.elementos" :item-per-page="5"
+                    :search="search" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle" v-if="verificarPermisos(item)">
                             <td>
@@ -79,25 +79,26 @@
                     </template>
                 </v-data-table>
             </v-card>
-
         </template>
     </div>
 </template>
 
+
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 import ObsArch from './ventanaModalObs.vue';
-
+import progres2 from './progresCircular.vue';
 export default {
     name: "TablaC",
 
-    props: ['show', 'Titulo', 'Cabecera', 'Items'],
+    props: ['show', 'Titulo', 'Cabecera', 'ItemsArchivos'],
 
     data() {
         return {
             search: '',
             path: '',
             search: '',
+            sms:'Cargando Datos...',
             selectedItems: [],
             carpetaSelecionada: {},
             rutaActual: '',
@@ -106,7 +107,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setMostrarCrear', 'setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder']),
+        ...mapMutations('Dialogo', ['setDailogEliminar','setMostrarCrear', 'setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder','setDailogCargarDatos']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Server_Archivos', ['descargarArchivo', 'cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
@@ -134,7 +135,7 @@ export default {
                     async () => {
                         //console.log('Ruta Borrar ' + this.path + item.nombre);
                         await this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre, tipo: item.tipo });
-                        //this.cargarCarpetas(this.path);
+                        await this.cargarCarpetas(this.path);
                         this.path = '';
                         this.$alertify.success('Carpeta ' + item.nombre + ' Eliminada');
                     },
@@ -146,6 +147,7 @@ export default {
         },
 
         async hacerAlgoAlHacerClic(item) {
+            this.setDailogEliminar(true);
             if (this.verificarSiPadre(item)) {
                 localStorage.setItem('padreActual', item.nombre.trim().toLowerCase());
             }
@@ -155,10 +157,11 @@ export default {
             this.setCtlfolder(true);
             await this.cargarCarpetasAsync(this.path);
             this.path = '';
+            this.setDailogEliminar(false);
         },
 
         async cargarCarpetasAsync(path) {
-            this.cargarCarpetas(path);
+            await this.cargarCarpetas(path);
         },
 
         verificarSiArchivo(item) {
@@ -221,7 +224,7 @@ export default {
                 const aux = permisosSubdirectorio.get(padreActual.trim());
                 return aux != null && aux.includes(permiso);
             } catch (error) {
-                this.$alertify.error('Error al verificar permisos individuales ' +error);
+                this.$alertify.error('Error al verificar permisos individuales ' + error);
             }
         },
 
@@ -317,11 +320,12 @@ export default {
 
     components: {
         ObsArch,
+        progres2,
     },
 
     computed: {
         //...mapState('Carreras', ['idCarreraSelect']),
-        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Dialogo', ['itemsBread','dailogCargarDatos','dailogEliminar']),
         ...mapState('Permisos', ['permisosSubDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),
     },

@@ -8,12 +8,15 @@
                 <v-card-title>
                     {{ Titulo }}
                     <v-spacer></v-spacer>
+                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
+                    </v-text-field>
+                    <v-spacer></v-spacer>
                     <v-btn color="primary" @click.stop-="agregarCarrera()">Crear
                         <v-icon right>mdi-school-outline</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table v-if="getCarreras.length > 0" dense :headers="Cabecera" :items="getCarreras" :item-per-page="5" :search="search"
-                    class="mt-4 elevation-1">
+                <v-data-table v-if="getCarreras.length > 0" dense :headers="Cabecera" :items="getCarreras"
+                    :item-per-page="5" :search="search" :serach="search" class="mt-4 elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle">
                             <td><v-icon class="mr-3" color="pink darken-1" size="35">mdi-school-outline</v-icon></td>
@@ -61,7 +64,7 @@ export default {
             Titulo: 'CARRERAS FISEI',
             Cabecera: [
                 { text: 'Tipo', value: 'tipo', },
-                { text: 'Carrera', value: 'carreras', }, ,
+                { text: 'Carrera', value: 'NomCar', }, ,
                 { text: 'ACCIONES', value: 'acciones', },
             ],
         }
@@ -84,13 +87,13 @@ export default {
         },
 
         editarItem(item) {
-            this.nuevaCarrera={
-                idCar:item.IdCar,
-                nomCar:item.NomCar,
+            this.nuevaCarrera = {
+                idCar: item.IdCar,
+                nomCar: item.NomCar,
             };
             this.setDialogCarreras(true);
             //console.log(this.itemsBread[0] +'/'+ item.NomCar.trim())
-            this.setRutaAnterior(this.itemsBread[0] +'/'+ item.NomCar.trim());
+            this.setRutaAnterior(this.itemsBread[0] + '/' + item.NomCar.trim());
             this.path = '';
 
         },
@@ -100,8 +103,8 @@ export default {
                 'Deseas eliminar la Carrera: ' + item.NomCar + ', Se borrara permanentemente los datos',
                 () => {
                     this.eliminarCarrera(item);
-                    let res = this.eliminarCarpeta({ ruta1: '', ruta2: this.itemsBread[0] + '/' +item.NomCar });
-                    if ( res ) {
+                    let res = this.eliminarCarpeta({ ruta1: '', ruta2: this.itemsBread[0] + '/' + item.NomCar });
+                    if (res) {
                         this.$alertify.success('Carrera ' + item.NomCar + ' Eliminado');
                     } else {
                         this.$alertify.error('No se pudo eliminar la carrera ' + item.NomCar);

@@ -17,6 +17,10 @@ export default {
     dailogContra:false, // Estado del diálogo
     dailogCarpetas:false, // Estado del diálogo
     dailogCrearEst:false, // Estado del diálogo
+    dailogPermisos:false, // Estado del diálogo
+    dailogSubirArch:false, // Estado del diálogo
+    dailogCargarDatos:false, // Estado del diálogo
+    dailogEliminar:false, // Estado del diálogo
     mostrarCrear:false, // Estado del diálogo
     tablaEst: false, // Estado del diálogo
     tablaArch: false, // Estado del diálogo
@@ -65,12 +69,28 @@ export default {
       state.dailogCarpetas = value; // Mutación para actualizar el estado del diálogo
     },
 
+    setDailogPermisos(state, value) {
+      state.dailogPermisos = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogSubirArch(state, value) {
+      state.dailogSubirArch = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogCargarDatos(state, value) {
+      state.dailogCargarDatos = value; // Mutación para actualizar el estado del diálogo
+    },
+
     setMostrarCrear(state, value) {
       state.mostrarCrear = value; // Mutación para actualizar el estado del diálogo
     },
 
     setDailogCrearEst(state, value) {
       state.dailogCrearEst = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogEliminar(state, value) {
+      state.dailogEliminar = value; // Mutación para actualizar el estado del diálogo
     },
 
     setVentanaEst(state, value) {

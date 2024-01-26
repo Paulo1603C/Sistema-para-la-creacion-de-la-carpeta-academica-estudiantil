@@ -1,15 +1,19 @@
 <template>
     <div>
+        <progres :dialog="dailogPermisos" :message="sms"></progres>
         <template>
-            <v-card v-show="show">
+            <v-card v-if="show">
                 <v-card-title>
                     {{ Titulo }}
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
+                    </v-text-field>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" @click="descargarAll()">Descargar Todo
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items" :items-per-page="5">
+                <v-data-table dense :headers="Cabecera" :items="Items" :items-per-page="5" :search="search">
                     <template v-slot:item="{ item }">
                         <tr @click="abrirVentana(item)" class="myStyle">
                             <td class="linea"><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon>{{ item.NomEst
@@ -31,13 +35,12 @@
                     </template>
                 </v-data-table>
             </v-card>
-
         </template>
     </div>
 </template>
 <script>
 import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
-
+import progres from './progresCircular.vue';
 export default {
     name: "Carreras",
 
@@ -45,8 +48,10 @@ export default {
 
     data() {
         return {
+            search:'',
             carrera: 0,
             permisosDirectorios: new Map(),
+            sms: 'Obteniendo Permisos...',
         }
     },
 
@@ -55,7 +60,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs', 'setVentanaArch']),
+        ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs', 'setVentanaArch', 'setDailogPermisos']),
         ...mapMutations('Carreras', ['setCarreraSelect']),
         ...mapMutations('Carreras', ['setIdCarreraSelect']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
@@ -64,7 +69,7 @@ export default {
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
         ...mapActions('Server_Carpetas', ['descargarCarpeta']),
 
-        abrirVentana(item) {
+        abrirVentana: async function (item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
             const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
             //console.log("nuevos permiso" + permisosSubdirectorio.get("CEDULA"));
@@ -73,12 +78,10 @@ export default {
             this.setBreadcrumbs(item.nomCar.toUpperCase());
             this.obtnerIdCarrera();
             const storedUser = JSON.parse(localStorage.getItem('user'));
-            this.cargarEstudiantes({ idCar: this.carrera, idUser: storedUser.IdUser });
+            await this.cargarEstudiantes({ idCar: this.carrera, idUser: storedUser.IdUser });
             this.setCarreraSelect(item.nomCar);
             this.setVentanaCarreras(false);
-            setTimeout(() => {
-                this.setVentanaEst(true);
-            }, 2000);
+            this.setVentanaEst(true);
         },
 
         descargarDirectorio: async function (item) {
@@ -120,6 +123,7 @@ export default {
         },
 
         obtenerPermisosDirectorios: async function () {
+            this.setDailogPermisos(true);
             try {
                 const storedUser = JSON.parse(localStorage.getItem('user'));
                 const idUser = storedUser.IdUser;
@@ -136,6 +140,7 @@ export default {
                 console.error('Error al obtener permisos de directorios:', error);
                 throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
             }
+            this.setDailogPermisos(false);
         },
 
 
@@ -149,8 +154,13 @@ export default {
         },
 
     },
+
+    components: {
+        progres,
+    },
+
     computed: {
-        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Dialogo', ['itemsBread', 'dailogPermisos']),
         ...mapGetters('Permisos', ['getPermisosDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),
     }

@@ -8,7 +8,7 @@
         <progres :dialog="dailogProgres" :message="sms"></progres>
         <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
         <v-container class="mt-5">
-            <v-menu v-model="showMenu" offset-y>
+            <v-menu v-model="showMenu" offset-y  transition="scroll-x-transition">
                 <template v-slot:activator="{ on }">
                     <!-- Botón que activa el menú desplegable -->
                     <v-btn v-on="on" color="primary">Opciones

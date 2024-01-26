@@ -43,10 +43,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog">
+                    <v-btn color="secondary" variant="text" @click="cerrarDialog">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar">
+                    <v-btn color="primary" variant="text" @click="agregar">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -91,15 +91,17 @@ export default {
             return {
                 controlNom: [
                     value => {
-                        if (value) return true;
-                        return 'Ingresar los nombres de usuario';
-                    },
+                        if (!value) return 'Ingrese los nombres del usuario';
+                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
                 controlApe: [
                     value => {
-                        if (value) return true;
-                        return 'Ingresar los apellidos de usuario';
-                    },
+                        if (!value) return 'Ingrese los Apellidos del usuario';
+                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
                 controlCor: [
                     value => {
@@ -154,12 +156,12 @@ export default {
                     this.ItemUsuario.apellido !== "" &&
                     this.ItemUsuario.correo !== "" &&
                     this.ItemUsuario.contraseña !== "") {
-                    const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo  });
+                    const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
                     if (correoValido) {
                         this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () => {
                             this.ItemUsuario.correo = '';
                         });
-                    }else{
+                    } else {
                         let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
                         this.ItemUsuario.contraseña = contraseñaHash;
                         await this.AgregarUsuario(this.ItemUsuario);

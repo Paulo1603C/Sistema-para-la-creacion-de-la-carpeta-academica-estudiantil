@@ -1,5 +1,8 @@
 <template>
     <v-row justify="center">
+        <div>
+            <progres :dialog="dailogSubirArch" :message="sms"></progres>    
+        </div>
         <v-dialog v-model="dialog" persistent width="600">
             <v-card>
                 <v-card-title>
@@ -33,8 +36,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
-
+import { mapActions, mapGetters, mapState, mapMutations} from 'vuex';
+import progres from './progresCircular.vue';
 export default {
 
     name: "nuevo",
@@ -48,6 +51,7 @@ export default {
             ItemArchivo: {},
             selectedFile: null,
             obsAux: '',
+            sms:'Subiendo archivo...',
             path: '',
         }
     },
@@ -60,21 +64,24 @@ export default {
 
         ...mapActions('Server_Archivos', ['crearArchivos', 'crearObsArchivos']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
+        ...mapMutations('Dialogo', ['setDailogSubirArch']),
 
         agregar: async function () {
+            this.setDailogSubirArch(true);
             try {
                 this.rutaNueva();
                 await Promise.all([
                     this.crearArchivos({ ruta: this.path, archivo: this.selectedFile }),
-                    this.cargarCarpetas(this.path),
                     this.crearObsArchivos({ ruta: this.path + this.selectedFile.name, observacion: this.obsAux, idEstPer: this.idEst })
                 ]);
+                await this.cargarCarpetas(this.path),
                 this.$alertify.success("Archivo Insertado");
                 this.cerrarDialog();
                 this.path = '';
             } catch (error) {
                 this.$alertify.success("Error al internar insertar un archivo " + error);
             }
+            this.setDailogSubirArch(false);
         },
 
         cerrarDialog() {
@@ -98,8 +105,12 @@ export default {
         },
     },
 
+    components: {
+        progres,
+    },
+
     computed: {
-        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Dialogo', ['itemsBread','dailogSubirArch']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
         ...mapState('Estudiantes', ['dataEst', 'idEst']),
     },

@@ -4,11 +4,13 @@
             <v-card>
                 <v-card-title>
                     <span class="text-h5">Permisos Asignados</span>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
+                    </v-text-field>
                 </v-card-title>
-
                 <v-card-text>
                     <v-data-table v-if="getPermisosSubDir_User.length != 0" style="max-height:200px; overflow-y: auto;"
-                        dense :headers="Cabecera" :items="getPermisosSubDir_User" hide-default-footer>
+                        dense :headers="Cabecera" :items="getPermisosSubDir_User" :search="search" hide-default-footer>
                         <template v-slot:item="{ item }">
                             <tr class="myStyle">
                                 <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
@@ -52,10 +54,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog()">
+                    <v-btn color="secondary" variant="text" @click="cerrarDialog()">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar()">
+                    <v-btn color="primary" variant="text" @click="agregar()">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -78,10 +80,11 @@ export default {
 
     data() {
         return {
+            search:'',
             Cabecera: [
                 { text: 'Tipo', value: 'tipo', },
-                { text: 'SubCarpeta', value: 'subCarpeta', },
-                { text: 'Permisos', value: 'permisos', },
+                { text: 'SubCarpeta', value: 'NomItem', },
+                { text: 'Permisos', value: 'NomPer', },
                 { text: 'ACCIONES', value: 'acciones', },
             ],
         }
@@ -110,7 +113,7 @@ export default {
                 controlPer: [
                     value => {
                         if (value) return true;
-                        return 'Seleccione almenos un permiso';
+                        return 'Seleccione por lo menos un permiso';
                     },
                 ],
             }

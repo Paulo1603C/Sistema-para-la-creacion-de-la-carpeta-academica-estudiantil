@@ -15,7 +15,8 @@
                             </v-col>
                             <v-col cols="12">
                                 <v-input>
-                                    <v-text-field label="Nombre Subcarpeta*" v-model="item" required></v-text-field>
+                                    <v-text-field label="Nombre Subcarpeta*" :rules="controles().controlItem"
+                                    v-model="item" required></v-text-field>
                                     <v-tooltip bottom style="margin-right: 100px;">
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-icon color="black darken-2" size="30" @click.stop="agrgarItem()"
@@ -37,10 +38,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog()">
+                    <v-btn color="secondary" variant="text" @click="cerrarDialog()">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar()">
+                    <v-btn color="primary" variant="text" @click="agregar()">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -64,7 +65,7 @@ export default {
             item: '',
             auxItem: '',
             aux: '',
-            auxModify:false,
+            auxModify: false,
             auxArray: [],
         }
     },
@@ -80,14 +81,17 @@ export default {
             return {
                 controlNom: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese un nombre'
-                    },
+                        if (!value) return 'Ingrese un nombre';
+                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
                 controlItem: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese un nombre para agregar a la lista'
+                        if (value) {
+                            const soloLetras = /^[a-zA-Z\s]+$/;
+                            return soloLetras.test(value) || 'Ingrese solo letras';
+                        }
                     },
                 ],
             }
@@ -101,11 +105,11 @@ export default {
                         this.AgregarItemsPalntilla(this.ItemPlantilla),
                         this.AgregarItemsSubDirectorios(this.ItemPlantilla)
                     ]);
-                    if ( !this.auxModify ) {
+                    if (!this.auxModify) {
                         let aux = this.obtenerNoRepetidos(this.auxArray);
                         await this.AgregarMasItemsDirectorios({ datos: aux, idPlan: this.ItemPlantilla.idPlan });
                     }
-                    if( this.ItemPlantilla.idPlan == 0 ){
+                    if (this.ItemPlantilla.idPlan == 0) {
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
                     }
                     await this.cargarPlantillas();
@@ -158,10 +162,10 @@ export default {
         obtenerNoRepetidos(arr) {
             let nuevoArray = [];
             const contador = {};
-            for ( const valor of arr) {
+            for (const valor of arr) {
                 contador[valor] = (contador[valor] || 0) + 1;
             }
-            for ( const aux in contador) {
+            for (const aux in contador) {
                 if (contador[aux] <= 1) {
                     nuevoArray.push(aux);
                 }

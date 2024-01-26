@@ -18,10 +18,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog()">
+                    <v-btn color="secondary" variant="text" @click="cerrarDialog()">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar()">
+                    <v-btn color="primary" variant="text" @click="agregar()">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -50,9 +50,10 @@ export default {
             return {
                 controlNom: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese un nombre'
-                    },
+                        if (!value) return 'Ingrese un nombre';
+                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
             }
         },
@@ -74,7 +75,7 @@ export default {
                 }
             } catch (error) {
                 console.error('Error al agregar carrera:', error);
-                this.$alertify.error("Error al realizar la operación " +error);
+                this.$alertify.error("Error al realizar la operación " + error);
             }
 
         },

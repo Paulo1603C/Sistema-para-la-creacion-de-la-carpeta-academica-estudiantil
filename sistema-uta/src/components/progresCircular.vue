@@ -4,7 +4,7 @@
         <div class="loading-container">
           <v-progress-circular color="purple" indeterminate :size="100" :width="6"></v-progress-circular>
           <div>
-            <v-alert type="success" outline dense>{{ message }}</v-alert>
+            <v-alert type="success" outlined dense color="secondary darken-1" >{{ message }}</v-alert>
           </div>
         </div>
       </v-dialog>

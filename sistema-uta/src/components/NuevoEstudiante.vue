@@ -1,7 +1,7 @@
 <template>
     <v-row justify="center">
         <progres :dialog="dailogCrearEst" :message="sms"></progres>
-        <v-dialog v-model="dialog" persistent width="400">
+        <v-dialog v-model="dialog" persistent width="450">
             <v-card>
                 <v-card-title>
                     <span v-if="ItemEstudiante.IdEst == 0" class="text-h5">Estudiante Nuevo</span>
@@ -11,16 +11,16 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field label="Cedula*" :rules="controles().controlCed"
+                                <v-text-field label="Cedula*" :rules="[controles().controlCed, cedulaLengthRule]" maxlength="10"
                                     @change="buscarEstudianteCed()" v-model="ItemEstudiante.Cedula" :counter="10"
                                     required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Nombres Completos*" :rules="controles().controlNom"
+                                <v-text-field label="Nombres Completos*" maxlength="30" :rules="controles().controlNom"
                                     v-model="ItemEstudiante.NomEst" required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                                <v-text-field label="Apellidos Comletos*" :rules="controles().controlApe"
+                                <v-text-field label="Apellidos Completos*" maxlength="30"  :rules="controles().controlApe"
                                     v-model="ItemEstudiante.ApeEst" required></v-text-field>
                             </v-col>
                             <v-col cols="12" v-if="ItemEstudiante.IdEst == 0">
@@ -34,10 +34,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog()">
+                    <v-btn color="secondary" variant="text" @click="cerrarDialog()">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar()">
+                    <v-btn color="primary" variant="text" @click="agregar()">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -61,7 +61,7 @@ export default {
 
     data: () => ({
         path: '',
-        sms:'Creando las carpetas para el estudiante...'
+        sms: 'Creando las carpetas para el estudiante...'
     }),
 
     created() {
@@ -74,27 +74,38 @@ export default {
         ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes', 'buscarEstCedula']),
         ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
         ...mapActions('Plantillas', ['cargarPlantillas', 'cargarItemsPlantillas']),
-        ...mapMutations('Dialogo', ['setDialogFolder','setDailogCrearEst']),
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setDailogCrearEst']),
+
+        cedulaLengthRule(value) {
+            if (!value || value.length === 10) {
+                return true; // La longitud es correcta
+            } else {
+                return 'La cédula debe tener exactamente 10 dígitos'; // Mensaje de error
+            }
+        },
 
         controles() {
             return {
                 controlCed: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese la cedula del estudiante'
+                        if (!value) return 'Ingrese una cédula';
+                        const soloNumeros = /^\d+$/;
+                        return soloNumeros.test(value) || 'Ingrese solo números';
                     },
                 ],
                 controlNom: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese los nombres del estudiante'
-                    },
+                        if (!value) return 'Ingrese los nombres del estudiante';
+                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
                 controlApe: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese los apellidos del estudiante'
-                    },
+                        if (!value) return 'Ingrese los apellidos del estudiante';
+                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
                 controlPlan: [
                     value => {
@@ -164,32 +175,71 @@ export default {
         },
 
         buscarEstudianteCed: async function () {
-            let buscar = await this.buscarEstCedula({ cedula: this.ItemEstudiante.Cedula });
-            if (buscar) {
-                this.$alertify.confirm(
-                    `El estudinate con cedula ${this.ItemEstudiante.Cedula} ya existe, Deseas crear el mismo estudiante otra vez?`,
-                    () => {
-                        this.$alertify.success('Prosiga')
-                    },
-                    () => {
-                        this.cerrarDialog(),
-                            this.ItemEstudiante.Cedula = '',
-                            this.$alertify.error('Cancelado')
-                    }
-                );
+            let res = this.validarCedula(this.ItemEstudiante.Cedula);
+            if (res) {
+                let buscar = await this.buscarEstCedula({ cedula: this.ItemEstudiante.Cedula });
+                if (buscar) {
+                    this.$alertify.confirm(
+                        `El estudinate con cedula ${this.ItemEstudiante.Cedula} ya existe, Deseas crear el mismo estudiante otra vez?`,
+                        () => {
+                            this.$alertify.success('Prosiga')
+                        },
+                        () => {
+                            this.cerrarDialog(),
+                                this.ItemEstudiante.Cedula = '',
+                                this.$alertify.error('Cancelado')
+                        }
+                    );
+                }
+            } else {
+                this.ItemEstudiante.Cedula = '';
+                this.$alertify.error('La cédula no es válida');
             }
-        }
+        },
+
+        validarCedula(cedula) {
+            const digitos = cedula.substring(0, 9);
+            // Obtener el décimo dígito (dígito verificador)
+            const verificador = parseInt(cedula.charAt(9));
+            // Calcular el dígito verificador esperado
+            let suma = 0;
+            for (let i = 0; i < 9; i++) {
+                let digito = parseInt(digitos.charAt(i));
+                if (i % 2 === 0) {
+                    digito *= 2;
+                    if (digito > 9) {
+                        digito -= 9;
+                    }
+                }
+                suma += digito;
+            }
+
+            const residuo = suma % 10;
+            const digitoEsperado = residuo === 0 ? 0 : 10 - residuo;
+            // Comparar el dígito verificador calculado con el proporcionado
+            return digitoEsperado === verificador;
+        },
+
+        controlCedula() {
+            let res = this.validarCedula(this.ItemEstudiante.Cedula)
+            if (res) {
+                console.log("La cédula es válida.");
+            } else {
+                console.log("La cédula no es válida.");
+            }
+        },
+
 
     },
 
-    components:{
+    components: {
         progres,
     },
 
     computed: {
         ...mapGetters('Carreras', ['getCarreras']),
         ...mapGetters('Plantillas', ['getPlantillas', 'getItemsPlantillas']),
-        ...mapState('Dialogo', ['itemsBread','dailogCrearEst']),
+        ...mapState('Dialogo', ['itemsBread', 'dailogCrearEst']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
     },

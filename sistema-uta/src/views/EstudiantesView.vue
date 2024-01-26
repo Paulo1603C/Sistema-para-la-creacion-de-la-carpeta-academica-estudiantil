@@ -1,7 +1,6 @@
 <template>
     <div>
         <BtnOpciones :links="btnOP" v-if="tablaEst == true || tablaArch == true" dark class="mb-2"></BtnOpciones>
-
         <v-breadcrumbs>
             <v-breadcrumbs-item style="font-size:20px" class="BreadCumbs" v-for="(item, index) in itemsBread" :key="index"
                 @click="acciones(item)">
@@ -10,10 +9,11 @@
             </v-breadcrumbs-item>
         </v-breadcrumbs>
 
+
         <Carreras :show="carreras" Titulo="CARRERAS" :Cabecera="CabeceraCarreras" :Items="getCarrerasUser"></Carreras>
         <TablaEst :show="tablaEst" Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
-        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[2]" :Cabecera="Cabecera2" :Items="getCarpetas"></TablaDir_Arch>
-
+        <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[2]" :Cabecera="Cabecera2" :ItemsArchivos="getCarpetas">
+        </TablaDir_Arch>
     </div>
 </template>
 
@@ -25,6 +25,7 @@ import BtnOpciones from '../components/BtnOpciones.vue';
 import TablaEst from '../components/TablaEstudiantes.vue';
 import TablaDir_Arch from '../components/TablaDir_Arch.vue';
 import Carreras from '../components/CarrerasUser.vue';
+
 
 export default {
     name: 'Estudiantes',
@@ -43,27 +44,28 @@ export default {
             tituloUser: '',
             idUser: null,
             path: '',
+            sms: '',
             carrera: 0,
             permisosDirectorios: new Map(),
             Cabecera: [
                 { text: 'Tipo', value: 'tipo', },
-                { text: 'Nombre', value: 'nombre', },
-                { text: 'Carrera', value: 'carrera', },
-                { text: 'Modificado', value: 'fecha', },
-                { text: 'Modificador por', value: 'user', },
+                { text: 'Nombre', value: 'NomUser', },
+                { text: 'Carrera', value: 'NomCar', },
+                { text: 'Modificado', value: 'Fecha', },
+                { text: 'Modificador por', value: 'Nom_Modificador', },
                 { text: 'ACCIONES', value: 'acciones', },
             ],
             Cabecera2: [
                 { text: 'Tipo', value: 'tipo', },
                 { text: 'Nombre', value: 'nombre', },
-                { text: 'Tamaño', value: 'amaño', },
+                { text: 'Tamaño', value: 'tamaño', },
                 { text: 'Modificado', value: 'fecha', },
                 { text: 'Modificador por', value: 'user', },
                 { text: 'ACCIONES', value: 'acciones', },
             ],
             CabeceraCarreras: [
                 { text: 'Tipo', value: ' ', },
-                { text: 'Nombre', value: 'nombre', },
+                { text: 'Nombre', value: 'nomCar', },
                 { text: 'Descargar', value: 'descargar', },
             ],
         }
@@ -89,7 +91,7 @@ export default {
         ...mapActions('Carreras', ['cargarCarrerasUser']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
-        ...mapMutations('Dialogo', ['setVentanaEst', 'setVentanaArch', 'setVentanaCarreras', 'setBreadcrumbs', 'setCtlSubirArch', 'setCtlfolder']),
+        ...mapMutations('Dialogo', ['setVentanaEst', 'setVentanaArch', 'setVentanaCarreras', 'setBreadcrumbs', 'setCtlSubirArch', 'setCtlfolder', 'setDailogCargarDatos']),
         //...mapActions('SubCarpetas', ['cargarSubCarpetas']),
         ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
@@ -105,11 +107,9 @@ export default {
         },
 
         acciones(item) {
-            //console.log(item);
             this.rutaNueva();
             this.controlArchFolder(this.path);
             if (item == this.itemsBread[0]) {
-                //console.log('Mijas de pan');
                 this.setVentanaCarreras(true);
                 this.setVentanaEst(false);
                 this.setVentanaArch(false);
@@ -177,9 +177,9 @@ export default {
                 }));
                 const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
                 localStorage.setItem('PermisosSubDirectorios', permission);
-                console.log(this.permisosDirectorios);
+                //console.log(this.permisosDirectorios);
             } catch (error) {
-                console.error('Error al obtener permisos de directorios:', error);
+                this.$alertify.error('Error al obtener permisos de directorios:', error);
                 throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
             }
         },
@@ -198,12 +198,12 @@ export default {
                 } else {
                     const storedUser = JSON.parse(localStorage.getItem('user'));
                     const idUser = storedUser.IdRolPer;
-                    if ( idUser == 1 ) {
+                    if (idUser == 1) {
                         this.btnOP = [
                             { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
                             //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
                         ];
-                    }else{
+                    } else {
                         this.btnOP = [
                             { icon: "alpha-x", text: "Sin permisos", show: "true" },
                         ];
@@ -230,13 +230,23 @@ export default {
                 }
             }
         },
+
+        mostrarCrear: {
+            handler(newVal, oldVal) {
+                if (newVal) {
+                    this.btnOP = [
+                        { icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
+                    ];
+                }
+            }
+        },
     },
 
     computed: {
         ...mapGetters('Estudiantes', ['getItems']),
         ...mapGetters('Carreras', ['getCarrerasUser', 'getCarreras']),
         ...mapGetters('Server_Carpetas', ['getCarpetas']),
-        ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras', 'itemsBread', 'ctlSubirArch', 'mostrarCrear']),
+        ...mapState('Dialogo', ['tablaEst', 'tablaArch', 'carreras', 'itemsBread', 'ctlSubirArch', 'mostrarCrear', 'dailogCargarDatos']),
         ...mapState('Carreras', ['carreraSelecionada', 'idCarreraSelect']),
         ...mapGetters('Permisos', ['getPermisosDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),

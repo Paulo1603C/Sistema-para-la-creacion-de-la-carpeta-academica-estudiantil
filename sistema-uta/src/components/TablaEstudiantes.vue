@@ -1,6 +1,7 @@
 <template>
     <div>
         <template>
+            <progres :dialog="dailogCargarDatos" :message="sms"></progres>
             <v-card v-show="show">
                 <v-card-title>
                     {{ Titulo }}
@@ -12,8 +13,8 @@
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10" :search="search"
-                    class="elevation-1">
+                <v-data-table dense :headers="Cabecera" :items="Items" :item-per-page="10"
+                    :search="search" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle">
                             <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
@@ -53,7 +54,6 @@
                         </tr>
                     </template>
                 </v-data-table>
-
             </v-card>
 
         </template>
@@ -62,7 +62,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
-
+import progres from './progresCircular.vue';
 
 export default {
     name: "TablaC",
@@ -73,6 +73,7 @@ export default {
         return {
             search: '',
             path: '',
+            sms:'Cargando datos...',
             search: '',
             customDir: null,
             selectedItems: [],
@@ -81,7 +82,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs']),
+        ...mapMutations('Dialogo', ['setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs','setDailogCargarDatos']),
         ...mapMutations('Estudiantes', ['setEst', 'setIdEst']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior']),
         ...mapMutations('Plantillas', ['setIdEstPlan']),
@@ -132,7 +133,7 @@ export default {
                 this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
                 this.path = '';
             } catch (error) {
-                this.$alertify.error('Error al descargar un archivo ' +error);
+                this.$alertify.error('Error al descargar un archivo ' + error);
             }
         },
 
@@ -145,11 +146,12 @@ export default {
                 this.path = '';
             } catch (error) {
                 console.error('Error al descargar carpeta:', error);
-                this.$alertify.error('Error al descargar carpeta ' +error);
+                this.$alertify.error('Error al descargar carpeta ' + error);
             }
         },
 
         hacerAlgoAlHacerClic: async function (item) {
+            this.setDailogCargarDatos(true);
             localStorage.removeItem('padreActual');
             this.setIdEst(item.IdEst);
             this.setIdEstPlan(item.IdPlanPer);
@@ -161,7 +163,7 @@ export default {
             //console.log(item.IdEst);
             await this.cargarCarpetas(this.path);
             this.path = '';
-            //this.selectedItems = [];
+            this.setDailogCargarDatos(false);
         },
 
         handleDirChange(event) {
@@ -187,12 +189,12 @@ export default {
     },
 
     components: {
-
+        progres,
     },
 
     computed: {
         ...mapState('Carreras', ['idCarreraSelect']),
-        ...mapState('Dialogo', ['itemsBread']),
+        ...mapState('Dialogo', ['itemsBread','dailogCargarDatos']),
     },
 
     watch: {

@@ -32,7 +32,6 @@ export default {
 
         setCarpeta(state, value) {
             state.dataCarpeta = value;
-            console.log('Data Carpetas -> ' + JSON.stringify(state.dataCarpeta));
         },
 
     },
@@ -52,9 +51,15 @@ export default {
                     }
                     const url = `${baseURL}Apis-UTA/Dir_ArchSelect.php`;
                     const data = await fetch(url, setting);
-                    const json = await data.json();
-                    //console.log(json);
-                    commit('llenarlista', json);
+                    if (data.ok) {
+                        const json = await data.text();
+                        if (json.startsWith('{')) {
+                            const jsonData = JSON.parse(json);
+                            commit('llenarlista', jsonData);
+                        } else {
+                            commit('llenarlista', json);
+                        }
+                    }
                 } catch (error) {
                     console.error('Error en la solicitud:', error);
                 }
@@ -69,11 +74,11 @@ export default {
                 const rutaC = path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase();
                 const aux = rutaC.indexOf('.');
                 if (aux < 0) {
-                    if( datos.ApeEst == '' ){
+                    if (datos.ApeEst == '') {
                         console.log('just folder');
-                        datosCarpeta.append( 'nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() );
-                    }else{
-                        datosCarpeta.append( 'nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase() );
+                        datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase());
+                    } else {
+                        datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase());
                     }
                     datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
                 } else {
@@ -110,7 +115,7 @@ export default {
         crearSubCarpeta: async function ({ commit, dispatch }, { datos, path, nombre }) {
             try {
                 const datosCarpeta = new FormData();
-                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase() );
+                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase() + '/' + nombre.toUpperCase());
                 //console.log('RUTA-> ' + path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase());
                 const setting = {
                     method: 'POST',
@@ -137,9 +142,9 @@ export default {
             try {
                 //console.log('Server'+ruta2.toUpperCase())
                 const datosCarpeta = new FormData();
-                if( tipo == 'Archivo' ){
+                if (tipo == 'Archivo') {
                     datosCarpeta.append('rutaServidor', ruta2);
-                }else{
+                } else {
                     datosCarpeta.append('rutaServidor', ruta2.toUpperCase());
                 }
                 const setting = {

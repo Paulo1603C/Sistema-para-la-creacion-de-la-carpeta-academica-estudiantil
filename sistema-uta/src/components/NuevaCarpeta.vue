@@ -11,18 +11,19 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field label="Nombre*" :rules="controles().controlNom" v-model="ItemCarpeta.NomEst"
-                                    required></v-text-field>
+                                <v-text-field label="Nombre*"
+                                    :rules="[controles().controlNom, controles().controlNombreArchivo]"
+                                    v-model="ItemCarpeta.NomEst" required></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="cerrarDialog()">
+                    <v-btn color="secondary" variant="text" @click="cerrarDialog()">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="agregar()">
+                    <v-btn color="primary" variant="text" @click="agregar()">
                         Save
                     </v-btn>
                 </v-card-actions>
@@ -45,7 +46,7 @@ export default {
 
     data: () => ({
         path: '',
-        sms2: 'Creando carpetas...',
+        sms2: 'Creando Item...',
         permisosDirectorios: new Map(),
     }),
 
@@ -64,14 +65,36 @@ export default {
             return {
                 controlNom: [
                     value => {
-                        if (value) return true
-                        return 'Ingrese un nombre'
-                    },
+                        if (!value) return 'Ingrese un nombre';
+                        const soloLetras = /^[a-zA-Z\s._]+$/;
+                        return soloLetras.test(value) || 'Ingrese solo letras';
+                    }
                 ],
+                controlNombreArchivo: (value) => {
+                    if (!value) {
+                        return "Ingrese el nombre del archivo";
+                    }
+
+                    // Verificar si la extensión es ".txt"
+                    const extensionValida = /\.txt$/i; // La extensión debe ser ".txt"
+                    if (!extensionValida.test(value)) {
+                        return "La extensión del archivo debe ser '.txt'";
+                    }
+
+                    // Si quieres que el usuario no pueda modificar la extensión:
+                    const nombreSinExtension = value.replace(extensionValida, "");
+                    if (nombreSinExtension !== "") {
+                        return "No puedes modificar la extensión del archivo";
+                    }
+
+                    return true; // La validación pasó
+                },
+
             }
         },
 
         agregar: async function () {
+            this.setDailogCarpetas(true);
             try {
                 if (this.ItemCarpeta.NomEst != "") {
                     this.rutaNueva();
@@ -85,7 +108,6 @@ export default {
                             await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
                             await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
                             await this.agregarPermisos(this.ItemCarpeta.NomEst);
-                            await this.cargarSubCarpetas();
                             this.obtenerPermisosDirectorios();
                         } else {
                             //console.log("HIJA "+ultimoValor);
@@ -102,13 +124,14 @@ export default {
                     }
                     await this.cargarCarpetas(this.path);
                     this.cerrarDialog();
+                    this.setDailogCarpetas(false);
                     this.path = '';
                 } else {
                     this.$alertify.error("Complete todos campos para llevar acabo el proceso");
                 }
             } catch (error) {
                 console.error('Error al agregar estudiante:', error);
-                this.$alertify.error("Error al realizar la operación "+error);
+                this.$alertify.error("Error al realizar la operación " + error);
             }
         },
 
@@ -143,7 +166,6 @@ export default {
         //este metodo creara el subdirectior  nuevo en todos los estudiante que tengan la misma plantilla
         crearSubDirectorios: async function (ruta, nomSub) {
             try {
-                this.setDailogCarpetas(true);
                 for (let i = 0; i < this.getEstudinates_Plantillas.length; i++) {
                     const row = (this.getEstudinates_Plantillas[i]);
                     let partes = ruta.split('/').filter(Boolean);
@@ -155,7 +177,6 @@ export default {
                     //console.log(nuevaCadena2 +"/"+ row.NomCar+ "/"+ row.NomEst + " " + row.ApeEst+"/"+nomSub);
                     await this.crearSubCarpeta({ datos: row, path: nuevaCadena2 + "/" + row.NomCar + "/", nombre: nomSub });
                 }
-                this.setDailogCarpetas(false);
             } catch (error) {
                 this.$alertify.error("Error al realizar la operación " + error);
             }

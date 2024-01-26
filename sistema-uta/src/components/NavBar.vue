@@ -16,6 +16,25 @@
             </div>
             <v-img :src="logo" alt="logo UTA" contain height="60"></v-img>
         </v-btn>
+        <!--<div class="text-center">
+            <v-menu transition="scroll-x-transition" offset-y >
+                <template v-slot:activator="{ on, attrs }">
+                <v-icon color="secondary" class="ma-2" v-bind="attrs" v-on="on">
+                    mdi-bell
+                </v-icon>
+                </template>
+                <v-list>
+                <v-list-item>
+                    <v-list-item-title>Notificaciones</v-list-item-title>
+                </v-list-item>
+                <v-divider></v-divider>
+                <v-list-item v-for="n in getNotificaciones" :key="n">
+                    <v-list-item-title>{{ n }}</v-list-item-title>
+                </v-list-item>
+                </v-list>
+            </v-menu>
+        </div>-->
+
       </v-app-bar>
 
       <v-navigation-drawer v-model="drawer" dark app class="red darken-4" height="100%">
@@ -75,7 +94,7 @@
 </template>
 <script>
 import CambioPass from './cambioContrasena.vue';
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapActions, mapGetters } from 'vuex';
 export default {
     name: "NavBar",
 
@@ -83,9 +102,13 @@ export default {
 
     data() {
         return {
+            fav: true,
+            menu: false,
+            message: false,
+            hints: true,
             drawer: true,
             rolUser: null,
-            showMenu:false,
+            showMenu: false,
             logo: require("../assets/logo2.png"),
             imgAux: require('../assets/user.png'),
             navegacion: [],
@@ -93,7 +116,7 @@ export default {
                 { icon: "key-change", text: "Cambiar contraseña", show: "true" },
                 //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
             ],
-            datosPass:{},
+            datosPass: {},
         }
     },
 
@@ -102,6 +125,7 @@ export default {
         if (autenticacion) {
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.rolUser = storedUser.IdRolPer;
+            let rolUser = storedUser.IdRolPer;
             this.roles();
         }
     },
@@ -129,20 +153,26 @@ export default {
             }
         },
 
-        openChangePass(){
-            this.datosPass={
-                contra1:'',
-                contra2:'',
+        openChangePass() {
+            this.datosPass = {
+                contra1: '',
+                contra2: '',
             }
             this.setDailogContra(true);
         },
+
+        mostrarNotificaciones() {
+
+        },
     },
 
-    computed:{
+    computed: {
         ...mapState('Dialogo', ['dailogContra']),
+        ...mapGetters('Carreras', ['getCarrerasUser']),
+        ...mapGetters('Login', ['getNotificaciones']),
     },
 
-    components:{
+    components: {
         CambioPass,
     }
 }

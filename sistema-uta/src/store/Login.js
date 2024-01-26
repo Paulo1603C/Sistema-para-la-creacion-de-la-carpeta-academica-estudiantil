@@ -12,6 +12,7 @@ export default {
         isAuthenticated: false, // Estado de autenticación
 
         sms: '',
+        notificaciones:[],
     },
 
     getters: {
@@ -23,6 +24,9 @@ export default {
         },
         getSms(state) {
             state.sms;
+        },
+        getNotificaciones(state) {
+            state.notificaciones;
         }
     },
 
@@ -35,6 +39,9 @@ export default {
         },
         setSms(state, value) {
             state.sms = value;
+        },
+        setNotificaciones(state, value) {
+            console.log(state.notificaciones);
         },
 
     },
@@ -87,9 +94,9 @@ export default {
                 const response = await fetch(url, setting);
                 if (response.ok) {
                     const json = await response.json();
-                    if( json == 'existe' ){
+                    if (json == 'existe') {
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
                 }
@@ -100,7 +107,7 @@ export default {
         },
 
 
-        cambioContraseñaCorreo:async function({ commit, state }, { correo, newPass }) {
+        cambioContraseñaCorreo: async function ({ commit, state }, { correo, newPass }) {
             try {
                 const datosContra = new FormData();
                 datosContra.append('correo', correo);
@@ -115,11 +122,33 @@ export default {
                 if (response.ok) {
                     const json = await response.json();
                     //console.log(json);
-                    if( json.message == 'contraseña Actualizada' ){
+                    if (json.message == 'contraseña Actualizada') {
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
+            }
+        },
+
+        notificaciones: async function ({ commit, state }, { idUser }) {
+            try {
+                const datosCar = new FormData();
+                datosCar.append('IdUser', 2);
+
+                const setting = {
+                    method: 'POST',
+                    body: datosCar,
+                };
+                const url = `${baseURL}Apis-UTA/carpetasVaciasServidor.php.`;
+                const response = await fetch(url, setting);
+                if (response.ok) {
+                    const json = await response.text();
+                    //console.log(json);
+                    commit('setNotificaciones', json);
                 }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
