@@ -133,7 +133,7 @@ export default {
                 this.$alertify.confirm(
                     'Deseas eliminar el estudiante: ' + item.nombre,
                     async () => {
-                        //console.log('Ruta Borrar ' + this.path + item.nombre);
+                        console.log('Ruta Borrar ' + this.path + item.nombre);
                         await this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre, tipo: item.tipo });
                         await this.cargarCarpetas(this.path);
                         this.path = '';
@@ -254,10 +254,10 @@ export default {
             return item.tipo === 'Archivo' ? true : false;
         },
 
-        verObservacion(item) {
+        verObservacion: async function(item) {
             this.dialogObs = true;
             this.rutaNueva();
-            this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
+            await this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
             this.path = '';
         },
 

@@ -14,7 +14,7 @@
                                     v-model="ItemPass.contra1" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Nueva contraseña*" type="password" :rules="controles().controlContra"
+                                <v-text-field label="Repetir nueva contraseña*" type="password" :rules="controles().controlContra"
                                     v-model="ItemPass.contra2" required></v-text-field>
                             </v-col>
                         </v-row>

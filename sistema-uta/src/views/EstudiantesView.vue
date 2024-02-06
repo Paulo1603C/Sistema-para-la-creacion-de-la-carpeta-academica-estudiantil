@@ -2,10 +2,10 @@
     <div>
         <BtnOpciones :links="btnOP" v-if="tablaEst == true || tablaArch == true" dark class="mb-2"></BtnOpciones>
         <v-breadcrumbs>
-            <v-breadcrumbs-item style="font-size:20px" class="BreadCumbs" v-for="(item, index) in itemsBread" :key="index"
+            <v-breadcrumbs-item style="font-size:15px" class="BreadCumbs" v-for="(item, index) in itemsBread" :key="index"
                 @click="acciones(item)">
                 {{ item }}
-                <span style="color:red;font-size:30px" v-if="index < itemsBread.length - 1"> / </span>
+                <span style="color:red;font-size:15x" v-if="index < itemsBread.length - 1"> / </span>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
 
@@ -78,7 +78,7 @@ export default {
         } else {
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.idUser = storedUser.IdUser;
-            console.log(this.carreraSelecionada);
+            //console.log(this.carreraSelecionada);
             this.cargarCarrerasUser(this.idUser);
             //this.cargarSubCarpetas();
             this.obtenerPermisosDirectorios();
@@ -135,7 +135,7 @@ export default {
                     case 'AUTOMATIZACIÓN Y ROBÓTICA':
                         this.carrera = 5;
                         this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
-                        console.log(this.path);
+                        //console.log(this.path);
                         break;
                     default:
                         this.path = '';
@@ -189,7 +189,7 @@ export default {
     watch: {
         tablaEst: {
             handler(newVal, oldVal) {
-                console.log('Nueva tablaEst:', newVal);
+                //console.log('Nueva tablaEst:', newVal);
                 if (newVal) {
                     this.btnOP = [
                         { icon: "folder-plus", text: "Crear Estudiante", show: "true" },
@@ -231,7 +231,7 @@ export default {
             }
         },
 
-        mostrarCrear: {
+        /*mostrarCrear: {
             handler(newVal, oldVal) {
                 if (newVal) {
                     this.btnOP = [
@@ -239,7 +239,7 @@ export default {
                     ];
                 }
             }
-        },
+        },*/
     },
 
     computed: {

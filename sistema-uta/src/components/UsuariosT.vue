@@ -3,11 +3,11 @@
         <div style="overflow: hidden;">
             <PermisosUser :dialog="dailogPermisos" :PermisosUsario="dataPermisosUsuario"></PermisosUser>
         </div>
-        <v-card class="mx-auto" max-width="244">
+        <v-card class="mx-auto" max-width="180">
 
-            <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="100px" cover></v-img>
+            <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="80px" cover></v-img>
 
-            <v-card-title class="d-flex justify-center align-center">
+            <v-card-title class="d-flex justify-center align-center" style="font-size: 15px;">
                 {{ nombre }} {{ apellido }}
             </v-card-title>
 
@@ -18,12 +18,12 @@
             </v-card-text>
 
             <v-card-actions>
-                <v-btn color="error darken-2" @click="eliminar">
+                <v-btn color="error darken-2" @click="eliminar" icon small>
                     <template>
                         <v-icon>mdi-delete</v-icon>
                     </template>
                 </v-btn>
-                <v-btn color="primary darken-2" @click="editar">
+                <v-btn color="primary darken-2" @click="editar" icon small>
                     <template>
                         <v-icon>mdi-pencil</v-icon>
                     </template>
@@ -31,7 +31,7 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn @click="show = !show">
+                <v-btn @click="show = !show" icon small>
                     <template v-if="show">
                         <v-icon>mdi-chevron-up</v-icon>
                     </template>

@@ -8,7 +8,7 @@
                 {{ mensaje }}
             </v-card-text>
             <v-card-text>
-                {{ getObs.length > 0 ? getObs[0].Observacion : '' }}
+                {{ getObs.length > 0 ? getObs[0].Observacion : 'No tiene observacion para mosttar' }}
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>

@@ -78,7 +78,7 @@ export default {
                     // Verificar si la extensión es ".txt"
                     const extensionValida = /\.txt$/i; // La extensión debe ser ".txt"
                     if (!extensionValida.test(value)) {
-                        return "La extensión del archivo debe ser '.txt'";
+                        return "Mantener la extension del archivo en caso de que sea un archivo";
                     }
 
                     // Si quieres que el usuario no pueda modificar la extensión:

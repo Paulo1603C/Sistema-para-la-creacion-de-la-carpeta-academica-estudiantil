@@ -2,10 +2,10 @@
     <div>
         <div style="overflow: hidden;">
         </div>
-        <v-card class="mx-auto" max-width="300">
+        <v-card class="mx-auto" max-width="200">
             <v-img :src="(urlDw != null) ? urlDw : imgAux" contain height="100px" cover></v-img>
 
-            <v-card-title class="d-flex justify-center align-center">
+            <v-card-title class="d-flex justify-center align-center" style="font-size: 15px;">
                 {{ titulo }}
             </v-card-title>
 
@@ -15,7 +15,7 @@
                         <v-icon>mdi-delete</v-icon>
                     </template>
                 </v-btn>
-                <v-btn color="primary darken-4" @click="editar()">
+                <v-btn color="primary darken-4" @click="editar()" icon small>
                     <template>
                         <v-icon>mdi-pencil</v-icon>
                     </template>
@@ -23,7 +23,7 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn @click="show = !show">
+                <v-btn @click="show = !show" icon small>
                     <template v-if="show">
                         <v-icon>mdi-chevron-up</v-icon>
                     </template>
@@ -38,12 +38,14 @@
                 <div v-show="show">
                     <v-divider></v-divider>
                     <v-card-text v-for="(word, index) in words" :key="index">
-                        <p style="font-size: 20px;overflow: hidden;">
+                        <ul style="font-size:10px;overflow: hidden;list-style: none;">
+                           <li>
                             <strong>
-                                <v-icon class="mr-3" size="36" color="yellow darken-1">mdi-folder</v-icon>
+                                <v-icon class="mr-3" size="16" color="yellow darken-1">mdi-folder</v-icon>
                                 {{ word }}
                             </strong>
-                        </p>
+                           </li> 
+                        </ul>
                     </v-card-text>
                 </div>
             </v-expand-transition>

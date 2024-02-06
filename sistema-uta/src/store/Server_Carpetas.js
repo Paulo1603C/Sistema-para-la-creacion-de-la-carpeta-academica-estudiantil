@@ -76,6 +76,9 @@ export default {
                 if (aux < 0) {
                     if (datos.ApeEst == '') {
                         console.log('just folder');
+                        //console.log(path);
+                        //console.log( path + datos.NomEst.toUpperCase());
+                        //console.log(  oldPath.toUpperCase() );
                         datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase());
                     } else {
                         datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase());
