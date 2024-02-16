@@ -145,10 +145,12 @@ export default {
                     { icon: 'school', text: 'Carreras', route: '/Carreras' },
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
                     { icon: 'view-dashboard', text: 'Plantillas', route: '/Plantillas' },
+                    { icon: 'chart-pie', text: 'Reportes', route: '/Reportes' },
                 ]
             } else {
                 this.navegacion = [
                     { icon: 'folder', text: 'Estudiantes', route: '/Estudiantes' },
+                    { icon: 'chart-pie', text: 'Reportes', route: '/Reportes' },
                 ]
             }
         },

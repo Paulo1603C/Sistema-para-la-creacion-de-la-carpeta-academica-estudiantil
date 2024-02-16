@@ -81,7 +81,7 @@ export default {
 
         cambioContraseña() {
             this.$alertify.promptWithTitle(
-                'Cambio de contraseña',
+                'Recuperar contraseña',
                 'Digite su correo para poder seguir con el proceso',
                 ' ',
                 async (evt, value) => {

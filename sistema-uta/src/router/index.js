@@ -6,6 +6,7 @@ import EstudiantesView from '../views/EstudiantesView.vue'
 import PlantillasView from '../views/PlantillasView.vue'
 import UsuariosView from '../views/UsuariosView.vue'
 import CarrerasView from '../views/CarrerasView.vue'
+import ReportesView from '../views/ReportesView.vue'
 import SinConexionView from '../views/SinConexionView.vue'
 
 Vue.use(VueRouter)
@@ -45,6 +46,11 @@ const routes = [
         path: '/Usuarios',
         name: 'Usuarios',
         component: UsuariosView
+      },
+      {
+        path: '/Reportes',
+        name: 'Reportes',
+        component: ReportesView
       },
     ]
   },

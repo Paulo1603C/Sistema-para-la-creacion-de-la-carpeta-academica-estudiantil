@@ -12,7 +12,6 @@ export default {
         isAuthenticated: false, // Estado de autenticación
 
         sms: '',
-        notificaciones:[],
     },
 
     getters: {
@@ -25,24 +24,21 @@ export default {
         getSms(state) {
             state.sms;
         },
-        getNotificaciones(state) {
-            state.notificaciones;
-        }
     },
 
     mutations: {
         setUser(state, user) {
             state.user = user;
         },
+
         setAuthentication(state, isAuthenticated) {
             state.isAuthenticated = isAuthenticated;
         },
+
         setSms(state, value) {
             state.sms = value;
         },
-        setNotificaciones(state, value) {
-            console.log(state.notificaciones);
-        },
+
 
     },
 
@@ -134,27 +130,6 @@ export default {
             }
         },
 
-        notificaciones: async function ({ commit, state }, { idUser }) {
-            try {
-                const datosCar = new FormData();
-                datosCar.append('IdUser', 2);
-
-                const setting = {
-                    method: 'POST',
-                    body: datosCar,
-                };
-                const url = `${baseURL}Apis-UTA/carpetasVaciasServidor.php.`;
-                const response = await fetch(url, setting);
-                if (response.ok) {
-                    const json = await response.text();
-                    //console.log(json);
-                    commit('setNotificaciones', json);
-                }
-            } catch (error) {
-                console.error('Error en la solicitud:', error);
-                throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.
-            }
-        },
     },
 
 }

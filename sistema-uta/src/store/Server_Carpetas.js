@@ -55,6 +55,7 @@ export default {
                         const json = await data.text();
                         if (json.startsWith('{')) {
                             const jsonData = JSON.parse(json);
+                            console.log(jsonData)
                             commit('llenarlista', jsonData);
                         } else {
                             commit('llenarlista', json);

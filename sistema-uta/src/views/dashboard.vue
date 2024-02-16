@@ -32,6 +32,8 @@ export default {
     if (isAuthenticated) {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       this.NomCom = storedUser.NomUser + " " + storedUser.ApeUser;
+      /*this.idUser = storedUser.IdUser;
+      this.notificaciones({idUser:this.idUser});*/
       this.setUser(storedUser);
       this.cargarSubCarpetas();
     } else {
@@ -42,6 +44,7 @@ export default {
   methods: {
     ...mapMutations('Login', ['setUser']),
     ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
+    //...mapActions('Notificaciones', ['notificaciones']),
 
   },
 

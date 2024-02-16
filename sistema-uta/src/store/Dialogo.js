@@ -19,6 +19,7 @@ export default {
     dailogCrearEst:false, // Estado del diálogo
     dailogPermisos:false, // Estado del diálogo
     dailogSubirArch:false, // Estado del diálogo
+    dailogPlantillaProgress:false, // Estado del diálogo
     dailogCargarDatos:false, // Estado del diálogo
     dailogEliminar:false, // Estado del diálogo
     mostrarCrear:false, // Estado del diálogo
@@ -75,6 +76,10 @@ export default {
 
     setDailogSubirArch(state, value) {
       state.dailogSubirArch = value; // Mutación para actualizar el estado del diálogo
+    },
+
+    setDailogPlantillaProgress(state, value) {
+      state.dailogPlantillaProgress = value; // Mutación para actualizar el estado del diálogo
     },
 
     setDailogCargarDatos(state, value) {

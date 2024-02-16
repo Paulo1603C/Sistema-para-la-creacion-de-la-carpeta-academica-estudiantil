@@ -180,9 +180,9 @@ export default {
                 let buscar = await this.buscarEstCedula({ cedula: this.ItemEstudiante.Cedula });
                 if (buscar) {
                     this.$alertify.confirm(
-                        `El estudinate con cedula ${this.ItemEstudiante.Cedula} ya existe, Deseas crear el mismo estudiante otra vez?`,
+                        `El estudinate con cedula ${this.ItemEstudiante.Cedula} ya existe`,
                         () => {
-                            this.$alertify.success('Prosiga')
+                            this.ItemEstudiante.Cedula = ''
                         },
                         () => {
                             this.cerrarDialog(),
@@ -213,7 +213,6 @@ export default {
                 }
                 suma += digito;
             }
-
             const residuo = suma % 10;
             const digitoEsperado = residuo === 0 ? 0 : 10 - residuo;
             // Comparar el dígito verificador calculado con el proporcionado

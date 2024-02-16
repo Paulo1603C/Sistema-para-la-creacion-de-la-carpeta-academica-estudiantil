@@ -8,7 +8,7 @@
         <progres :dialog="dailogProgres" :message="sms"></progres>
         <input ref="inputFile" id="archivoExcel" type="file" @change="subirExcel" style="display: none">
         <v-container class="mt-5">
-            <v-menu v-model="showMenu" offset-y  transition="scroll-x-transition">
+            <v-menu v-model="showMenu" offset-y transition="scroll-x-transition">
                 <template v-slot:activator="{ on }">
                     <!-- Botón que activa el menú desplegable -->
                     <v-btn v-on="on" color="primary">Opciones
@@ -74,7 +74,7 @@ export default {
         ...mapMutations('Plantillas', ['setPlan']),
         ...mapMutations('Server_Carpetas', ['setCarpeta']),
         ...mapMutations('Server_Archivos', ['setObsArch']),
-        ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes']),
+        ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes', 'buscarEstCedula']),
         ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
         ...mapActions('Plantillas', ['cargarItemsPlantillas']),
 
@@ -176,35 +176,43 @@ export default {
             let input = document.getElementById("archivoExcel");
             const fileName = input.files[0].name;
             const fileExtension = fileName.split('.').pop();
-            console.log(fileExtension)
+            //console.log(fileExtension)
             if (fileExtension === "xlsx") {
                 readXlsFile(input.files[0]).then(async (rows) => {
                     this.items = rows;
                     this.fechaActual();
+                    this.setDialogProgres(true);
+                    let contador = 0;
                     for (let i = 1; i < this.items.length; i++) {
-                        this.setDialogProgres(true);
                         const row = this.items[i];
-                        console.log(row);
-                        const datos = {
-                            IdEst: row[0],
-                            NomEst: row[1],
-                            ApeEst: row[2],
-                            Cedula: row[3],
-                            Fecha: this.fecha,
-                            NomModificador: this.nomUser,
-                            NomCar: this.idCarreraSelect,
-                            idPlanPer: row[4],
-                        };
-                        await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
-                        await this.AgregarEstudiante(datos);
-                        await this.crearSubDirectorios(datos, this.path);
-                        if (i == this.items.length - 1) {
-                            this.setDialogProgres(false);
+                        let respuesta = await this.buscarEstudianteCed(row[3].toString());
+                        //console.log("RES " + respuesta +"// "+row[3].toString());
+                        if (!respuesta) {
+                            const datos = {
+                                IdEst: row[0],
+                                NomEst: row[1],
+                                ApeEst: row[2],
+                                Cedula: row[3],
+                                Fecha: this.fecha,
+                                NomModificador: this.nomUser,
+                                NomCar: this.idCarreraSelect,
+                                idPlanPer: row[4],
+                            };
+                            await this.crearCarpeta({ datos: datos, path: this.path, oldPath: this.rutaAnterior });
+                            await this.AgregarEstudiante(datos);
+                            await this.crearSubDirectorios(datos, this.path);
+                            contador++;
                         }
                     }
+                    this.setDialogProgres(false);
                     this.path = '';
                     await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
-                    this.$alertify.success("Estudiantes Insertados");
+                    if (contador == 0) {
+                        this.$alertify.error("Estudiantes Insertados " + contador);
+                        this.$alertify.error("Los estudiantes ya existen, verifique datos y vuelta a intentarlo");
+                    } else {
+                        this.$alertify.success("Estudiantes Insertados " + contador);
+                    }
                     input.value = null;
                 });
             } else {
@@ -232,6 +240,49 @@ export default {
                 this.path += this.itemsBread[i] + "/";
             }
             //console.log(this.path);
+        },
+
+        buscarEstudianteCed: async function (cedula) {
+            let res = this.validarCedula(cedula);
+            if (res) {
+                let buscar = await this.buscarEstCedula({ cedula: cedula });
+                if (buscar) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                //this.$alertify.error('La cédula no es válida');
+                return false;
+            }
+        },
+
+        validarCedula(cedula) {
+            if (typeof cedula !== "string") {
+                return false;
+            }
+            if (cedula.length !== 10) {
+                return false;
+            }
+            const digitos = cedula.substring(0, 9);
+            // Obtener el décimo dígito (dígito verificador)
+            const verificador = parseInt(cedula.charAt(9));
+            // Calcular el dígito verificador esperado
+            let suma = 0;
+            for (let i = 0; i < 9; i++) {
+                let digito = parseInt(digitos.charAt(i));
+                if (i % 2 === 0) {
+                    digito *= 2;
+                    if (digito > 9) {
+                        digito -= 9;
+                    }
+                }
+                suma += digito;
+            }
+            const residuo = suma % 10;
+            const digitoEsperado = residuo === 0 ? 0 : 10 - residuo;
+            // Comparar el dígito verificador calculado con el proporcionado
+            return digitoEsperado === verificador;
         },
 
     },

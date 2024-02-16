@@ -45,7 +45,7 @@
             <v-expand-transition>
                 <div v-show="show">
                     <v-divider></v-divider>
-                    <v-card-text>
+                    <v-card-text style="font-size: 10px;">
                         <p><strong>Correo: </strong> {{ correo }}</p>
                         <p><strong>Rol: </strong> {{ rol }}</p>
                         <p><strong>Carreras: </strong> {{ carreras }}</p>

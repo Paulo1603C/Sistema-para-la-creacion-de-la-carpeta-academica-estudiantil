@@ -1,5 +1,6 @@
 <template>
     <v-row justify="center">
+        <progres3 :dialog="dailogPlantillaProgress" :message="sms"></progres3>
         <v-dialog v-model="dialog" persistent width="400">
             <v-card>
                 <v-card-title>
@@ -50,8 +51,8 @@
     </v-row>
 </template>
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex';
-
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import progres3 from './progresCircular.vue';
 export default {
     name: "NuevaPlantilla",
 
@@ -62,6 +63,7 @@ export default {
 
     data() {
         return {
+            sms:'Guardando Datos...',
             item: '',
             auxItem: '',
             aux: '',
@@ -72,7 +74,7 @@ export default {
 
 
     methods: {
-        ...mapMutations('Dialogo', ['setDialogPlantilla']),
+        ...mapMutations('Dialogo', ['setDialogPlantilla','setDailogPlantillaProgress']),
         ...mapActions('Plantillas', ['AgregarPlantilla', 'AgregarMasItemsDirectorios', 'AgregarItemsSubDirectorios', 'AgregarItemsDirectorios', 'cargarPlantillas', 'AgregarItemsPalntilla', 'cargarItemsPlantillasTiene']),
         ...mapActions('SubCarpetas', ['actualizarSubCapeta']),
 
@@ -98,12 +100,14 @@ export default {
         },
 
         agregar: async function () {
+            this.setDailogPlantillaProgress(true);
             try {
                 if (this.ItemPlantilla.nomPlan !== "" || this.ItemPlantilla.items > 0) {
                     await Promise.all([
                         this.AgregarPlantilla(this.ItemPlantilla),
                         this.AgregarItemsPalntilla(this.ItemPlantilla),
-                        this.AgregarItemsSubDirectorios(this.ItemPlantilla)
+                        this.AgregarItemsSubDirectorios(this.ItemPlantilla),
+                        this.cargarPlantillas(),
                     ]);
                     if (!this.auxModify) {
                         let aux = this.obtenerNoRepetidos(this.auxArray);
@@ -111,6 +115,7 @@ export default {
                     }
                     if (this.ItemPlantilla.idPlan == 0) {
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
+                        await this.cargarPlantillas();
                     }
                     await this.cargarPlantillas();
                     this.$alertify.success(this.ItemPlantilla.idPlan === 0 ? "Plantilla creada" : "Plantilla Actualizada");
@@ -118,6 +123,8 @@ export default {
                 } else {
                     this.$alertify.error("No existen datos");
                 }
+                this.auxArray = [];
+                this.setDailogPlantillaProgress(false);
             } catch (error) {
                 console.error('Error:', error);
                 this.$alertify.error("Ocurrió un error al procesar la solicitud agregar Plantilla " + error);
@@ -179,8 +186,13 @@ export default {
         },
     },
 
+    components:{
+        progres3,
+    },
+
     computed: {
         ...mapGetters('Plantillas', ['getItemsPlantillasTiene']),
+        ...mapState('Dialogo',['dailogPlantillaProgress']),
     }
 
 }

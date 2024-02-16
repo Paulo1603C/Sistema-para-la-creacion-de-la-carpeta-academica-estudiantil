@@ -21,7 +21,7 @@
                                     @change="validarC()" v-model="ItemUsuario.correo" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Password*" type="password" :rules="controles().controlCon"
+                                <v-text-field :disabled="ItemUsuario.id !== 0" label="Password*" type="password" :rules="controles().controlCon"
                                     v-model="ItemUsuario.contraseña" required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="4">
@@ -134,6 +134,10 @@ export default {
             this.insertarUsuario();
         },
 
+        notificarUsuario(){
+            
+        },
+
         validarC: async function () {
             try {
                 let c = this.ItemUsuario.correo;
@@ -141,6 +145,13 @@ export default {
                 if (partes[partes.length - 1] == "uta.edu.ec") {
                 } else {
                     this.$alertify.alert('Correo Incorrecto', 'Ingrese un correo válido => @uta.edu.ec  ', () => {
+                        this.ItemUsuario.correo = '';
+                    });
+                }
+
+                const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
+                if (correoValido) {
+                    this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () => {
                         this.ItemUsuario.correo = '';
                     });
                 }
@@ -156,20 +167,15 @@ export default {
                     this.ItemUsuario.apellido !== "" &&
                     this.ItemUsuario.correo !== "" &&
                     this.ItemUsuario.contraseña !== "") {
-                    const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
-                    if (correoValido) {
-                        this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () => {
-                            this.ItemUsuario.correo = '';
-                        });
-                    } else {
-                        let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
-                        this.ItemUsuario.contraseña = contraseñaHash;
-                        await this.AgregarUsuario(this.ItemUsuario);
-                        await this.actualizarCarrerasUsuario();
-                        this.cerrarDialog();
-                        this.limpiarCampos();
-                        this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
-                    }
+
+                    let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
+                    this.ItemUsuario.contraseña = contraseñaHash;
+                    await this.AgregarUsuario(this.ItemUsuario);
+                    await this.actualizarCarrerasUsuario();
+                    this.cerrarDialog();
+                    this.limpiarCampos();
+                    this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
+
                 } else {
                     this.$alertify.error("Complete los campos requeridos");
                 }
@@ -177,6 +183,7 @@ export default {
                 this.$alertify.error('Error al agregar usuario:' + error);
             }
         },
+
 
         devolverCarreras() {
             const carreras = [];
@@ -215,6 +222,7 @@ export default {
                 this.$alertify.error('Error al agregar un Usuario:', error);
             }
         },
+
 
 
         cerrarDialog() {

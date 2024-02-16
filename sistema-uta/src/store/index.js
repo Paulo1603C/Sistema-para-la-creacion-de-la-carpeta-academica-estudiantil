@@ -11,6 +11,7 @@ import Server_Carpetas from './Server_Carpetas'
 import Server_Archivos from './Server_Archivos'
 import Plantillas from './Plantillas'
 import SubCarpetas from './SubCarpetas'
+import Notificaciones from './Notificaciones'
 
 Vue.use(Vuex)
 
@@ -35,5 +36,6 @@ export default new Vuex.Store({
     Server_Archivos,
     Plantillas,
     SubCarpetas,
+    Notificaciones,
   }
 })

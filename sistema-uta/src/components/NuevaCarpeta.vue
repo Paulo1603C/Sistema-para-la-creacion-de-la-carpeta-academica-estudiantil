@@ -108,11 +108,13 @@ export default {
                             await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
                             await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
                             await this.agregarPermisos(this.ItemCarpeta.NomEst);
-                            this.obtenerPermisosDirectorios();
+                            await this.cargarSubCarpetas();
+                            await this.obtenerPermisosDirectorios();
                         } else {
                             //console.log("HIJA "+ultimoValor);
                             await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
                         }
+                        await this.cargarCarpetas(this.path);
                         this.$alertify.success(this.ItemCarpeta.IdEst == 0 ? "Carpeta creada" : "Carpeta Actualizada");
                     } else {
                         if (this.ctlSubirArch == true || this.ctlfolder == true) {

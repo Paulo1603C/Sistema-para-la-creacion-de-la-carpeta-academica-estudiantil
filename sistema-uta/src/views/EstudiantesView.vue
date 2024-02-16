@@ -82,19 +82,21 @@ export default {
             this.cargarCarrerasUser(this.idUser);
             //this.cargarSubCarpetas();
             this.obtenerPermisosDirectorios();
+            //this.notificaciones({idUser:this.idUser});
             this.acciones(this.itemsBread[0]);
         }
     },
 
     methods: {
 
-        ...mapActions('Carreras', ['cargarCarrerasUser']),
+        ...mapActions('Carreras', ['cargarCarrerasUser','cargarCarreras']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
         ...mapMutations('Dialogo', ['setVentanaEst', 'setVentanaArch', 'setVentanaCarreras', 'setBreadcrumbs', 'setCtlSubirArch', 'setCtlfolder', 'setDailogCargarDatos']),
         //...mapActions('SubCarpetas', ['cargarSubCarpetas']),
         ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
+        //...mapActions('Login', ['notificaciones']),
 
         controlArchFolder: async function (ruta) {
             let partes = ruta.split('/').filter(Boolean);
@@ -221,12 +223,22 @@ export default {
                         { icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
                         { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
                     ];
-
+                    
                 } else {
-                    this.btnOP = [
-                        { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
-                        //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
-                    ];
+                    this.cargarCarreras();
+                    this.rutaNueva();
+                    let arreglo = this.path.split("/").filter(Boolean);
+                    let auxR = arreglo[arreglo.length - 1];
+                    if (this.getCarreras.some(({ NomCar }) => NomCar.toUpperCase() === auxR.toUpperCase())) {
+                        this.btnOP = [
+                            { icon: "folder-plus", text: "Crear Estudiante", show: "true" },
+                            { icon: "import", text: "Importar Datos", show: "true" },
+                        ];
+                    } else {
+                        this.btnOP = [
+                            { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
+                        ];
+                    }
                 }
             }
         },
