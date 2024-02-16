@@ -53,16 +53,21 @@ export default {
                     const data = await fetch(url, setting);
                     if (data.ok) {
                         const json = await data.text();
+                        //console.log(json);
                         if (json.startsWith('{')) {
                             const jsonData = JSON.parse(json);
-                            console.log(jsonData)
                             commit('llenarlista', jsonData);
                         } else {
-                            commit('llenarlista', json);
+                            const errorResponse = JSON.parse(json);
+                            const errorMessage = errorResponse.error;
+                            commit('llenarlista', errorMessage);
+                            // Aquí puedes agregar código adicional para mostrar el mensaje de error en pantalla
+                            alert(errorMessage); // Por ejemplo, puedes mostrar una alerta con el mensaje de error
                         }
                     }
                 } catch (error) {
                     console.error('Error en la solicitud:', error);
+                    commit('setErrorCargaCarpetas', 'Error al cargar las carpetas: ' + error.message);
                 }
             }
 

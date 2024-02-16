@@ -14,7 +14,7 @@
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table dense :headers="Cabecera" :items="ItemsArchivos.elementos" :item-per-page="5"
+                <v-data-table v-if="ItemsArchivos != ''" dense :headers="Cabecera" :items="ItemsArchivos.elementos" :item-per-page="5"
                     :search="search" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle" v-if="verificarPermisos(item)">
@@ -78,6 +78,7 @@
                         </tr>
                     </template>
                 </v-data-table>
+                <div v-else="ItemsArchivos && ItemsArchivos.error" class="error-message">{{ ItemsArchivos }}</div>
             </v-card>
         </template>
     </div>

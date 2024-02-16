@@ -5,7 +5,7 @@
                 <v-card-title>
                     {{ Titulo }}
                     <v-spacer></v-spacer>
-                    <v-text-field v-model="searchInput" append-icon="mdi-magnify" label="INGENIERÍA INDUSTRIAL/..." single-line hide-details>
+                    <v-text-field v-model="searchInput" append-icon="mdi-magnify" label="search" single-line hide-details>
                     </v-text-field>
                     <v-spacer></v-spacer>
                 </v-card-title>
