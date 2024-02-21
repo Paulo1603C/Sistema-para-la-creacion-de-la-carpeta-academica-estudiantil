@@ -10,7 +10,7 @@
             </v-card-title>
 
             <v-card-actions>
-                <v-btn color="error darken-2" @click="eliminar" style="display: none;">
+                <v-btn color="error darken-2" @click="eliminar" icon small>
                     <template>
                         <v-icon>mdi-delete</v-icon>
                     </template>
@@ -72,6 +72,7 @@ export default {
     methods: {
         ...mapMutations('Plantillas', ['setPlan']),
         ...mapMutations('Dialogo', ['setDialogPlantilla']),
+        ...mapActions('Plantillas',['eliminarPlantilla']),
 
         editar() {
             try {
@@ -95,11 +96,11 @@ export default {
                 id: this.idPlan,
                 nombre: this.titulo,
             };
+            //console.log(this.itemSeleccionadoPlan );
             this.$alertify.confirm(
                 'Deseas eliminar la Plantilla: ' + this.itemSeleccionadoPlan.nombre,
                 () => {
-                    this.eliminarUsuario(this.itemSeleccionadoPlan);
-                    //console.log(this.itemSeleccionadoPlan);
+                    this.eliminarPlantilla(this.itemSeleccionadoPlan);
                     this.$alertify.success('Plantilla  Eliminada');
                 },
                 () => this.$alertify.error('Cancelado')

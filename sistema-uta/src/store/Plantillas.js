@@ -8,12 +8,12 @@ export default {
 
   state: {
     Plantillas: [],
-    ItemsPlantilla:[],
-    ItemsPlantillaTiene:[],
+    ItemsPlantilla: [],
+    ItemsPlantillaTiene: [],
     dataPlan: {},
-    estudinates_Plantillas:[],
+    estudinates_Plantillas: [],
     //alamcenara el id de la plantilla del estudiante seleccionado
-    idEstPlan:'',
+    idEstPlan: '',
 
   },
   getters: {
@@ -81,14 +81,14 @@ export default {
 
     },
 
-    cargarItemsPlantillas: async function ( { commit }, datos ) {
+    cargarItemsPlantillas: async function ({ commit }, datos) {
       try {
         const datosPlantilla = new FormData();
-        datosPlantilla.append('idPlantilla', datos.idPlanPer );
+        datosPlantilla.append('idPlantilla', datos.idPlanPer);
 
         const setting = {
           method: 'POST',
-          body:datosPlantilla,
+          body: datosPlantilla,
         };
         const url = `${baseURL}Apis-UTA/plantillasSelect.php`;
         const data = await fetch(url, setting);
@@ -105,14 +105,14 @@ export default {
 
     },
 
-    cargarItemsPlantillasTiene: async function ( { commit }, {idPlan} ) {
+    cargarItemsPlantillasTiene: async function ({ commit }, { idPlan }) {
       try {
         const datosPlantilla = new FormData();
-        datosPlantilla.append('IdPlan', idPlan );
+        datosPlantilla.append('IdPlan', idPlan);
 
         const setting = {
           method: 'POST',
-          body:datosPlantilla,
+          body: datosPlantilla,
         };
         const url = `${baseURL}Apis-UTA/ItemsPlantillaTiene.php`;
         const data = await fetch(url, setting);
@@ -129,14 +129,14 @@ export default {
 
     },
 
-    cargarEstudinates_Plantillas: async function ( { commit }, {idPlan} ) {
+    cargarEstudinates_Plantillas: async function ({ commit }, { idPlan }) {
       try {
         const datosPlantilla = new FormData();
-        datosPlantilla.append('IdPlanPer', idPlan );
+        datosPlantilla.append('IdPlanPer', idPlan);
 
         const setting = {
           method: 'POST',
-          body:datosPlantilla,
+          body: datosPlantilla,
         };
         const url = `${baseURL}Apis-UTA/estudiantesPlantillaSelect.php`;
         const data = await fetch(url, setting);
@@ -236,7 +236,7 @@ export default {
     },
 
     //insetar carreras para los usaurios-> se pasa un arreglo;
-    AgregarItemsDirectorios: async function ({ commit, dispatch }, {datos, idPlan }) {
+    AgregarItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
       var aux = 0;
       while (aux < datos.items.length) {
         try {
@@ -268,7 +268,7 @@ export default {
       }
     },
 
-    AgregarMasItemsDirectorios: async function ({ commit, dispatch }, {datos, idPlan }) {
+    AgregarMasItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
       var aux = 0;
       while (aux < datos.length) {
         try {
@@ -299,20 +299,25 @@ export default {
     eliminarPlantilla: async function ({ commit, dispatch }, datos) {
       try {
         const idUser = new FormData();
-        //console.log('ID: ' + datos.IdEst);
-        idUser.append('idEst', datos.IdEst);
+        idUser.append('IdPlantilla', datos.id);
         const setting = {
           method: 'POST',
           body: idUser,
         }
-        const url = `${baseURL}Apis-UTA/eliminarEstudiante.php`;
+        const url = `${baseURL}Apis-UTA/eliminarPlantilla.php`;
         const data = await fetch(url, setting);
-        const json = await data.text();
-        if (json.startsWith('{')) {
-          const jsonData = JSON.parse(json);
-          dispatch('cargarPlantillas');
-        } else {
-          dispatch('cargarPlantillas');
+        if (data.ok) {
+          const json = await data.text();
+          if (json.startsWith('{')) {
+            console.log(json);
+            const jsonData = JSON.parse(json);
+            if( jsonData.message === "Eliminado" ){
+              dispatch('cargarPlantillas');
+              return true;
+            }
+          } else {
+            dispatch('cargarPlantillas');
+          }
         }
       } catch (error) {
         console.log("Error de eliminción " + error);

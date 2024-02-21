@@ -112,17 +112,18 @@ export default {
                     if (!this.auxModify) {
                         let aux = this.obtenerNoRepetidos(this.auxArray);
                         await this.AgregarMasItemsDirectorios({ datos: aux, idPlan: this.ItemPlantilla.idPlan });
+                        await this.cargarPlantillas();
                     }
                     if (this.ItemPlantilla.idPlan == 0) {
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
                         await this.cargarPlantillas();
                     }
-                    await this.cargarPlantillas();
                     this.$alertify.success(this.ItemPlantilla.idPlan === 0 ? "Plantilla creada" : "Plantilla Actualizada");
                     this.cerrarDialog();
                 } else {
                     this.$alertify.error("No existen datos");
                 }
+                await this.cargarPlantillas();
                 this.auxArray = [];
                 this.setDailogPlantillaProgress(false);
             } catch (error) {

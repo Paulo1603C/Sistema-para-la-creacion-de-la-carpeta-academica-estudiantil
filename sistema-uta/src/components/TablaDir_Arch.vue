@@ -14,8 +14,8 @@
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-data-table v-if="ItemsArchivos != ''" dense :headers="Cabecera" :items="ItemsArchivos.elementos" :item-per-page="5"
-                    :search="search" class="elevation-1">
+                <v-data-table v-if="mostaraDatos" dense :headers="Cabecera" :items="ItemsArchivos.elementos"
+                    :item-per-page="5" :search="search" class="elevation-1">
                     <template v-slot:item="{ item }">
                         <tr class="myStyle" v-if="verificarPermisos(item)">
                             <td>
@@ -78,7 +78,7 @@
                         </tr>
                     </template>
                 </v-data-table>
-                <div v-else="ItemsArchivos && ItemsArchivos.error" class="error-message">{{ ItemsArchivos }}</div>
+                <div v-else class="error-message">{{ ItemsArchivos }}</div>
             </v-card>
         </template>
     </div>
@@ -99,7 +99,7 @@ export default {
             search: '',
             path: '',
             search: '',
-            sms:'Cargando Datos...',
+            sms: 'Cargando Datos...',
             selectedItems: [],
             carpetaSelecionada: {},
             rutaActual: '',
@@ -108,7 +108,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations('Dialogo', ['setDailogEliminar','setMostrarCrear', 'setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder','setDailogCargarDatos']),
+        ...mapMutations('Dialogo', ['setDailogEliminar', 'setMostrarCrear', 'setDialogFolder', 'setVentanaEst', 'setVentanaArch', 'setBreadcrumbs', 'setDialogCarpeta', 'setCtlSubirArch', 'setCtlfolder', 'setDailogCargarDatos']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Server_Archivos', ['descargarArchivo', 'cargarObsArchivos']),
         ...mapMutations('Server_Carpetas', ['setRutaAnterior', 'setCarpeta']),
@@ -255,7 +255,7 @@ export default {
             return item.tipo === 'Archivo' ? true : false;
         },
 
-        verObservacion: async function(item) {
+        verObservacion: async function (item) {
             this.dialogObs = true;
             this.rutaNueva();
             await this.cargarObsArchivos({ rutaObs: this.path + item.nombre.trim() });
@@ -326,9 +326,19 @@ export default {
 
     computed: {
         //...mapState('Carreras', ['idCarreraSelect']),
-        ...mapState('Dialogo', ['itemsBread','dailogCargarDatos','dailogEliminar']),
+        ...mapState('Dialogo', ['itemsBread', 'dailogCargarDatos', 'dailogEliminar']),
         ...mapState('Permisos', ['permisosSubDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),
+
+        mostaraDatos(){
+            try {
+                if(this.ItemsArchivos.elementos.length > 0){
+                   return true
+                }
+            } catch (error) {
+                return false
+            }
+        }
     },
 
     watch: {

@@ -22,7 +22,9 @@ export default {
         } else {
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.idUser = storedUser.IdUser;
-            await this.notificaciones({idUser:this.idUser});
+            await Promise.all([
+                this.notificaciones({ idUser: this.idUser }),
+            ]);
         }
     },
 
