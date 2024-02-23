@@ -160,7 +160,7 @@ export default {
             this.setVentanaArch(true);
             this.setBreadcrumbs(item.NomEst.toUpperCase() + ' ' + item.ApeEst.toUpperCase());
             this.rutaNueva();
-            //console.log(item.IdEst);
+            //console.log(this.path);
             await this.cargarCarpetas(this.path);
             this.path = '';
             this.setDailogCargarDatos(false);

@@ -57,7 +57,7 @@ export default {
                 if (data.ok) {
                     const json = await data.json();
                     const firstObject = json[0];
-                    console.log(firstObject);
+                    //console.log(firstObject);
                     if (user.toLowerCase() === firstObject.Correo.toLowerCase() && pass === firstObject.Contraseña) {
                         commit('setAuthentication', true);
                         commit('setUser', firstObject);

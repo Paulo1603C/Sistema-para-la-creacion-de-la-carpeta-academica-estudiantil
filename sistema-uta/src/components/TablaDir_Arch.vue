@@ -78,7 +78,8 @@
                         </tr>
                     </template>
                 </v-data-table>
-                <div v-else class="error-message">{{ ItemsArchivos }}</div>
+                <div v-else-if="auxPermisosControl.length == 0" class="error-message text-center">No tienes permisos, solicitalos al administrador</div>
+                <div v-else class="error-message text-center">No se puede conectar al servidor</div>
             </v-card>
         </template>
     </div>
@@ -104,6 +105,7 @@ export default {
             carpetaSelecionada: {},
             rutaActual: '',
             dialogObs: false,
+            auxPermisosControl: [],
         }
     },
 
@@ -331,9 +333,18 @@ export default {
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),
 
         mostaraDatos(){
+            for( let i=0; i < this.getSubCarpetas.length; i++ ){
+                let permisos = this.recuperarPermisos().get(this.getSubCarpetas[0].NomItem.toLowerCase());
+                if( permisos != null ){
+                    this.auxPermisosControl = permisos
+                }
+            }
             try {
-                if(this.ItemsArchivos.elementos.length > 0){
+                if(this.ItemsArchivos.elementos.length > 0 && this.auxPermisosControl.length > 0 ){
                    return true
+                }else{
+                    return false
+
                 }
             } catch (error) {
                 return false

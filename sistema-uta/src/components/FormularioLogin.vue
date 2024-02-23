@@ -50,7 +50,7 @@ export default {
         ...mapActions('Login', ['login', 'validarCorreo', 'cambioContraseñaCorreo']),
         ...mapActions('SubCarpetas', ['cargarSubCarpetas']),
 
-        recuperarContraseña( email, pass) {
+        recuperarContraseña(email, pass) {
             let sms = {
                 to_email: email,
                 message: pass,
@@ -86,21 +86,21 @@ export default {
                 ' ',
                 async (evt, value) => {
                     try {
-                        if ( value != '' ) {
+                        if (value != '') {
                             const correoValido = await this.validarCorreo({ correo: value });
                             if (correoValido) {
                                 let auxC = this.generarContraseña();
-                                let auxContra = CryptoJS.SHA256( auxC ).toString();
-                                let cambio = await this.cambioContraseñaCorreo( { correo: value, newPass: auxContra } );
-                                if( cambio ){
-                                    this.recuperarContraseña( value, auxC );
-                                }else{
+                                let auxContra = CryptoJS.SHA256(auxC).toString();
+                                let cambio = await this.cambioContraseñaCorreo({ correo: value, newPass: auxContra });
+                                if (cambio) {
+                                    this.recuperarContraseña(value, auxC);
+                                } else {
                                     this.$alertify.error('Error con el servidor');
                                 }
                             } else {
                                 this.$alertify.error('El correo ingresado no existe');
                             }
-                        }else{
+                        } else {
                             this.$alertify.error('Ingrese un correo válido');
                         }
                     } catch (error) {

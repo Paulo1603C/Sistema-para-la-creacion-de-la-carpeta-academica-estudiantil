@@ -18,7 +18,8 @@
                         </tr>
                     </template>
                 </v-data-table>
-                <p v-else class="text-center">Esperando datos...</p>
+                <p v-else-if="getNotificaciones !== null" class="text-center">No hay datos</p>
+                <p v-else class="text-center">Cargando datos...</p>
             </v-card>
 
         </template>

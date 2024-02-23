@@ -136,6 +136,7 @@ export default {
         salir() {
             localStorage.removeItem('user');
             localStorage.removeItem('Authentication');
+            localStorage.removeItem('PermisosSubDirectorios');
             this.$router.push("/");
         },
         roles() {

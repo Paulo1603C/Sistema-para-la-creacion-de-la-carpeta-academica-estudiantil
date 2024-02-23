@@ -21,8 +21,9 @@
                                     @change="validarC()" v-model="ItemUsuario.correo" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field :disabled="ItemUsuario.id !== 0" label="Password*" type="password" :rules="controles().controlCon"
-                                    v-model="ItemUsuario.contraseña" required></v-text-field>
+                                <v-text-field :disabled="ItemUsuario.id !== 0" label="Password*" type="password"
+                                    :rules="controles().controlCon" v-model="ItemUsuario.contraseña"
+                                    required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="4">
                                 <v-select :rules="controles().controlRol" :items="getRoles" item-text="NomRol"
@@ -58,6 +59,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import CryptoJS from 'crypto-js';
+import emailjs from '@emailjs/browser';
 
 export default {
 
@@ -69,6 +71,7 @@ export default {
     },
 
     data: () => ({
+        passAux:"",
     }),
 
     created() {
@@ -131,11 +134,33 @@ export default {
         },
 
         agregar() {
+            //console.log(this.ItemUsuario.correo , this.ItemUsuario.contraseña)
+            this.passAux = this.ItemUsuario.contraseña;
             this.insertarUsuario();
+            if(this.ItemUsuario.id == 0){
+                this.notificarUsuario(this.ItemUsuario.correo, this.passAux);
+            }
         },
 
-        notificarUsuario(){
-            
+        notificarUsuario(email, pass) {
+            console.log(email)
+            let sms = {
+                to_email: email,
+                message: pass,
+                from_name: 'UTA Services',
+            };
+
+            emailjs.send('service_jafj6oc', 'template_9pjnynb', sms, '_9AGnDi4yMhKta2Fh')
+                .then(response => {
+                    this.$alertify.alert('Nueva Cuenta', 'Se ha enviado un correo con los datos al usuario', () =>
+                        this.$alertify.warning('alerta cerrada')
+                    );
+                })
+                .catch(error => {
+                    this.$alertify.alert('Nueva Cuenta', 'El servicio no esta disponible', () =>
+                        this.$alertify.warning('alerta cerrada')
+                    );
+                });
         },
 
         validarC: async function () {
