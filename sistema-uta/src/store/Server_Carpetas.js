@@ -49,7 +49,7 @@ export default {
                         method: 'POST',
                         body: items,
                     }
-                    const url = `${baseURL}Apis-UTA/Dir_ArchSelect.php`;
+                    const url = `${baseURL}Dir_ArchSelect.php`;
                     const data = await fetch(url, setting);
                     if (data.ok) {
                         const json = await data.text();
@@ -99,9 +99,9 @@ export default {
                 //console.log("ID" + datos.IdEst);
                 var url = "";
                 if (datos.IdEst == 0) {
-                    url = `${baseURL}Apis-UTA/crearCarpetas.php`;
+                    url = `${baseURL}crearCarpetas.php`;
                 } else {
-                    url = `${baseURL}Apis-UTA/actualizarCarpetaServidor.php`;
+                    url = `${baseURL}actualizarCarpetaServidor.php`;
                 }
                 const data = await fetch(url, setting);
                 const json = await data.text();
@@ -128,7 +128,7 @@ export default {
                     method: 'POST',
                     body: datosCarpeta,
                 }
-                const url = `${baseURL}Apis-UTA/crearCarpetas.php`;
+                const url = `${baseURL}crearCarpetas.php`;
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -158,7 +158,7 @@ export default {
                     method: 'POST',
                     body: datosCarpeta,
                 }
-                const url = `${baseURL}Apis-UTA/eliminarCarpetaServidor.php`;
+                const url = `${baseURL}eliminarCarpetaServidor.php`;
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -184,7 +184,7 @@ export default {
                     method: 'POST',
                     body: datosArchivos,
                 }
-                const url = `${baseURL}Apis-UTA/descargarCarpetas.php`;
+                const url = `${baseURL}descargarCarpetas.php`;
                 const response = await fetch(url, setting);
                 //console.log('Imprimido');
                 //const json = await response.text();

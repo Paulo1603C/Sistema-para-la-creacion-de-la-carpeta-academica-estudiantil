@@ -54,7 +54,7 @@ export default {
           method: 'POST',
           body: datosEST,
         };
-        const url = `${baseURL}Apis-UTA/estudiantesSelect.php`;
+        const url = `${baseURL}estudiantesSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -77,7 +77,7 @@ export default {
           method: 'POST',
           body: datosEST,
         };
-        const url = `${baseURL}Apis-UTA/buscarEstCedula.php`;
+        const url = `${baseURL}buscarEstCedula.php`;
         const data = await fetch(url, setting);
         
         if (data.ok) {
@@ -117,9 +117,9 @@ export default {
         }
         var url = "";
         if (datos.IdEst == 0) {
-          url = `${baseURL}Apis-UTA/insertarEstudiantes.php`;
+          url = `${baseURL}insertarEstudiantes.php`;
         } else {
-          url = `${baseURL}Apis-UTA/actualizarEstudiante.php`;
+          url = `${baseURL}actualizarEstudiante.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -143,7 +143,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = `${baseURL}Apis-UTA/eliminarEstudiante.php`;
+        const url = `${baseURL}eliminarEstudiante.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {

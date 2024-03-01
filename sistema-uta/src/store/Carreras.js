@@ -58,7 +58,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = `${baseURL}Apis-UTA/carreras.php`;
+        const url = `${baseURL}carreras.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarCarreras', json);
@@ -77,7 +77,7 @@ export default {
           method: 'POST',
           body: datosUser,
         }
-        const url = `${baseURL}Apis-UTA/carrerasUsuarios.php`;
+        const url = `${baseURL}carrerasUsuarios.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarCarrerasUser', json);
@@ -100,9 +100,9 @@ export default {
           }
           let url = "";
           if (datos.idCar == 0) {
-            url = `${baseURL}Apis-UTA/InsetarCarrera.php`;
+            url = `${baseURL}InsetarCarrera.php`;
           } else {
-            url = `${baseURL}Apis-UTA/editarCarrera.php`;
+            url = `${baseURL}editarCarrera.php`;
           }
           const data = await fetch(url, setting);
           if (data.ok) {
@@ -138,9 +138,9 @@ export default {
         }
         var url = "";
         if (datos.idCar == 0) {
-          url = `${baseURL}Apis-UTA/crearCarpetas.php`;
+          url = `${baseURL}crearCarpetas.php`;
         } else {
-          url = `${baseURL}Apis-UTA/actualizarCarpetaServidor.php`;
+          url = `${baseURL}actualizarCarpetaServidor.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -168,7 +168,7 @@ export default {
             method: 'POST',
             body: datosCar,
           }
-          const url = `${baseURL}Apis-UTA/eliminarCarrera.php`;
+          const url = `${baseURL}eliminarCarrera.php`;
           const data = await fetch(url, setting);
           if (data.ok) {
             const json = await data.text();

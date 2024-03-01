@@ -30,7 +30,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = `${baseURL}Apis-UTA/subCarpetasSelect.php`;
+        const url = `${baseURL}subCarpetasSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarSubCarpetas', json);
@@ -50,7 +50,7 @@ export default {
           method: 'POST',
           body: datosPantilla,
         }
-        var url = `${baseURL}Apis-UTA/actualizarItemSubDir.php`;
+        var url = `${baseURL}actualizarItemSubDir.php`;
         const response = await fetch(url, setting);
         if ( response.ok ) {
           const json = await response.json();

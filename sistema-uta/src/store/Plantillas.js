@@ -66,7 +66,7 @@ export default {
         const setting = {
           method: 'GET',
         };
-        const url = `${baseURL}Apis-UTA/plantillasSelect.php`;
+        const url = `${baseURL}plantillasSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -90,7 +90,7 @@ export default {
           method: 'POST',
           body: datosPlantilla,
         };
-        const url = `${baseURL}Apis-UTA/plantillasSelect.php`;
+        const url = `${baseURL}plantillasSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -114,7 +114,7 @@ export default {
           method: 'POST',
           body: datosPlantilla,
         };
-        const url = `${baseURL}Apis-UTA/ItemsPlantillaTiene.php`;
+        const url = `${baseURL}ItemsPlantillaTiene.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -138,7 +138,7 @@ export default {
           method: 'POST',
           body: datosPlantilla,
         };
-        const url = `${baseURL}Apis-UTA/estudiantesPlantillaSelect.php`;
+        const url = `${baseURL}estudiantesPlantillaSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
 
@@ -165,9 +165,9 @@ export default {
         }
         var url = "";
         if (datos.idPlan == 0) {
-          url = `${baseURL}Apis-UTA/insetarPlantilla.php`;
+          url = `${baseURL}insetarPlantilla.php`;
         } else {
-          url = `${baseURL}Apis-UTA/actualizarEstudiante.php`;
+          url = `${baseURL}actualizarEstudiante.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -193,7 +193,7 @@ export default {
             method: 'POST',
             body: datosItem,
           }
-          const url = `${baseURL}Apis-UTA/insertarItemsSubdirectorios.php`;
+          const url = `${baseURL}insertarItemsSubdirectorios.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -219,7 +219,7 @@ export default {
             method: 'POST',
             body: datosItem,
           }
-          const url = `${baseURL}Apis-UTA/insertarItemsPlantilla.php`;
+          const url = `${baseURL}insertarItemsPlantilla.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -249,9 +249,9 @@ export default {
           }
           var url = "";
           if (datos.idPlan == 0) {
-            url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
+            url = `${baseURL}insertarItemDirectorio.php`;
           } else {
-            url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
+            url = `${baseURL}insertarItemDirectorio.php`;
           }
           const data = await fetch(url, setting);
           const json = await data.text();
@@ -279,7 +279,7 @@ export default {
             method: 'POST',
             body: datosItem,
           }
-          var url = `${baseURL}Apis-UTA/insertarItemDirectorio.php`;
+          var url = `${baseURL}insertarItemDirectorio.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -304,7 +304,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = `${baseURL}Apis-UTA/eliminarPlantilla.php`;
+        const url = `${baseURL}eliminarPlantilla.php`;
         const data = await fetch(url, setting);
         if (data.ok) {
           const json = await data.text();

@@ -64,7 +64,7 @@ export default {
                     method: 'POST',
                     body: datosEST,
                 };
-                const url = `${baseURL}Apis-UTA/obsArchSelect.php`;
+                const url = `${baseURL}obsArchSelect.php`;
                 const data = await fetch(url, setting);
                 const json = await data.json();
 
@@ -89,7 +89,7 @@ export default {
                     method: 'POST',
                     body: datosArchivos,
                 }
-                const url = `${baseURL}Apis-UTA/crearArchivos.php`;
+                const url = `${baseURL}crearArchivos.php`;
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -117,7 +117,7 @@ export default {
                     method: 'POST',
                     body: datosObsArchivos,
                 }
-                const url = `${baseURL}Apis-UTA/insertarObsArch.php`;
+                const url = `${baseURL}insertarObsArch.php`;
                 const data = await fetch(url, setting);
                 const json = await data.text();
                 if (json.startsWith('{')) {
@@ -143,7 +143,7 @@ export default {
                     method: 'POST',
                     body: datosArchivos,
                 }
-                const url = `${baseURL}Apis-UTA/descargarDir_Arch.php`;
+                const url = `${baseURL}descargarDir_Arch.php`;
                 const response = await fetch(url, setting);
                 //const json = await response.text();
                 if (response.ok) {

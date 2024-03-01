@@ -49,7 +49,7 @@ export default {
             permisosDirectorios: new Map(),
             Cabecera: [
                 { text: 'Tipo', value: 'tipo', },
-                { text: 'Nombre', value: 'NomUser', },
+                { text: 'Nombre', value: 'NomEst', },
                 { text: 'Carrera', value: 'NomCar', },
                 { text: 'Modificado', value: 'Fecha', },
                 { text: 'Modificador por', value: 'Nom_Modificador', },

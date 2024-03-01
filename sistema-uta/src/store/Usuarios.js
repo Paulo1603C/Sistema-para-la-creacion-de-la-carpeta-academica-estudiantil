@@ -33,7 +33,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = `${baseURL}Apis-UTA/usuariosSelect.php`;
+        const url = `${baseURL}usuariosSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarItems', json);
@@ -62,9 +62,9 @@ export default {
         //console.log(datos);
         var url = "";
         if (datos.id == 0) {
-          url = `${baseURL}Apis-UTA/insetarUsuario.php`;
+          url = `${baseURL}insetarUsuario.php`;
         } else {
-          url = `${baseURL}Apis-UTA/actualizarUsuario.php`;
+          url = `${baseURL}actualizarUsuario.php`;
         }
         const data = await fetch(url, setting);
         const json = await data.text();
@@ -91,7 +91,7 @@ export default {
             method: 'POST',
             body: datosUser,
           }
-          var url = `${baseURL}Apis-UTA/insertCarrerasSecre.php`;
+          var url = `${baseURL}insertCarrerasSecre.php`;
           const data = await fetch(url, setting);
           const json = await data.text();
           if (json.startsWith('{')) {
@@ -117,7 +117,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = `${baseURL}Apis-UTA/eliminarUsuario.php`;
+        const url = `${baseURL}eliminarUsuario.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {
@@ -143,7 +143,7 @@ export default {
           method: 'POST',
           body: idUser,
         }
-        const url = `${baseURL}Apis-UTA/eliminarCarreraSecre.php`;
+        const url = `${baseURL}eliminarCarreraSecre.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {

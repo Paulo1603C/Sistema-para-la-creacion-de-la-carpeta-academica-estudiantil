@@ -52,7 +52,7 @@ export default {
                     method: 'POST',
                     body: datosUser,
                 }
-                const url = `${baseURL}Apis-UTA/Login.php`;
+                const url = `${baseURL}Login.php`;
                 const data = await fetch(url, setting)
                 if (data.ok) {
                     const json = await data.json();
@@ -86,7 +86,7 @@ export default {
                     method: 'POST',
                     body: datosCorreo,
                 };
-                const url = `${baseURL}Apis-UTA/validarCorreo.php`;
+                const url = `${baseURL}validarCorreo.php`;
                 const response = await fetch(url, setting);
                 if (response.ok) {
                     const json = await response.json();
@@ -113,7 +113,7 @@ export default {
                     method: 'POST',
                     body: datosContra,
                 };
-                const url = `${baseURL}Apis-UTA/cambioContrasena.php`;
+                const url = `${baseURL}cambioContrasena.php`;
                 const response = await fetch(url, setting);
                 if (response.ok) {
                     const json = await response.json();

@@ -26,7 +26,7 @@ export default{
         const setting ={
           methods:'GET',
         }
-        const url = `${baseURL}Apis-UTA/roles.php`;
+        const url = `${baseURL}roles.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarRoles', json); 

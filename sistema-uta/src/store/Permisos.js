@@ -60,7 +60,7 @@ export default {
         const setting = {
           methods: 'GET',
         }
-        const url = `${baseURL}Apis-UTA/permisos.php`;
+        const url = `${baseURL}permisos.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarPermisos', json);
@@ -79,7 +79,7 @@ export default {
           method: 'POST',
           body: datosPerDir,
         };
-        const url = `${baseURL}Apis-UTA/permisosDirectorios.php`;
+        const url = `${baseURL}permisosDirectorios.php`;
         const response = await fetch(url, setting);
         if (!response.ok) {
           throw new Error(`Error en la solicitud: ${response.statusText}`);
@@ -102,7 +102,7 @@ export default {
           method: 'POST',
           body: datosPerDir,
         }
-        const url = `${baseURL}Apis-UTA/permisosSubDirectorios_User.php`;
+        const url = `${baseURL}permisosSubDirectorios_User.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
         commit('llenarPermisosSubDir_User', json);
@@ -127,9 +127,9 @@ export default {
           }
           var url = "";
           if (datos.IdRelacion == 0) {
-            url = `${baseURL}Apis-UTA/insertarPermisosUser.php`;
+            url = `${baseURL}insertarPermisosUser.php`;
           } else {
-            url = `${baseURL}Apis-UTA/actualizarPermisosUser.php`;
+            url = `${baseURL}actualizarPermisosUser.php`;
           }
           const data = await fetch(url, setting);
           const json = await data.text();
@@ -159,7 +159,7 @@ export default {
           method: 'POST',
           body: datosPermisos,
         }
-        var url = `${baseURL}Apis-UTA/insertarPermisosNew.php`;
+        var url = `${baseURL}insertarPermisosNew.php`;
         const data = await fetch(url, setting);
         console.log("DATA "+data);
         if ( data.ok ) {
@@ -187,7 +187,7 @@ export default {
           method: 'POST',
           body: datosPermisos,
         }
-        const url = `${baseURL}Apis-UTA/eliminarPermisosSub_User.php`;
+        const url = `${baseURL}eliminarPermisosSub_User.php`;
         const data = await fetch(url, setting);
         const json = await data.text();
         if (json.startsWith('{')) {
