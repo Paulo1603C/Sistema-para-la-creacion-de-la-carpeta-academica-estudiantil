@@ -51,11 +51,13 @@ export default {
                 const setting = {
                     method: 'POST',
                     body: datosUser,
-                }
+                };
                 const url = `${baseURL}Login.php`;
-                const data = await fetch(url, setting)
+                const data = await fetch(url, setting);
                 if (data.ok) {
-                    const json = await data.json();
+                    const json = await data.json(); 
+                    console.log("json2");
+                    console.log(json);
                     const firstObject = json[0];
                     console.log(firstObject);
                     if (user.toLowerCase() === firstObject.Correo.toLowerCase() && pass === firstObject.Contraseña) {
@@ -65,7 +67,7 @@ export default {
                         localStorage.setItem('Authentication', true);
                         localStorage.setItem('user', JSON.stringify(firstObject));
                     } else {
-                        //console.log("No se encontro el usuario...");
+                        console.log("No se encontró el usuario...");
                         commit('setSms', 'incorrecto');
                     }
                 } else {
@@ -73,9 +75,10 @@ export default {
                     //console.log(" Not found => Error 400 ");
                 }
             } catch (error) {
-                console.log("Error de Autenticacion:" + error);
+                console.log("Error de Autenticación:" + error);
             }
         },
+        
 
         validarCorreo: async function ({ commit, state }, { correo }) {
             try {
