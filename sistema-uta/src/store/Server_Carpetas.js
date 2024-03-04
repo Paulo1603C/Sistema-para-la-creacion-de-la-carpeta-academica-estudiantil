@@ -176,7 +176,7 @@ export default {
 
         descargarCarpeta: async function ({ commit, dispatch }, { ruta, nombre }) {
             try {
-                //console.log('RUTA ' + ruta + nombre.toUpperCase());
+                console.log('RUTA '+ nombre.toUpperCase());
                 const datosArchivos = new FormData();
                 datosArchivos.append('rutaRemota', ruta + nombre.toUpperCase().trim());
 
@@ -185,15 +185,35 @@ export default {
                     body: datosArchivos,
                 }
                 const url = `${baseURL}descargarCarpetas.php`;
-                const response = await fetch(url, setting);
-                //console.log('Imprimido');
-                //const json = await response.text();
-                if (response.ok) {
-                    //console.log('Imprimido');
-                } else {
-                    //console.log('No Imprimido');
-
-                }
+                const response = await fetch(url, setting)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("No se pudo completar la solicitud");
+                        }
+                        return response.blob();
+                    })
+                    .then((blob) => {
+                        const url = window.URL.createObjectURL(new Blob([blob]));
+                        const link = document.createElement("a");
+                        link.href = url;
+                        if( nombre != '' ){
+                            nombre=nombre;
+                        }else{
+                            nombre=`${ruta}`;
+                        }
+                        link.setAttribute("download", `${nombre}.zip`);
+                        document.body.appendChild(link);
+                        link.click();
+                        link.parentNode.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                        this.descargando = false;
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        this.error = true;
+                        this.errorMessage = error.message;
+                        this.descargando = false;
+                    });
             } catch (error) {
                 console.error('Error en la solicitud:', error);
             }
