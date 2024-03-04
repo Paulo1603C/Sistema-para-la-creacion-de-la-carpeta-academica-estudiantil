@@ -37,7 +37,7 @@ export default {
                     method: 'POST',
                     body: datosCar,
                 };
-                const url = `${baseURL}carpetasVaciasServidor.php.`;
+                const url = `${baseURL}carpetasVaciasServidor.php`;
                 const response = await fetch(url, setting);
                 if (response.ok) {
                     const json = await response.text();
