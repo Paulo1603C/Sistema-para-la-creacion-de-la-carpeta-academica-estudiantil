@@ -292,7 +292,7 @@ export default {
                 this.rutaNueva();
                 const nom = '';
                 await this.descargarCarpeta({ ruta: this.path, nombre: nom });
-                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                this.$alertify.success('Archivo Descargado en unidad');
                 this.path = '';
             } catch (error) {
                 this.$alertify.error('Error al descargar las carpetas ' + error);

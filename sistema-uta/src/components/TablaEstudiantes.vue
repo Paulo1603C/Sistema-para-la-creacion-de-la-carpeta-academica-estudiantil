@@ -130,7 +130,7 @@ export default {
             try {
                 this.rutaNueva();
                 await this.descargarCarpeta({ ruta: this.path, nombre: item.NomEst + " " + item.ApeEst });
-                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                this.$alertify.success('Archivo Descargado');
                 this.path = '';
             } catch (error) {
                 this.$alertify.error('Error al descargar un archivo ' + error);
@@ -142,7 +142,7 @@ export default {
                 this.rutaNueva();
                 const nombre = '';
                 await this.descargarCarpeta({ ruta: this.path, nombre });
-                this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+                this.$alertify.success('Archivo Descargado ');
                 this.path = '';
             } catch (error) {
                 console.error('Error al descargar carpeta:', error);
