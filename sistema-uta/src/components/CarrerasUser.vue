@@ -87,7 +87,7 @@ export default {
         descargarDirectorio: async function (item) {
             this.rutaNueva();
             await this.descargarCarpeta({ ruta: this.path, nombre: item.nomCar });
-            this.$alertify.success('Archivo Descargado en unidad /C:');
+            this.$alertify.success('Archivo Descargado ');
             this.path = '';
         },
 
@@ -95,7 +95,7 @@ export default {
             //this.rutaNueva();
             const nom = '';
             await this.descargarCarpeta({ ruta: this.itemsBread[0], nombre: nom });
-            this.$alertify.success('Archivo Descargado en unidad C:/DESCARGAS');
+            this.$alertify.success('Archivo Descargado ');
             this.path = '';
         },
 
