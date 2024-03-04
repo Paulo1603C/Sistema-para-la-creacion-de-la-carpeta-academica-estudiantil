@@ -107,6 +107,7 @@ export default {
                     carreras.push(this.idCarreras[i]);
                 }
             }
+            console.log(carreras);
             return carreras;
         },
 
