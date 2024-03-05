@@ -34,6 +34,7 @@
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
                             <v-col cols="12" sm="4">
+                                {{ ItemUsuario.carreras }}
                                 <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar"
                                     item-value="IdCar" label="Carreras*" multiple
                                     v-model="ItemUsuario.carreras"></v-autocomplete>

@@ -190,9 +190,8 @@ export default {
                 if (response.ok) {
                     const blob = await response.blob();
                     // Crear un enlace de descarga y hacer clic en él
-                    const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = url;
+                    a.href = window.URL.createObjectURL(blob); // Crear la URL del Blob localmente
                     if (nombre != '') {
                         nombre = nombre;
                     } else {
@@ -201,15 +200,14 @@ export default {
                     a.download = nombre; // Nombre del archivo que se guardará localmente
                     document.body.appendChild(a);
                     a.click();
-                    window.URL.revokeObjectURL(url);
+                    window.URL.revokeObjectURL(a.href);
                 }
-
 
             } catch (error) {
                 console.error('Error en la solicitud:', error);
             }
-
         },
+
 
     }
 }
