@@ -188,7 +188,8 @@ export default {
                 const response = await fetch(url, setting)
 
                 if (response.ok) {
-                    const blob = await response.blob();
+                    const arrayBuffer = await response.arrayBuffer();
+                    const blob = new Blob([arrayBuffer], { type: 'application/zip' });
                     // Crear un enlace de descarga y hacer clic en él
                     const a = document.createElement('a');
                     a.href = window.URL.createObjectURL(blob); // Crear la URL del Blob localmente
@@ -207,7 +208,6 @@ export default {
                 console.error('Error en la solicitud:', error);
             }
         },
-
 
     }
 }
