@@ -191,6 +191,7 @@ export default {
                     const arrayBuffer = await response.arrayBuffer();
                     const blob = new Blob([arrayBuffer], { type: 'application/zip' });
                     // Crear un enlace de descarga y hacer clic en él
+                    console.log(blob);
                     const a = document.createElement('a');
                     a.href = window.URL.createObjectURL(blob); // Crear la URL del Blob localmente
                     if (nombre != '') {
