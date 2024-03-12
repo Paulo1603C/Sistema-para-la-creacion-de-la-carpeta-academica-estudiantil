@@ -34,7 +34,6 @@
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
                             <v-col cols="12" sm="4">
-                                {{ ItemUsuario.carreras }}
                                 <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar"
                                     item-value="IdCar" label="Carreras*" multiple
                                     v-model="ItemUsuario.carreras"></v-autocomplete>
@@ -197,7 +196,11 @@ export default {
                     let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
                     this.ItemUsuario.contraseña = contraseñaHash;
                     await this.AgregarUsuario(this.ItemUsuario);
-                    await this.actualizarCarrerasUsuario();
+                    if( this.ItemUsuario.id != 0){
+                        await this.actualizarCarrerasUsuario();
+                    }else{
+                        await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: this.ItemUsuario.carreras });
+                    }
                     this.cerrarDialog();
                     this.limpiarCampos();
                     this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
