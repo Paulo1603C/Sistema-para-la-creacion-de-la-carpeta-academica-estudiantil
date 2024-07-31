@@ -12,7 +12,8 @@
                         <v-row>
                             <v-col cols="12">
                                 <v-text-field 
-                                    label="Nombre Plantilla*" 
+                                    label="Nombre Directorio*"
+                                    :disabled="true" 
                                     :rules="controles().controlNom" 
                                     v-model="ItemPlantilla.nomPlan" 
                                     required
@@ -74,7 +75,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 import progres3 from './progresCircular.vue';
 
 export default {
-    name: "SubItems",
+    name: "ModuloSubItems",
 
     props: {
         dialog: Boolean,
@@ -97,6 +98,7 @@ export default {
 
     methods: {
         ...mapMutations('Dialogo', ['setDialogPlantilla', 'setDailogPlantillaProgress']),
+        ...mapActions('SubSubItems', ['insetarSubSubItem']),
 
         controles() {
             return {
@@ -117,12 +119,20 @@ export default {
             };
         },
 
-        guardar() {
+        //envia los datos al back
+        guardar: async function() {
             // Implementación del método guardar
-            if( this.subItems.size > 0 ){
-
+            console.log(this.subItems);
+            if( this.subItems.length > 0 ){
+                const answer = await this.insetarSubSubItem({subItems:this.subItems ,idItemPlan:this.ItemPlantilla.idPlan});
+                if( answer === true || answer === 'true'){
+                    this.$alertify.success("Items creados con éxito");
+                }else{
+                    this.$alertify.error("Error 500 el servidor respondio con FAILED");
+                }
+                this.subItems = [];
             }else{
-                this.$alertify.error("Agrega items para guardar");
+                this.$alertify.error("Agrega items antes de guardar");
             }
         },
 

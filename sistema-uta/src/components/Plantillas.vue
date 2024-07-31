@@ -1,6 +1,7 @@
 <template>
   <div>
     <SubItem :dialog.sync="dialogPlantilla" :ItemPlantilla="dataPlan"></SubItem>
+    <DetalleSubItems :dialog.sync="dialogObs" :data="getSubSubItems"></DetalleSubItems>
     <div style="overflow: hidden"></div>
     <v-card class="mx-auto mt-10" max-width="200">
       <v-card-title class="d-flex justify-center align-center" style="font-size: 15px">
@@ -56,8 +57,9 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import SubItem from "./SubItem.vue";
+import DetalleSubItems from './DetalleSubItems.vue';
 
 export default {
   data: () => ({
@@ -67,6 +69,7 @@ export default {
     selectedWord: null,
     dialogPlantilla: false,
     dataPlan: {},
+    dialogObs: false,
   }),
 
   props: ["idPlan", "titulo", "idItem", "items", "urlDw"],
@@ -75,15 +78,24 @@ export default {
     ...mapMutations("Plantillas", ["setPlan"]),
     ...mapMutations("Dialogo", ["setDialogPlantilla"]),
     ...mapActions("Plantillas", ["eliminarPlantilla"]),
+    ...mapActions("SubSubItems", ["cargarSubSubItemsHas"]),
+
+    //ver los subsubitem
+    verItem: async function (item){
+      console.log(item);
+      if( item.id !== 0 ){
+        this.dialogObs = true;
+        await this.cargarSubSubItemsHas( {idPlan:item.id} );
+        console.log(this.getSubSubItems);
+      }
+    },
 
     crearSubSubItemsPlantilla(item) {
       console.log(item);
       this.dialogPlantilla = true;
       this.dataPlan = {
-        idPlan: 0,
+        idPlan: item.id,
         nomPlan: item.text,
-        items: [],
-        idItem:item.id,
       };
     },
 
@@ -129,6 +141,11 @@ export default {
 
   components: {
     SubItem,
+    DetalleSubItems,
+  },
+
+  computed:{
+    ...mapGetters( 'SubSubItems' ,['getSubSubItems']),
   },
 };
 </script>
