@@ -6,14 +6,14 @@
         <v-dialog v-model="dialog" persistent width="600">
             <v-card>
                 <v-card-title>
-                    <span class="text-h5">Subir Archivo</span>
+                    <span class="text-h5">Subir Archivos</span>
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <input ref="fileInput" type="file" @change="handleFileChange" />
+                                <input ref="fileInput" type="file" @change="handleFileChange" multiple />
                             </v-col>
                             <v-col cols="12">
                                 <v-text-field label="Observación" v-model="obsAux"></v-text-field>
@@ -34,52 +34,56 @@
         </v-dialog>
     </v-row>
 </template>
-
 <script>
-import { mapActions, mapGetters, mapState, mapMutations} from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import progres from './progresCircular.vue';
+
 export default {
-
     name: "nuevo",
-
     props: {
         dialog: Boolean,
     },
-
     data() {
         return {
             ItemArchivo: {},
-            selectedFile: null,
+            selectedFiles: [], // Almacena múltiples archivos
             obsAux: '',
-            sms:'Subiendo archivo...',
+            sms: 'Subiendo archivo...',
             path: '',
         }
     },
-
     created() {
         //this.subirObsArchivo();
     },
-
     methods: {
-
         ...mapActions('Server_Archivos', ['crearArchivos', 'crearObsArchivos']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas']),
         ...mapMutations('Dialogo', ['setDailogSubirArch']),
-
+        
         agregar: async function () {
             this.setDailogSubirArch(true);
             try {
                 this.rutaNueva();
-                await Promise.all([
-                    this.crearArchivos({ ruta: this.path, archivo: this.selectedFile }),
-                    this.crearObsArchivos({ ruta: this.path + this.selectedFile.name, observacion: this.obsAux, idEstPer: this.idEst })
-                ]);
-                await this.cargarCarpetas(this.path),
-                this.$alertify.success("Archivo Insertado");
+                
+                // Subir cada archivo con su observación
+                await Promise.all(this.selectedFiles.map(file => {
+                    return Promise.all([
+                        this.crearArchivos({ ruta: this.path, archivo: file }),
+                        console.log('SAVE OBS'),
+                        console.log(this.path + file.name),
+                        console.log(this.obsAux),
+                        console.log(this.idEst ),
+                        this.crearObsArchivos({ ruta: this.path + file.name, observacion: this.obsAux, idEstPer: this.idEst })
+                    ]);
+                }));
+
+                await this.cargarCarpetas(this.path);
+                this.$alertify.success("Archivos Insertados");
                 this.cerrarDialog();
                 this.path = '';
+                this.selectedFiles = []; // Limpiar la lista de archivos seleccionados
             } catch (error) {
-                this.$alertify.success("Error al internar insertar un archivo " + error);
+                this.$alertify.success("Error al intentar insertar archivos " + error);
             }
             this.setDailogSubirArch(false);
         },
@@ -89,30 +93,23 @@ export default {
         },
 
         handleFileChange(event) {
-            this.selectedFile = event.target.files[0];
-            if (this.selectedFile) {
-                const rutaArchivo = this.selectedFile;
-                //console.log('Ruta: ', rutaArchivo);
-            }
+            this.selectedFiles = Array.from(event.target.files);
         },
 
         rutaNueva() {
-            //metodo para obtener la ruta
+            this.path = '';
             for (let i = 0; i < this.itemsBread.length; i++) {
                 this.path += this.itemsBread[i] + "/";
             }
-            //console.log(this.path);
         },
     },
-
     components: {
         progres,
     },
-
     computed: {
-        ...mapState('Dialogo', ['itemsBread','dailogSubirArch']),
+        ...mapState('Dialogo', ['itemsBread', 'dailogSubirArch']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
         ...mapState('Estudiantes', ['dataEst', 'idEst']),
     },
 }
-</script>       
+</script>

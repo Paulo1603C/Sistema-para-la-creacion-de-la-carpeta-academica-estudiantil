@@ -5,7 +5,7 @@
     <div style="overflow: hidden"></div>
     <v-card class="mx-auto mt-10" max-width="200">
       <v-card-title class="d-flex justify-center align-center" style="font-size: 15px">
-        {{ idPlan }}
+        ID: {{ idPlan }}
       </v-card-title>
       <v-img :src="urlDw || imgAux" contain height="100px" cover></v-img>
       <v-card-title class="d-flex justify-center align-center" style="font-size: 15px">

@@ -105,6 +105,10 @@ export default {
         },
 
         crearObsArchivos: async function ({ commit, dispatch }, { ruta, observacion, idEstPer }) {
+            console.log("Datos a insertar");
+            console.log("RUTA "+ ruta);
+            console.log("RUTA "+ observacion);
+            console.log("RUTA "+ idEstPer);
             try {
                 //console.log(observacion);
                 //console.log(ruta);
