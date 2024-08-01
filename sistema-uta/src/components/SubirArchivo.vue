@@ -69,10 +69,6 @@ export default {
                 await Promise.all(this.selectedFiles.map(file => {
                     return Promise.all([
                         this.crearArchivos({ ruta: this.path, archivo: file }),
-                        console.log('SAVE OBS'),
-                        console.log(this.path + file.name),
-                        console.log(this.obsAux),
-                        console.log(this.idEst ),
                         this.crearObsArchivos({ ruta: this.path + file.name, observacion: this.obsAux, idEstPer: this.idEst })
                     ]);
                 }));
@@ -81,7 +77,8 @@ export default {
                 this.$alertify.success("Archivos Insertados");
                 this.cerrarDialog();
                 this.path = '';
-                this.selectedFiles = []; // Limpiar la lista de archivos seleccionados
+                this.selectedFiles = []; 
+                this.obsAux = "";
             } catch (error) {
                 this.$alertify.success("Error al intentar insertar archivos " + error);
             }

@@ -40,10 +40,10 @@
                   <v-list-item-title v-text="item.text"></v-list-item-title>
                 </v-col>
                 <v-col cols="auto">
-                  <v-icon  @click.stop="crearSubSubItemsPlantilla(item)" class="mr-2" color="green darken-1" size="18">
+                  <v-icon @click.stop="crearSubSubItemsPlantilla(item)" class="mr-2" color="green darken-1" size="18">
                     mdi-plus
                   </v-icon>
-                  <v-icon  @click.stop="verItem(item)" color="blue darken-1" size="18">
+                  <v-icon @click.stop="verItem(item)" color="blue darken-1" size="18">
                     mdi-eye
                   </v-icon>
                 </v-col>
@@ -74,18 +74,29 @@ export default {
 
   props: ["idPlan", "titulo", "idItem", "items", "urlDw"],
 
+  watch: {
+    items: 'updateItemsList',  // Watch for changes in the items prop
+    idItem: 'updateItemsList'  // Watch for changes in the idItem prop
+  },
+
   methods: {
     ...mapMutations("Plantillas", ["setPlan"]),
     ...mapMutations("Dialogo", ["setDialogPlantilla"]),
     ...mapActions("Plantillas", ["eliminarPlantilla"]),
     ...mapActions("SubSubItems", ["cargarSubSubItemsHas"]),
 
-    //ver los subsubitem
-    verItem: async function (item){
+    updateItemsList() {
+      this.itemsList = this.items.split(",").map((text, index) => ({
+        text,
+        id: this.idItem.split(",")[index],
+      }));
+    },
+
+    verItem: async function (item) {
       console.log(item);
-      if( item.id !== 0 ){
+      if (item.id !== 0) {
         this.dialogObs = true;
-        await this.cargarSubSubItemsHas( {idPlan:item.id} );
+        await this.cargarSubSubItemsHas({ idPlan: item.id });
         console.log(this.getSubSubItems);
       }
     },
@@ -97,6 +108,7 @@ export default {
         idPlan: item.id,
         nomPlan: item.text,
       };
+      this.$emit('update');  // Emit an event to notify parent component
     },
 
     editar() {
@@ -110,6 +122,7 @@ export default {
           items: this.words,
         };
         this.setPlan(this.plantillaSelect);
+        this.$emit('update');  // Emit an event to notify parent component
       } catch (error) {
         this.$alertify.error("Error al editar:", error);
       }
@@ -125,6 +138,7 @@ export default {
         () => {
           this.eliminarPlantilla(this.itemSeleccionadoPlan);
           this.$alertify.success("Plantilla Eliminada");
+          this.$emit('update');  // Emit an event to notify parent component
         },
         () => this.$alertify.error("Cancelado")
       );
@@ -132,10 +146,7 @@ export default {
   },
 
   mounted() {
-    this.itemsList = this.items.split(",").map((text, index) => ({
-      text,
-      id: this.idItem.split(",")[index],
-    }));
+    this.updateItemsList();
     console.log(this.itemsList);
   },
 
@@ -144,8 +155,8 @@ export default {
     DetalleSubItems,
   },
 
-  computed:{
-    ...mapGetters( 'SubSubItems' ,['getSubSubItems']),
+  computed: {
+    ...mapGetters('SubSubItems', ['getSubSubItems']),
   },
 };
 </script>
