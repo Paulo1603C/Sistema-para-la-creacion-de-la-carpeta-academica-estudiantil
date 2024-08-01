@@ -123,7 +123,8 @@ export default {
             try {
                 const datosCarpeta = new FormData();
                 datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase() + '/' + nombre.toUpperCase());
-                //console.log('RUTA-> ' + path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nombre.toUpperCase());
+                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase() + '/' + nombre.toUpperCase());
+                console.log('RUTA-> ' + path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+ '/' + nombre.toUpperCase());
                 const setting = {
                     method: 'POST',
                     body: datosCarpeta,

@@ -72,9 +72,10 @@ export default {
     methods: {
         ...mapActions('Carreras', ['cargarCarreras']),
         ...mapActions('Estudiantes', ['AgregarEstudiante', 'cargarEstudiantes', 'buscarEstCedula']),
-        ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta']),
+        ...mapActions('Server_Carpetas', ['crearCarpeta', 'crearSubCarpeta','crearSubSubCarpeta']),
         ...mapActions('Plantillas', ['cargarPlantillas', 'cargarItemsPlantillas']),
         ...mapMutations('Dialogo', ['setDialogFolder', 'setDailogCrearEst']),
+        ...mapActions("SubSubItems", ["cargarSubSubItemsHas"]),
 
         cedulaLengthRule(value) {
             if (!value || value.length === 10) {
@@ -148,17 +149,45 @@ export default {
         },
 
         crearSubDirectorios: async function (datosEst, ruta) {
-            this.setDailogCrearEst(true);
             try {
+                this.setDailogCrearEst(true);
                 await this.cargarItemsPlantillas(datosEst);
                 const cadenaDeItems = this.getItemsPlantillas[0].Items;
-                const auxItemsPlan = cadenaDeItems.split(',');
-                for (let i = 0; i < auxItemsPlan.length; i++) {
-                    await this.crearSubCarpeta({ datos: datosEst, path: ruta, nombre: auxItemsPlan[i] });
-                }
+                const auxItemsPlan = cadenaDeItems.split(",");
+
+                // Crear subcarpetas en paralelo
+                const crearSubCarpetasPromises = auxItemsPlan.map((item) =>
+                    this.crearSubCarpeta({ datos: datosEst, path: ruta, nombre: item })
+                );
+                await Promise.all(crearSubCarpetasPromises);
+
+                const idDeItems = this.getItemsPlantillas[0].IdItem; // Servirá para buscar subSubItems relacionados
+                const auxIdItemsPlan = idDeItems.split(",");
+
+                // Cargar SubSubItems y crear subSubCarpetas en paralelo
+                const subSubItemsPromises = auxIdItemsPlan.map(async (id, index) => {
+                    await this.cargarSubSubItemsHas({ idPlan: id });
+                    const nomSubDirectorio = auxItemsPlan[index];
+                    console.log('Datsos porblem')
+                    console.log(this.getSubSubItems);
+                    console.log(this.nomSubDirectorio);
+                    if (this.getSubSubItems.length > 0) {
+                    const crearSubSubCarpetasPromises = this.getSubSubItems.map((subSubItem) =>
+                        this.crearSubSubCarpeta({
+                        datos: datosEst,
+                        nomSubDir: nomSubDirectorio,
+                        path: ruta,
+                        nombre: subSubItem.NomSubSubItem,
+                        })
+                    );
+                    await Promise.all(crearSubSubCarpetasPromises);
+                    }
+                });
+                await Promise.all(subSubItemsPromises);
                 this.setDailogCrearEst(false);
             } catch (error) {
                 this.$alertify.error('Error al intentar crear una carpeta:', error);
+                console.log('Error al intentar crear una carpeta:', error);
             }
         },
 
@@ -241,6 +270,7 @@ export default {
         ...mapState('Dialogo', ['itemsBread', 'dailogCrearEst']),
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
+        ...mapGetters("SubSubItems", ["getSubSubItems"]),
     },
 }
 </script>       

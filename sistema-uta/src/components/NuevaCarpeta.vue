@@ -13,7 +13,12 @@
                             <v-col cols="12">
                                 <v-text-field label="Nombre*"
                                     :rules="[controles().controlNom, controles().controlNombreArchivo]"
-                                    v-model="ItemCarpeta.NomEst" required></v-text-field>
+                                    v-model="ItemCarpeta.NomEst" required>
+                                </v-text-field>
+                                <v-checkbox
+                                v-model="checkbox1"
+                                :label="`Carpeta Unica`"
+                                ></v-checkbox>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -45,6 +50,7 @@ export default {
     },
 
     data: () => ({
+        checkbox1:true,
         path: '',
         sms2: 'Creando Item...',
         permisosDirectorios: new Map(),
@@ -94,9 +100,9 @@ export default {
         },
 
         agregar: async function () {
-            this.setDailogCarpetas(true);
             try {
                 if (this.ItemCarpeta.NomEst != "") {
+                    this.setDailogCarpetas(true);
                     this.rutaNueva();
                     if (this.ItemCarpeta.IdEst == 0) {
                         //dependiendo la ruta se creara la carpeta
@@ -106,7 +112,11 @@ export default {
                         if (this.getCarreras.some(({ NomCar }) => NomCar.toLowerCase() === ultimoValor.toLowerCase())) {
                             //console.log("PADRE "+ultimoValor);
                             await this.insertarItemSubCarpta(this.ItemCarpeta.NomEst);
-                            await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
+                            if( this.checkbox1 ){
+                                await this.crearSubCarpeta({ datos: this.ItemCarpeta, path: this.path, nombre: '' });
+                            }else{
+                                await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
+                            }
                             await this.agregarPermisos(this.ItemCarpeta.NomEst);
                             await this.cargarSubCarpetas();
                             await this.obtenerPermisosDirectorios();

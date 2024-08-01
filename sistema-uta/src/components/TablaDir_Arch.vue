@@ -77,7 +77,12 @@
                             </td>
                         </tr>
                         <tr v-else >
-                            <td class="text-center">No tienes permisos para mostrar los Directorios, Solicitalos</td>
+                            <td><v-icon color="error darken-2" size="28">mdi-file-alert</v-icon></td>
+                            <td style="color: red;"  >Sin</td>
+                            <td style="color: red;" >acceso</td>
+                            <td style="color: red;" >al</td>
+                            <td style="color: red;" >Directorio</td>
+                            <td style="color: red;" >Solicite Permisos</td>
                         </tr>
                     </template>
                 </v-data-table>

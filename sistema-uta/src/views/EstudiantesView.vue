@@ -200,7 +200,11 @@ export default {
                 } else {
                     const storedUser = JSON.parse(localStorage.getItem('user'));
                     const idUser = storedUser.IdRolPer;
-                    if (idUser == 1) {
+                    this.btnOP = [
+                            { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
+                            //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
+                        ];
+                    /*if (idUser == 1) {
                         this.btnOP = [
                             { icon: "folder-plus", text: "Crear Carpeta", show: "true" },
                             //{ icon: "folder-arrow-up", text: "Subir Archivo", show: "true" },
@@ -210,7 +214,7 @@ export default {
                             { icon: "alpha-x", text: "Sin permisos", show: "true" },
                         ];
 
-                    }
+                    }*/
                 }
             },
             immediate: true, // Si deseas que el watcher se ejecute inmediatamente al montar el componente
