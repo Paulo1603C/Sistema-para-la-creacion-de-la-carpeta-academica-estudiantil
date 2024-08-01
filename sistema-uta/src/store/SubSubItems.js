@@ -33,7 +33,7 @@ export default {
         const url = `${baseURL}selectSubSubItems.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
-        console.log(json);
+        //console.log(json);
         if (data.ok) {
             commit('llenarListSubsubItems', json);
         } else {

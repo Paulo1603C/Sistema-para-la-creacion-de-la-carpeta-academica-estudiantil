@@ -145,6 +145,32 @@ export default {
 
         },
 
+        crearSubSubCarpeta: async function ({ commit, dispatch }, { datos, nomSubDir ,path, nombre }) {
+            try {
+                const datosCarpeta = new FormData();
+                datosCarpeta.append('nuevoNombreDirectorio', path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nomSubDir.toUpperCase()+'/'+nombre.toUpperCase());
+                console.log('RUTA-> ' + path.toUpperCase() + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase()+'/'+nomSubDir.toUpperCase()+'/'+nombre.toUpperCase());
+                const setting = {
+                    method: 'POST',
+                    body: datosCarpeta,
+                }
+                const url = `${baseURL}crearCarpetas.php`;
+                const data = await fetch(url, setting);
+                const json = await data.text();
+                if (json.startsWith('{')) {
+                    const jsonData = JSON.parse(json);
+                    console.log('json');
+                    dispatch('cargarCarpetas', path);
+                } else {
+                    console.log('Text');
+                    dispatch('cargarCarpetas', path);
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+
+        },
+
         eliminarCarpeta: async function ({ commit, dispatch }, { ruta1, ruta2, tipo }) {
             try {
                 //console.log('Server'+ruta2.toUpperCase())
