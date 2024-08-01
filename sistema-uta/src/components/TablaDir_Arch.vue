@@ -76,6 +76,9 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr v-else >
+                            <td class="text-center">No tienes permisos para mostrar los Directorios, Solicitalos</td>
+                        </tr>
                     </template>
                 </v-data-table>
                 <div v-else-if="auxPermisosControl.length == 0" class="error-message text-center">No tienes permisos, solicitalos al administrador</div>
@@ -233,7 +236,16 @@ export default {
 
         // Verificar permisos
         verificarPermisos(item) {
-            return this.verificarPermisosGenerico(item);
+            console.log("Iniciando verificación de permisos para:", item);
+            const tienePermisos = this.verificarPermisosGenerico(item);
+            console.log("Resultado de permisos:", tienePermisos);
+            
+            if (!tienePermisos) {
+                //this.$alertify.error("No tienes permisos para mostrar los Directorios, Solicitalos");
+                console.log("ERROR al verificar permisos para:", item);
+            }
+            
+            return tienePermisos;
         },
 
         // Mostrar editar
@@ -337,6 +349,8 @@ export default {
                 let permisos = this.recuperarPermisos().get(this.getSubCarpetas[0].NomItem.toLowerCase());
                 if( permisos != null ){
                     this.auxPermisosControl = permisos
+                }else{
+                    console.log('No tienes permisos');
                 }
             }
             try {
