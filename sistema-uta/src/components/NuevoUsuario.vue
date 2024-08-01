@@ -95,14 +95,14 @@ export default {
                 controlNom: [
                     value => {
                         if (!value) return 'Ingrese los nombres del usuario';
-                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
                         return soloLetras.test(value) || 'Ingrese solo letras';
                     }
                 ],
                 controlApe: [
                     value => {
                         if (!value) return 'Ingrese los Apellidos del usuario';
-                        const soloLetras = /^[a-zA-Z\s]+$/;
+                        const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
                         return soloLetras.test(value) || 'Ingrese solo letras';
                     }
                 ],
@@ -176,9 +176,13 @@ export default {
 
                 const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
                 if (correoValido) {
-                    this.$alertify.alert('Correo Registrado', 'Este correo ya esta registrado', () => {
+                    console.log('Correo ya registrado');
+                    this.$alertify.error("Este correo ya está registrado");
+                    this.ItemUsuario.correo = '';
+                    /*this.$alertify.alert('Correo Registrado', 'Este correo ya está registrado', function() {
                         this.ItemUsuario.correo = '';
-                    });
+                        console.log('cambio');
+                    }.bind(this));*/
                 }
             } catch (error) {
                 this.$alertify.error('Error al validar un correo:', error);

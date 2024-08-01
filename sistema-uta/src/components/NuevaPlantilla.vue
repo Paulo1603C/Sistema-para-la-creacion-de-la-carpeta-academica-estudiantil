@@ -97,10 +97,10 @@ export default {
         controles() {
             return {
                 controlNom: [
-                    value => !value ? 'Ingrese un nombre' : /^[a-zA-Z\s]+$/.test(value) || 'Ingrese solo letras'
+                    value => !value ? 'Ingrese un nombre' : /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/.test(value) || 'Ingrese solo letras, números y espacios'
                 ],
                 controlItem: [
-                    value => !value ? 'Ingrese un nombre' : /^[a-zA-Z\s]+$/.test(value) || 'Ingrese solo letras'
+                    value => !value ? 'Ingrese un nombre' : /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/.test(value) || 'Ingrese solo letras, números y espacios'
                 ],
             }
         },
