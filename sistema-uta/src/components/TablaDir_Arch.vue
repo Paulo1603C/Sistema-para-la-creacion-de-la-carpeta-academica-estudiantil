@@ -17,7 +17,7 @@
                 <v-data-table v-if="mostaraDatos" dense :headers="Cabecera" :items="ItemsArchivos.elementos"
                     :item-per-page="5" :search="search" class="elevation-1">
                     <template v-slot:item="{ item }">
-                        <tr class="myStyle" v-if="verificarPermisos(item)">
+                        <tr class="myStyle" v-if="verificarPermisos(item) === true">
                             <td>
                                 <v-icon v-if="item.tipo != 'Archivo'" class="mr-3"
                                     color="yellow darken-1">mdi-folder</v-icon>
@@ -81,7 +81,7 @@
                             <td style="color: red;"  >Sin</td>
                             <td style="color: red;" >acceso</td>
                             <td style="color: red;" >al</td>
-                            <td style="color: red;" >Directorio  {{ sinPermisos }}</td>
+                            <td style="color: red;" >Directorio {{ verificarPermisos(item) }}</td>
                             <td style="color: red;" >Solicite Permisos</td>
                         </tr>
                     </template>
@@ -242,14 +242,13 @@ export default {
 
         // Verificar permisos
         verificarPermisos(item) {
-            //console.log("Iniciando verificación de permisos para:", item);
             const tienePermisos = this.verificarPermisosGenerico(item);
-            //console.log("Resultado de permisos:", tienePermisos);
             
             if (!tienePermisos) {
                 //this.sinPermisos = item.nombre;
                 //this.$alertify.error("No tienes permisos para mostrar los Directorios, Solicitalos");
                 //console.log("ERROR al verificar permisos para:", item);
+                return item.nombre;
             }
             
             return tienePermisos;
