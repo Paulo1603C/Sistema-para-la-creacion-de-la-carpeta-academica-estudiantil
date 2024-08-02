@@ -60,7 +60,7 @@ export default {
                 { text: 'Nombre', value: 'nombre', },
                 { text: 'Tamaño', value: 'tamaño', },
                 { text: 'Modificado', value: 'fecha', },
-                { text: 'Modificador por', value: 'user', },
+                { text: 'Tipo', value: 'user', },
                 { text: 'ACCIONES', value: 'acciones', },
             ],
             CabeceraCarreras: [
