@@ -130,9 +130,9 @@ export default {
 
                 await Promise.all(this.getSubCarpetas.map(async (item) => {
                     await this.cargarPermisosDirectorios({ idUser:idUser, nomItem: item.NomItem });
-                    console.log(this.getPermisosDirectorios)
+                    //console.log(this.getPermisosDirectorios)
                     this.permisosDirectorios.set(item.NomItem.toLowerCase(), this.getPermisosDirectorios[0].NomPer);
-                    console.dir(`Permisos ${item.NomItem} -> ${this.getPermisosDirectorios[0].NomPer}`);
+                    //console.dir(`Permisos ${item.NomItem} -> ${this.getPermisosDirectorios[0].NomPer}`);
                 }));
                 const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
                 localStorage.setItem('PermisosSubDirectorios', permission);

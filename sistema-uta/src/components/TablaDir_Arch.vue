@@ -81,7 +81,7 @@
                             <td style="color: red;"  >Sin</td>
                             <td style="color: red;" >acceso</td>
                             <td style="color: red;" >al</td>
-                            <td style="color: red;" >Directorio</td>
+                            <td style="color: red;" >Directorio  {{ sinPermisos }}</td>
                             <td style="color: red;" >Solicite Permisos</td>
                         </tr>
                     </template>
@@ -114,6 +114,7 @@ export default {
             rutaActual: '',
             dialogObs: false,
             auxPermisosControl: [],
+            sinPermisos:"",
         }
     },
 
@@ -241,13 +242,14 @@ export default {
 
         // Verificar permisos
         verificarPermisos(item) {
-            console.log("Iniciando verificación de permisos para:", item);
+            //console.log("Iniciando verificación de permisos para:", item);
             const tienePermisos = this.verificarPermisosGenerico(item);
-            console.log("Resultado de permisos:", tienePermisos);
+            //console.log("Resultado de permisos:", tienePermisos);
             
             if (!tienePermisos) {
+                this.sinPermisos = item.nombre;
                 //this.$alertify.error("No tienes permisos para mostrar los Directorios, Solicitalos");
-                console.log("ERROR al verificar permisos para:", item);
+                //console.log("ERROR al verificar permisos para:", item);
             }
             
             return tienePermisos;
