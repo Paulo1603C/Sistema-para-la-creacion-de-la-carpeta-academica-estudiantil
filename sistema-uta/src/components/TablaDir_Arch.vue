@@ -247,7 +247,7 @@ export default {
             //console.log("Resultado de permisos:", tienePermisos);
             
             if (!tienePermisos) {
-                this.sinPermisos = item.nombre;
+                //this.sinPermisos = item.nombre;
                 //this.$alertify.error("No tienes permisos para mostrar los Directorios, Solicitalos");
                 //console.log("ERROR al verificar permisos para:", item);
             }
