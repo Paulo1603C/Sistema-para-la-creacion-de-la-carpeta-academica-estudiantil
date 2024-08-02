@@ -192,7 +192,7 @@ export default {
             const row = this.items[i];
             let respuesta = await this.buscarEstudianteCed(row[3].toString());
             //console.log("RES " + respuesta +"// "+row[3].toString());
-            if (!respuesta) {
+            if ( respuesta === false) {
               const datos = {
                 IdEst: row[0],
                 NomEst: row[1],
@@ -274,7 +274,9 @@ export default {
 
     buscarEstudianteCed: async function (cedula) {
       let res = this.validarCedula(cedula);
-      if (res) {
+      console.log('Valor cedula');
+      console.log(res);
+      if (res === true) {
         let buscar = await this.buscarEstCedula({ cedula: cedula });
         if (buscar) {
           return true;
@@ -283,7 +285,7 @@ export default {
         }
       } else {
         //this.$alertify.error('La cédula no es válida');
-        return false;
+        return true;
       }
     },
 
