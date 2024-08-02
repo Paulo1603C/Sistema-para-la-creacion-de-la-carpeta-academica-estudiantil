@@ -81,7 +81,7 @@
                             <td style="color: red;"  >Sin</td>
                             <td style="color: red;" >acceso</td>
                             <td style="color: red;" >al</td>
-                            <td style="color: red;" >Directorio</td>
+                            <td style="color: red;" >Directorio {{auxSinPermiso.nombre}}</td>
                             <td style="color: red;" >Solicite Permisos</td>
                         </tr>
                     </template>
@@ -114,6 +114,7 @@ export default {
             rutaActual: '',
             dialogObs: false,
             auxPermisosControl: [],
+            auxSinPermiso:'',
         }
     },
 
@@ -241,6 +242,7 @@ export default {
 
         // Verificar permisos
         verificarPermisos(item) {
+            this.auxSinPermiso = item;
             console.log("Iniciando verificación de permisos para:", item);
             const tienePermisos = this.verificarPermisosGenerico(item);
             console.log("Resultado de permisos:", tienePermisos);
