@@ -23,7 +23,7 @@
                             <td>{{ item.Fecha }}</td>
                             <td>{{ item.Nom_Modificador }}</td>
                             <td>
-                                <v-tooltip bottom style="margin-right: 100px; !important">
+                                <v-tooltip bottom style="margin-right: 100px !important">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="primary darken-2" size="30" class="me-2"
                                             @click.stop="editarItem(item)" v-bind="attrs" v-on="on">
@@ -32,7 +32,7 @@
                                     </template>
                                     <span>Editar</span>
                                 </v-tooltip>
-                                <v-tooltip bottom style="margin-right: 100px; !important">
+                                <v-tooltip bottom style="margin-right: 100px !important">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="red darken-2" size="30" @click.stop="eliminarItem(item)"
                                             v-bind="attrs" v-on="on">
