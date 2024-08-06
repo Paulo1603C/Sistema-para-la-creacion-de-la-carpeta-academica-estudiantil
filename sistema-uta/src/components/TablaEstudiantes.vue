@@ -1,6 +1,7 @@
 <template>
     <div>
         <template>
+            <FinalStudy :dialog="showModal" :datos="studentData"></FinalStudy>
             <progres :dialog="dailogCargarDatos" :message="sms"></progres>
             <v-card v-show="show">
                 <v-card-title>
@@ -50,6 +51,15 @@
                                     </template>
                                     <span>Descargar</span>
                                 </v-tooltip>
+                                <v-tooltip bottom style="margin-right: 100px;">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon color="black darken-2" size="30" @click.stop="final_Study(item)"
+                                            v-bind="attrs" v-on="on">
+                                            mdi-download
+                                        </v-icon>
+                                    </template>
+                                    <span>Descargar</span>
+                                </v-tooltip>
                             </td>
                         </tr>
                     </template>
@@ -63,6 +73,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 import progres from './progresCircular.vue';
+import FinalStudy from './FinalStudy.vue';
 
 export default {
     name: "TablaC",
@@ -78,6 +89,8 @@ export default {
             customDir: null,
             selectedItems: [],
             estudianteSeleccionado: {},
+            showModal:false,
+            studentData:{},
         }
     },
 
@@ -89,6 +102,13 @@ export default {
         ...mapActions('Estudiantes', ['eliminarEstudiante', 'cargarEstudiantes']),
         ...mapActions('Server_Carpetas', ['cargarCarpetas', 'eliminarCarpeta', 'descargarCarpeta']),
         ...mapActions('Plantillas', ['cargarEstudinates_Plantillas']),
+
+        final_Study(item){
+            studentData={
+                nombre:item.NomEst,
+                apellido:item.ApeEst,
+            }
+        },
 
         editarItem(item) {
             console.log("item Datos");
@@ -190,6 +210,7 @@ export default {
 
     components: {
         progres,
+        FinalStudy,
     },
 
     computed: {
