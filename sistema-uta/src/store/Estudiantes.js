@@ -44,6 +44,32 @@ export default {
 
   },
   actions: {
+    
+    cargarEstudiantesCarrera: async function ({ commit,  rootState }, { idCar }) {
+
+      try {
+        const datosEST = new FormData();
+        datosEST.append('IdCar', idCar);
+        const setting = {
+          method: 'POST',
+          body: datosEST,
+        };
+        const url = `${baseURL}cragarEstudienteCarrera.php`;
+        const data = await fetch(url, setting);
+        const json = await data.json();
+
+        if (data.ok) {
+          commit('llenarItems', json);
+        } else {
+          console.log('La respuesta no es un JSON válido:', await data.text());
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+
+    },
+
+
     cargarEstudiantes: async function ({ commit,  rootState }, { idCar,idUser }) {
 
       try {
@@ -173,11 +199,11 @@ export default {
         const json = await data.text();
         if (json.startsWith('{')) {
           const jsonData = JSON.parse(json);
-          console.log(json);
+          //console.log(json);
           //dispatch('cargarEstudiantes');
         } else {
           //dispatch('cargarEstudiantes');
-          console.log(json);
+          //console.log(json);
         }
       } catch (error) {
         console.log("Error de actualizacion fecha " + error);

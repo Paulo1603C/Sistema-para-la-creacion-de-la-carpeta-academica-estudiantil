@@ -137,18 +137,27 @@ export default {
         },
 
 
-        eliminarItem(item) {
-            this.rutaNueva();
+        async eliminarItem(item) {
+            this.rutaNueva(); // Mueve esto fuera si es posible y si no cambia con frecuencia
             const storedUser = JSON.parse(localStorage.getItem('user'));
             this.idUser = storedUser.IdUser;
+
+            const estudianteNombre = `${item.NomEst} ${item.ApeEst}`;
+            const confirmMessage = `Deseas eliminar el estudiante: ${estudianteNombre}, Se borran todos los datos`;
+
             this.$alertify.confirm(
-                'Deseas eliminar el estudiante: ' + item.NomEst + " " + item.ApeEst + ', Se borran todos los datos',
-                () => {
-                    this.eliminarEstudiante(item);
-                    this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.NomEst + " " + item.ApeEst });
-                    this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
-                    this.$alertify.success('Usuario ' + item.NomEst + " " + item.ApeEst + ' Eliminado');
-                    this.path = '';
+                confirmMessage,
+                async () => {
+                    try {
+                        await this.eliminarEstudiante(item);
+                        await this.eliminarCarpeta({ ruta1: this.path, ruta2: `${this.path}${estudianteNombre}` });
+                        await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
+                        this.$alertify.success(`Usuario ${estudianteNombre} Eliminado`);
+                        this.path = '';
+                    } catch (error) {
+                        console.error('Error al eliminar el item:', error);
+                        this.$alertify.error('Error al eliminar el estudiante');
+                    }
                 },
                 () => this.$alertify.error('Cancelado')
             );

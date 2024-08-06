@@ -132,6 +132,7 @@ export default {
                         if (this.ItemEstudiante.IdEst == 0) {
                             await this.crearSubDirectorios(this.ItemEstudiante, this.path);
                         }
+                        console.log("ID=> "+ this.idUser);
                         await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     } else {
                         await this.crearCarpeta({ datos: this.ItemEstudiante, path: this.path, oldPath: this.rutaAnterior });

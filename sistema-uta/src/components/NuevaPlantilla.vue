@@ -110,6 +110,7 @@ export default {
             try {
                 if (this.ItemPlantilla.nomPlan && this.ItemPlantilla.items.length > 0) {
                     await Promise.all([
+                        this.ItemPlantilla.items.push('TITULACION'),
                         this.AgregarPlantilla(this.ItemPlantilla),
                         this.AgregarItemsPalntilla(this.ItemPlantilla),
                         this.AgregarItemsSubDirectorios(this.ItemPlantilla)
@@ -120,6 +121,7 @@ export default {
                         await this.AgregarMasItemsDirectorios({ datos: aux, idPlan: this.ItemPlantilla.idPlan });
                     }
                     if (this.ItemPlantilla.idPlan === 0) {
+                        //this.ItemPlantilla.items.push('TITULACION');
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
                     }
 

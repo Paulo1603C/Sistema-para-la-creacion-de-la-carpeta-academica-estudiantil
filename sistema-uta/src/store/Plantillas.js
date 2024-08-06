@@ -235,10 +235,14 @@ export default {
       }
     },
 
-    //insetar carreras para los usaurios-> se pasa un arreglo;
+    //insetar items para los direcotios-> se pasa un arreglo;
     AgregarItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
+      //datos.items.push('TITULACION');
+      console.log(datos);
       var aux = 0;
+      console.log(datos.items.length);
       while (aux < datos.items.length) {
+        console.log(aux);
         try {
           const datosItem = new FormData();
           datosItem.append('NomItem', datos.items[aux].toUpperCase());
@@ -268,31 +272,37 @@ export default {
       }
     },
 
+    //este metodo se usa cuando actializa y quiere ingresar nuevos elmentos
     AgregarMasItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
-      var aux = 0;
-      while (aux < datos.length) {
-        try {
-          const datosItem = new FormData();
-          datosItem.append('NomItem', datos[aux].toUpperCase());
-          datosItem.append('IdPlan', idPlan);
-          const setting = {
-            method: 'POST',
-            body: datosItem,
-          }
-          var url = `${baseURL}insertarItemDirectorio.php`;
-          const data = await fetch(url, setting);
-          const json = await data.text();
-          if (json.startsWith('{')) {
-            const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
-            //dispatch('cargarPlantillas');
-          } else {
-            //dispatch('cargarPlantillas');
-          }
-        } catch (error) {
-          console.error('Error en la solicitud:', error);
+    
+        let aux = 0;
+        while (aux < datos.length) {
+            try {
+                console.log('Procesando elemento en índice', aux, ':', datos[aux]);
+                
+                const datosItem = new FormData();
+                datosItem.append('NomItem', datos[aux].toUpperCase());
+                datosItem.append('IdPlan', idPlan);
+    
+                const setting = {
+                    method: 'POST',
+                    body: datosItem,
+                }
+                const url = `${baseURL}insertarItemDirectorio.php`;
+                const response = await fetch(url, setting);
+                const json = await response.text();
+                
+                if (json.startsWith('{')) {
+                    const jsonData = JSON.parse(json);
+                    // dispatch('cargarPlantillas');
+                } else {
+                    // dispatch('cargarPlantillas');
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+            aux++;
         }
-        aux++;
-      }
     },
 
     //por el momento no se usa debido a la integridad referencial
