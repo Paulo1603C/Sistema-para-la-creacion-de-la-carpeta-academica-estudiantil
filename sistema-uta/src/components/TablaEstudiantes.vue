@@ -1,8 +1,12 @@
 <template>
     <div>
         <template>
-            <FinalStudy :dialog="showModal" :datos="studentData"></FinalStudy>
-            <progres :dialog="dailogCargarDatos" :message="sms"></progres>
+            <div style="margin-bottom: 16px;">
+                <FinalStudy :dialog="dialogFile" @dialog="dialogFile = $event" :datos="studentData"></FinalStudy>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <progres :dialog="dailogCargarDatos" :message="sms"></progres>
+            </div>
             <v-card v-show="show">
                 <v-card-title>
                     {{ Titulo }}
@@ -89,7 +93,7 @@ export default {
             customDir: null,
             selectedItems: [],
             estudianteSeleccionado: {},
-            showModal:false,
+            dialogFile:false,
             studentData:{},
         }
     },
@@ -104,9 +108,13 @@ export default {
         ...mapActions('Plantillas', ['cargarEstudinates_Plantillas']),
 
         final_Study(item){
-            studentData={
+            console.info(item);
+            this.dialogFile=true;
+            this.studentData={
+                id:item.IdEst,
                 nombre:item.NomEst,
                 apellido:item.ApeEst,
+                ruta:this.itemsBread[1],
             }
         },
 

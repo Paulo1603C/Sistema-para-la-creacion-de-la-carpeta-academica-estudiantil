@@ -156,6 +156,32 @@ export default {
         console.log("Error de eliminción " + error);
       }
 
+    },
+
+
+    actaulizarFecha:async function ({ commit, dispatch }, {id ,fecha}) {
+      try {
+        const idUser = new FormData();
+        idUser.append('IdEst', id);
+        idUser.append('Fecha', fecha);
+        const setting = {
+          method: 'POST',
+          body: idUser,
+        }
+        const url = `${baseURL}actualizarFechaEstudiante.php`;
+        const data = await fetch(url, setting);
+        const json = await data.text();
+        if (json.startsWith('{')) {
+          const jsonData = JSON.parse(json);
+          console.log(json);
+          //dispatch('cargarEstudiantes');
+        } else {
+          //dispatch('cargarEstudiantes');
+          console.log(json);
+        }
+      } catch (error) {
+        console.log("Error de actualizacion fecha " + error);
+      }
     }
   },
 

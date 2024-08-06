@@ -81,6 +81,8 @@ export default {
 
         crearArchivos: async function ({ commit, dispatch }, { ruta, archivo }) {
             try {
+                console.log('RUTAS+> '+ruta);
+                console.log('Archivo+> '+archivo);
                 const datosArchivos = new FormData();
                 datosArchivos.append('rutaRemota', ruta);
                 datosArchivos.append('file', archivo);
@@ -105,10 +107,10 @@ export default {
         },
 
         crearObsArchivos: async function ({ commit, dispatch }, { ruta, observacion, idEstPer }) {
-            console.log("Datos a insertar");
+            /*console.log("Datos a insertar");
             console.log("RUTA "+ ruta);
             console.log("RUTA "+ observacion);
-            console.log("RUTA "+ idEstPer);
+            console.log("RUTA "+ idEstPer);*/
             try {
                 //console.log(observacion);
                 //console.log(ruta);
