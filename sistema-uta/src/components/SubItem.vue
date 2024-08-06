@@ -125,6 +125,7 @@ export default {
             console.log(this.subItems);
             if( this.subItems.length > 0 ){
                 const answer = await this.insetarSubSubItem({subItems:this.subItems ,idItemPlan:this.ItemPlantilla.idPlan});
+                this.cerrarDialog();
                 if( answer === true || answer === 'true'){
                     this.$alertify.success("Items creados con éxito");
                 }else{
