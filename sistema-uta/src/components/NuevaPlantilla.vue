@@ -121,7 +121,7 @@ export default {
                         await this.AgregarMasItemsDirectorios({ datos: aux, idPlan: this.ItemPlantilla.idPlan });
                     }
                     if (this.ItemPlantilla.idPlan === 0) {
-                        //this.ItemPlantilla.items.push('TITULACION');
+                        this.ItemPlantilla.items.push('TITULACION');
                         await this.AgregarItemsDirectorios({ datos: this.ItemPlantilla, idPlan: this.ItemPlantilla.idPlan });
                     }
 
