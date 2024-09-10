@@ -59,10 +59,10 @@
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon color="black darken-2" size="30" @click.stop="final_Study(item)"
                                             v-bind="attrs" v-on="on">
-                                            mdi-download
+                                            mdi-apple-finder
                                         </v-icon>
                                     </template>
-                                    <span>Descargar</span>
+                                    <span>Finalizar estudios</span>
                                 </v-tooltip>
                             </td>
                         </tr>
