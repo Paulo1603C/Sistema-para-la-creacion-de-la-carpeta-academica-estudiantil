@@ -237,7 +237,8 @@ export default {
 
     //insetar items para los direcotios-> se pasa un arreglo;
     AgregarItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
-      //datos.items.push('TITULACION');
+      console.log('Creandp directorios');
+      datos.items.push('TITULACION');
       console.log(datos);
       var aux = 0;
       console.log(datos.items.length);
