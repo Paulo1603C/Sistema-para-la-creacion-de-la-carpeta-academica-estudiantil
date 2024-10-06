@@ -56,18 +56,19 @@ export default {
     },
 
     created() {
-
+        this.cargarCarreras();
     },
 
     methods: {
         ...mapMutations('Dialogo', ['setVentanaCarreras', 'setVentanaEst', 'setBreadcrumbs', 'setVentanaArch', 'setDailogPermisos']),
-        ...mapMutations('Carreras', ['setCarreraSelect']),
-        ...mapMutations('Carreras', ['setIdCarreraSelect']),
+        ...mapMutations('Carreras', ['setCarreraSelect','setIdCarreraSelect']),
+        //...mapMutations('Carreras', ['']),
         ...mapActions('Estudiantes', ['cargarEstudiantes']),
         //...mapActions('Server_Carpetas', ['cargarCarpetas']),
         ...mapMutations('Permisos', ['setPermisosSubDirectorios']),
         ...mapActions('Permisos', ['cargarPermisosDirectorios']),
         ...mapActions('Server_Carpetas', ['descargarCarpeta']),
+        ...mapActions('Carreras', ['cargarCarrerasUser','cargarCarreras']),
 
         abrirVentana: async function (item) {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
@@ -100,25 +101,21 @@ export default {
         },
 
         obtnerIdCarrera() {
-            switch (this.itemsBread[1]) {
-                case 'INGENIERÍA INDUSTRIAL':
-                    this.carrera = 1;
-                    break;
-                case 'SOFTWARE':
-                    this.carrera = 2;
-                    break;
-                case 'TI':
-                    this.carrera = 3;
-                    break;
-                case 'TELECOMUNICACIONES':
-                    this.carrera = 4;
-                    break;
-                case 'AUTOMATIZACIÓN Y ROBÓTICA':
-                    this.carrera = 5;
-                    break;
-                default:
-                    break;
+            // Obtener las carreras desde el getter
+            const carreras = this.getCarreras;  // o this.getCarreras, según corresponda
+
+            // Buscar la carrera en base al nombre en itemsBread[1]
+            const carreraEncontrada = carreras.find(carrera => carrera.NomCar.toUpperCase() === this.itemsBread[1].toUpperCase());
+
+            // Si se encontró, asignar el ID de la carrera, si no, manejar el caso en el que no se encuentra
+            if (carreraEncontrada) {
+                this.carrera = carreraEncontrada.IdCar;
+            } else {
+                //console.warn(`Carrera no encontrada: ${this.itemsBread[1]}`);
+                this.carrera = null; // O algún valor por defecto o manejo de error
             }
+
+            // Finalmente, llamar a setIdCarreraSelect con el ID encontrado
             this.setIdCarreraSelect(this.carrera);
         },
 
@@ -164,6 +161,7 @@ export default {
         ...mapState('Dialogo', ['itemsBread', 'dailogPermisos']),
         ...mapGetters('Permisos', ['getPermisosDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),
+        ...mapGetters('Carreras', ['getCarrerasUser', 'getCarreras']),
     }
 }
 </script>

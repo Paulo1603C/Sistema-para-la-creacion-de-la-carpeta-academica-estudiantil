@@ -19,14 +19,10 @@
 
             <v-card-actions>
                 <v-btn color="error darken-2" @click="eliminar" icon small>
-                    <template>
-                        <v-icon>mdi-delete</v-icon>
-                    </template>
+                    <v-icon>mdi-delete</v-icon>
                 </v-btn>
                 <v-btn color="primary darken-2" @click="editar" icon small>
-                    <template>
-                        <v-icon>mdi-pencil</v-icon>
-                    </template>
+                    <v-icon>mdi-pencil</v-icon>
                 </v-btn>
 
                 <v-spacer></v-spacer>
@@ -39,7 +35,6 @@
                         <v-icon>mdi-chevron-down</v-icon>
                     </template>
                 </v-btn>
-
             </v-card-actions>
 
             <v-expand-transition>
@@ -81,9 +76,8 @@ export default {
         ...mapActions('Permisos', ['cargarPermisosSubDir_User']),
         ...mapActions('Carreras', ['cargarCarrerasUser']),
 
-        editar: async function (item) {
+        async editar(item) {
             this.setDialog(true);
-            //console.log("ID user "+this.id);
             await this.cargarCarrerasUser(this.id);
             this.itemSeleccionadoUsuario = {
                 id: this.id,
@@ -93,22 +87,17 @@ export default {
                 apellido: this.apellido,
                 rol: this.idRol,
                 carreras: this.devolverCarreras(),
-                //permisos: [this.idPermisos[0],this.idPermisos[1],this.idPermisos[2],this.idPermisos[3],this.idPermisos[5],],
                 urlDw: this.urlDw,
             };
-            //console.log('Datos del card seleccionado:', this.devolverCarreras());
             this.setUser(this.itemSeleccionadoUsuario);
         },
 
         devolverCarreras() {
-            const carreras = [];
-            for (let i = 0; i < this.idCarreras.length; i++) {
-                if (this.idCarreras[i] !== ',') {
-                    carreras.push(this.idCarreras[i]);
-                }
-            }
-            console.log(carreras);
-            return carreras;
+            const carreras = this.idCarreras.split(',').filter(id => id.trim() !== '');
+            // Eliminar duplicados si es necesario
+            const uniqueCarreras = [...new Set(carreras)];
+ 
+            return uniqueCarreras;
         },
 
         eliminar() {
@@ -121,17 +110,15 @@ export default {
                 'Deseas eliminar el usuario: ' + this.itemSeleccionadoUsuario.nombre + " " + this.itemSeleccionadoUsuario.apellido,
                 () => {
                     this.eliminarUsuario(this.itemSeleccionadoUsuario);
-                    //console.log(this.itemSeleccionadoUsuario);
-                    this.$alertify.success('Usuario  Eliminado');
+                    this.$alertify.success('Usuario Eliminado');
                 },
-                () => this.$alertify.error('cancel')
+                () => this.$alertify.error('Cancel')
             );
         },
 
-        asignarPermisos: async function () {
+        async asignarPermisos() {
             try {
                 await this.cargarPermisosSubDir_User({ idUser: this.id });
-                //console.log("PERMISOS INIT");
                 this.permisoInit = {
                     IdRelacion: 0,
                     IdUserPer: this.id,
@@ -141,10 +128,9 @@ export default {
                 this.setPermisosUsuario(this.permisoInit);
                 this.setDialogPermisos(true);
             } catch (error) {
-                this.$alertify.error('Error en la solicitud asignar permisos ' + error);
+                this.$alertify.error('Error en la solicitud de asignar permisos ' + error);
             }
         },
-
     },
 
     components: {

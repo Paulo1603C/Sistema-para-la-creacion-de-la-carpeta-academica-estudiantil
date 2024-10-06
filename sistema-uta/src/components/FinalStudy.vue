@@ -103,7 +103,7 @@ export default {
           try {
               if( this.selectedFiles.length>0 && this.obsAux!='' ){
                 const rutaNueva = `CARRERAS/${this.datos.ruta}/${this.datos.nombre.toUpperCase()} ${this.datos.apellido.toUpperCase()}/TITULACION/`;
-                console.log(rutaNueva);
+                //console.log(rutaNueva);
                 // Subir cada archivo con su observación
                 const storedUser = JSON.parse(localStorage.getItem('user'));
                 this.idUser = storedUser.IdUser;
@@ -112,10 +112,10 @@ export default {
                     return Promise.all([
                         this.crearArchivos({ ruta: rutaNueva, archivo: file }),
                         this.actaulizarFecha({id:this.datos.id, fecha:this.obsAux}),
-                        this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser}),
                     ]);
                 }));
-
+                    
+                this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser}),
                 //await this.cargarCarpetas(this.path);
                 this.$alertify.success("Archivos Insertados");
                 this.cerrarDialog();

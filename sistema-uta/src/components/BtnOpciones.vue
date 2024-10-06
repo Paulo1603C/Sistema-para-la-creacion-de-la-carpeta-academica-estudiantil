@@ -274,8 +274,8 @@ export default {
 
     buscarEstudianteCed: async function (cedula) {
       let res = this.validarCedula(cedula);
-      console.log('Valor cedula');
-      console.log(res);
+      //console.log('Valor cedula');
+      //console.log(res);
       if (res === true) {
         let buscar = await this.buscarEstCedula({ cedula: cedula });
         if (buscar) {

@@ -218,7 +218,7 @@ export default {
                 }));
                 const permission = JSON.stringify(Array.from(this.permisosDirectorios.entries()));
                 localStorage.setItem('PermisosSubDirectorios', permission);
-                console.log(this.permisosDirectorios);
+                //console.log(this.permisosDirectorios);
             } catch (error) {
                 console.error('Error al obtener permisos de directorios:', error);
                 throw error; // Re-lanza el error para que pueda ser manejado externamente si es necesario.

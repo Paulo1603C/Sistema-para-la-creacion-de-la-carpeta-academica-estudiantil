@@ -127,6 +127,8 @@ export default {
                     const storedUser = JSON.parse(localStorage.getItem('user'));
                     this.idUser = storedUser.IdUser;
                     if (this.itemsBread.length < 3) {
+                        console.info('Crwando nuevo estudicnate');
+                        console.info(this.ItemEstudiante);
                         await this.AgregarEstudiante(this.ItemEstudiante);
                         await this.crearCarpeta({ datos: this.ItemEstudiante, path: this.path, oldPath: this.rutaAnterior });
                         if (this.ItemEstudiante.IdEst == 0) {
@@ -272,6 +274,7 @@ export default {
         ...mapState('Carreras', ['idCarreraSelect']),
         ...mapState('Server_Carpetas', ['rutaAnterior']),
         ...mapGetters("SubSubItems", ["getSubSubItems"]),
+        ...mapGetters('Carreras', ['getCarrerasUser', 'getCarreras']),
     },
 }
 </script>       

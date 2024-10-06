@@ -33,6 +33,8 @@
                                 <v-autocomplete :items="getPermisos" item-text="nomPer" item-value="IdPer" label="Permisos*"
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
+                            {{ getCarreras }}
+                            {{ ItemUsuario.carreras }}
                             <v-col cols="12" sm="4">
                                 <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar"
                                     item-value="IdCar" label="Carreras*" multiple
@@ -62,7 +64,6 @@ import CryptoJS from 'crypto-js';
 import emailjs from '@emailjs/browser';
 
 export default {
-
     name: "nuevoUser",
 
     props: {
@@ -71,19 +72,27 @@ export default {
     },
 
     data: () => ({
-        passAux:"",
+        passAux: "",
     }),
 
     created() {
         this.cargarCarreras();
         this.cargarRoles();
         this.cargarPermisos();
+
+        if (this.ItemUsuario.id !== 0) {
+            // Cargar carreras asignadas al usuario si está en modo edición
+            this.ItemUsuario.carreras = this.devolverCarreras();
+        } else {
+            // Si es un nuevo usuario, inicializa el campo de carreras vacío
+            this.ItemUsuario.carreras = [];
+        }
+
         this.ItemUsuario.correo = '';
     },
 
     methods: {
-
-        ...mapActions('Carreras', ['cargarCarreras']),
+        ...mapActions('Carreras', ['cargarCarreras','cargarCarrerasUser']),
         ...mapActions('Usuarios', ['AgregarUsuario', 'AgregarUsuarioCarreras', 'eliminarCarrerasSecre']),
         ...mapActions('Roles', ['cargarRoles']),
         ...mapActions('Permisos', ['cargarPermisos']),
@@ -121,29 +130,27 @@ export default {
                 controlRol: [
                     value => {
                         if (value) return true;
-                        return 'Selecione un rol';
+                        return 'Seleccione un rol';
                     },
                 ],
                 controlCar: [
                     value => {
                         if (value) return true;
-                        return 'Selecione almenos una carrera';
+                        return 'Seleccione al menos una carrera';
                     },
                 ],
             };
         },
 
         agregar() {
-            //console.log(this.ItemUsuario.correo , this.ItemUsuario.contraseña)
             this.passAux = this.ItemUsuario.contraseña;
             this.insertarUsuario();
-            if(this.ItemUsuario.id == 0){
+            if (this.ItemUsuario.id == 0) {
                 this.notificarUsuario(this.ItemUsuario.correo, this.passAux);
             }
         },
 
         notificarUsuario(email, pass) {
-            console.log(email)
             let sms = {
                 to_email: email,
                 message: pass,
@@ -157,7 +164,7 @@ export default {
                     );
                 })
                 .catch(error => {
-                    this.$alertify.alert('Nueva Cuenta', 'El servicio no esta disponible', () =>
+                    this.$alertify.alert('Nueva Cuenta', 'El servicio no está disponible', () =>
                         this.$alertify.warning('alerta cerrada')
                     );
                 });
@@ -167,28 +174,21 @@ export default {
             try {
                 let c = this.ItemUsuario.correo;
                 let partes = c.split("@").filter(Boolean);
-                if (partes[partes.length - 1] == "uta.edu.ec") {
-                } else {
-                    this.$alertify.alert('Correo Incorrecto', 'Ingrese un correo válido => @uta.edu.ec  ', () => {
+                if (partes[partes.length - 1] !== "uta.edu.ec") {
+                    this.$alertify.alert('Correo Incorrecto', 'Ingrese un correo válido => @uta.edu.ec', () => {
                         this.ItemUsuario.correo = '';
                     });
                 }
 
                 const correoValido = await this.validarCorreo({ correo: this.ItemUsuario.correo });
                 if (correoValido) {
-                    console.log('Correo ya registrado');
                     this.$alertify.error("Este correo ya está registrado");
                     this.ItemUsuario.correo = '';
-                    /*this.$alertify.alert('Correo Registrado', 'Este correo ya está registrado', function() {
-                        this.ItemUsuario.correo = '';
-                        console.log('cambio');
-                    }.bind(this));*/
                 }
             } catch (error) {
-                this.$alertify.error('Error al validar un correo:', error);
+                this.$alertify.error('Error al validar correo:', error);
             }
         },
-
 
         insertarUsuario: async function () {
             try {
@@ -199,16 +199,18 @@ export default {
 
                     let contraseñaHash = CryptoJS.SHA256(this.ItemUsuario.contraseña).toString();
                     this.ItemUsuario.contraseña = contraseñaHash;
+
                     await this.AgregarUsuario(this.ItemUsuario);
-                    if( this.ItemUsuario.id != 0){
+
+                    if (this.ItemUsuario.id !== 0) {
                         await this.actualizarCarrerasUsuario();
-                    }else{
+                    } else {
                         await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: this.ItemUsuario.carreras });
                     }
+
                     this.cerrarDialog();
                     this.limpiarCampos();
                     this.$alertify.success(this.ItemUsuario.id == 0 ? "Usuario Insertado" : "Usuario Actualizado");
-
                 } else {
                     this.$alertify.error("Complete los campos requeridos");
                 }
@@ -217,61 +219,44 @@ export default {
             }
         },
 
-
         devolverCarreras() {
-            const carreras = [];
-            for (let i = 0; i < this.getCarrerasUser.length; i++) {
-                carreras.push(this.getCarrerasUser[i].idCar);
-            }
-            return carreras;
+            return this.getCarrerasUser.map(carrera => carrera.IdCar);
         },
 
         actualizarCarrerasUsuario: async function () {
             try {
                 const carrerasAntiguas = this.devolverCarreras();
                 const carrerasNuevas = this.ItemUsuario.carreras;
-                // Identificar carreras que deben eliminarse
+
                 const carrerasEliminar = carrerasAntiguas.filter(carrera => !carrerasNuevas.includes(carrera));
-                // Identificar carreras que deben agregarse
                 const carrerasAgregar = carrerasNuevas.filter(carrera => !carrerasAntiguas.includes(carrera));
-                // Actualizar carreras solo si hay cambios
+
                 if (carrerasEliminar.length > 0 || carrerasAgregar.length > 0) {
-                    //console.log('Realizando actualización de carreras');
-                    // Eliminar carreras que ya no están en la lista nueva
                     if (carrerasEliminar.length > 0) {
                         for (const carreraEliminar of carrerasEliminar) {
                             await this.eliminarCarrerasSecre({ id: this.ItemUsuario.id, idCar: carreraEliminar });
                         }
                     }
-                    // Agregar carreras nuevas que no estaban en la lista antigua
                     if (carrerasAgregar.length > 0) {
                         await this.AgregarUsuarioCarreras({ idU: this.ItemUsuario.id, cars: carrerasAgregar });
                     }
-                    //console.log('Actualización completa');
-                } else {
-                    //console.log('No hay cambios en las carreras');
                 }
             } catch (error) {
-                this.$alertify.error('Error al agregar un Usuario:', error);
+                this.$alertify.error('Error al actualizar carreras:' + error);
             }
         },
-
-
 
         cerrarDialog() {
             this.setDialog(false);
         },
 
         limpiarCampos() {
-            this.ItemUsuario.nombre = "";
-            this.ItemUsuario.apellido = "";
-            this.ItemUsuario.correo = "";
-            this.ItemUsuario.contraseña = "";
-            this.ItemUsuario.rol = "";
-            this.ItemUsuario.permisos = "";
-            this.ItemUsuario.carreras = "";
+            this.ItemUsuario.nombre = '';
+            this.ItemUsuario.apellido = '';
+            this.ItemUsuario.correo = '';
+            this.ItemUsuario.contraseña = '';
+            this.ItemUsuario.carreras = [];
         },
-
     },
 
     computed: {
@@ -279,5 +264,9 @@ export default {
         ...mapGetters('Roles', ['getRoles']),
         ...mapGetters('Permisos', ['getPermisos']),
     },
-}
-</script>       
+};
+</script>
+
+<style scoped>
+/* Custom styles */
+</style>

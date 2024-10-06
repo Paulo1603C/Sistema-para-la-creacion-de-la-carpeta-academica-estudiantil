@@ -8,8 +8,6 @@
                 <span style="color:red;font-size:15x" v-if="index < itemsBread.length - 1"> / </span>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
-
-
         <Carreras :show="carreras" Titulo="CARRERAS" :Cabecera="CabeceraCarreras" :Items="getCarrerasUser"></Carreras>
         <TablaEst :show="tablaEst" Titulo="ESTUDIANTES " :Cabecera="Cabecera" :Items="getItems"></TablaEst>
         <TablaDir_Arch :show="tablaArch" :Titulo="itemsBread[2]" :Cabecera="Cabecera2" :ItemsArchivos="getCarpetas">
@@ -117,34 +115,21 @@ export default {
                 this.setVentanaArch(false);
                 this.setBreadcrumbs(this.itemsVacio);
             } else {
-                switch (item) {
-                    case 'INGENIERÍA INDUSTRIAL':
-                        this.carrera = 1;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
-                        break;
-                    case 'SOFTWARE':
-                        this.carrera = 2;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
-                        break;
-                    case 'TI':
-                        this.carrera = 3;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
-                        break;
-                    case 'TELECOMUNICACIONES':
-                        this.carrera = 4;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
-                        break;
-                    case 'AUTOMATIZACIÓN Y ROBÓTICA':
-                        this.carrera = 5;
-                        this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
-                        //console.log(this.path);
-                        break;
-                    default:
-                        this.path = '';
-                        this.setBreadcrumbs(item);
-                        this.rutaNueva();
-                        this.cargarCarpetas(this.path);
-                        break;
+                // Obtener las carreras desde el getter
+                const carreras = this.getCarreras;  // O this.getCarreras, según cuál uses
+
+                // Buscar la carrera en base al nombre (case-insensitive)
+                const carreraEncontrada = carreras.find(carrera => carrera.NomCar.toUpperCase() === item.toUpperCase());
+
+                if (carreraEncontrada) {
+                    this.carrera = carreraEncontrada.IdCar;
+                    this.navegacionBreadCrumbs(this.carrera, this.idUser, item);
+                } else {
+                    // Si no se encuentra la carrera, ejecutar el caso por defecto
+                    this.path = '';
+                    this.setBreadcrumbs(item);
+                    this.rutaNueva();
+                    this.cargarCarpetas(this.path);
                 }
 
             }
