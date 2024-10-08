@@ -3,6 +3,11 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 import { baseURL } from './config';
+
+const verificarConexion = () => {
+  return navigator.onLine; // Comprueba si hay conexión a Internet
+};
+
 export default {
   namespaced: true,
 
@@ -12,9 +17,7 @@ export default {
     ItemsPlantillaTiene: [],
     dataPlan: {},
     estudinates_Plantillas: [],
-    //alamcenara el id de la plantilla del estudiante seleccionado
     idEstPlan: '',
-
   },
   getters: {
     getPlantillas(state) {
@@ -32,7 +35,6 @@ export default {
     getEstudinates_Plantillas(state) {
       return state.estudinates_Plantillas;
     },
-
   },
   mutations: {
     llenarPlantillas(state, data) {
@@ -58,10 +60,14 @@ export default {
     setIdEstPlan(state, data) {
       state.idEstPlan = data;
     },
-
   },
   actions: {
     cargarPlantillas: async function ({ commit }) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       try {
         const setting = {
           method: 'GET',
@@ -78,10 +84,14 @@ export default {
       } catch (error) {
         console.error('Error en la solicitud:', error);
       }
-
     },
 
     cargarItemsPlantillas: async function ({ commit }, datos) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       try {
         const datosPlantilla = new FormData();
         datosPlantilla.append('idPlantilla', datos.idPlanPer);
@@ -102,10 +112,14 @@ export default {
       } catch (error) {
         console.error('Error en la solicitud:', error);
       }
-
     },
 
     cargarItemsPlantillasTiene: async function ({ commit }, { idPlan }) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       try {
         const datosPlantilla = new FormData();
         datosPlantilla.append('IdPlan', idPlan);
@@ -126,10 +140,14 @@ export default {
       } catch (error) {
         console.error('Error en la solicitud:', error);
       }
-
     },
 
     cargarEstudinates_Plantillas: async function ({ commit }, { idPlan }) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       try {
         const datosPlantilla = new FormData();
         datosPlantilla.append('IdPlanPer', idPlan);
@@ -150,10 +168,14 @@ export default {
       } catch (error) {
         console.error('Error en la solicitud:', error);
       }
-
     },
 
     AgregarPlantilla: async function ({ commit, dispatch }, datos) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       try {
         console.log(datos.nomPlan.toUpperCase());
         const datosPantilla = new FormData();
@@ -182,8 +204,12 @@ export default {
       }
     },
 
-    //insetar carreras para los usaurios-> se pasa un arreglo;
     AgregarItemsSubDirectorios: async function ({ commit, dispatch }, datos) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       var aux = 0;
       while (aux < datos.items.length) {
         try {
@@ -210,6 +236,11 @@ export default {
     },
 
     AgregarItemsPalntilla: async function ({ commit, dispatch }, datos) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       var aux = 0;
       while (aux < datos.items.length) {
         try {
@@ -235,15 +266,14 @@ export default {
       }
     },
 
-    //insetar items para los direcotios-> se pasa un arreglo;
     AgregarItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
-      //console.log('Creandp directorios');
-      //datos.items.push('TITULACION');
-      console.log(datos);
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
+      }
+
       var aux = 0;
-      console.log(datos.items.length);
       while (aux < datos.items.length) {
-        console.log(aux);
         try {
           const datosItem = new FormData();
           datosItem.append('NomItem', datos.items[aux].toUpperCase());
@@ -273,71 +303,32 @@ export default {
       }
     },
 
-    //este metodo se usa cuando actializa y quiere ingresar nuevos elmentos
-    AgregarMasItemsDirectorios: async function ({ commit, dispatch }, { datos, idPlan }) {
-    
-        let aux = 0;
-        while (aux < datos.length) {
-            try {
-                console.log('Procesando elemento en índice', aux, ':', datos[aux]);
-                
-                const datosItem = new FormData();
-                datosItem.append('NomItem', datos[aux].toUpperCase());
-                datosItem.append('IdPlan', idPlan);
-    
-                const setting = {
-                    method: 'POST',
-                    body: datosItem,
-                }
-                const url = `${baseURL}insertarItemDirectorio.php`;
-                const response = await fetch(url, setting);
-                const json = await response.text();
-                
-                if (json.startsWith('{')) {
-                    const jsonData = JSON.parse(json);
-                    // dispatch('cargarPlantillas');
-                } else {
-                    // dispatch('cargarPlantillas');
-                }
-            } catch (error) {
-                console.error('Error en la solicitud:', error);
-            }
-            aux++;
-        }
-    },
-
-    eliminarPlantilla: async function ({ commit, dispatch }, datos) {
-      try {
-        const idUser = new FormData();
-        idUser.append('IdPlantilla', datos.id);
-        const setting = {
-          method: 'POST',
-          body: idUser,
-        }
-        const url = `${baseURL}eliminarPlantilla.php`;
-        const data = await fetch(url, setting);
-        if (data.ok) {
-          const json = await data.text();
-          if (json.startsWith('{')) {
-            console.log(json);
-            const jsonData = JSON.parse(json);
-            if( jsonData.message === "Eliminado" ){
-              dispatch('cargarPlantillas');
-              return true;
-            }
-          } else {
-            dispatch('cargarPlantillas');
-          }
-        }
-      } catch (error) {
-        console.log("Error de eliminción " + error);
+    eliminarPlantilla: async function ({ commit, dispatch }, id) {
+      if (!verificarConexion()) {
+        console.error('No hay conexión a Internet.');
+        return;
       }
 
-    }
+      try {
+        const datosPlantilla = new FormData();
+        datosPlantilla.append('idPlantilla', id);
 
+        const setting = {
+          method: 'POST',
+          body: datosPlantilla,
+        };
+        const url = `${baseURL}eliminarPlantilla.php`;
+        const data = await fetch(url, setting);
+        const json = await data.text();
+        if (json.startsWith('{')) {
+          const jsonData = JSON.parse(json); // Analiza como JSON si parece válido
+          //dispatch('cargarPlantillas');
+        } else {
+          //dispatch('cargarPlantillas');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    },
   },
-
-  modules: {
-  }
-
 }
