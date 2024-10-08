@@ -306,7 +306,6 @@ export default {
         }
     },
 
-    //por el momento no se usa debido a la integridad referencial
     eliminarPlantilla: async function ({ commit, dispatch }, datos) {
       try {
         const idUser = new FormData();
@@ -335,7 +334,6 @@ export default {
       }
 
     }
-
 
   },
 

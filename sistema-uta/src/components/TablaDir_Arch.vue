@@ -214,8 +214,7 @@ export default {
         },
 
         // Verificar permisos genérico
-        //verificarPermisosGenerico(item, permiso) {
-        verificarPermisosGenerico(item) {
+        verificarPermisosGenerico(item, permiso) {
             /*console.log('Metodo verificar permisos');
             console.log(item);*/
             try {
@@ -225,14 +224,14 @@ export default {
                 const nombreTrim = item.nombre.trim().toLowerCase();
                 //console.log(nombreTrim);
                 if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
-                    console.log('Padre ');
+                    //console.log('Padre ');
                     localStorage.setItem('padreActual', '');
                 }
                 if (permisosSubdirectorio.get(nombreTrim) != null) {
-                    console.log('tiene permisos');
+                    //console.log('tiene permisos');
                     return true;
                 }
-                console.log(localStorage.getItem('padreActual'));
+                //console.log(localStorage.getItem('padreActual'));
                 const padreActual = localStorage.getItem('padreActual');
                 const auxPermisos = permisosSubdirectorio.get(padreActual);
                 return auxPermisos != null;

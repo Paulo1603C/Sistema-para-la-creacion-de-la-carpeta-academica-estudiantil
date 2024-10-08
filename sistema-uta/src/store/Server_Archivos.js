@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { baseURL } from './config';
 
 Vue.use(Vuex)
-import { baseURL } from './config';
+
 export default {
     namespaced: true,
 
@@ -10,16 +11,18 @@ export default {
         listArchivos: null,
         dataObsArch: {},
         observacion: '',
-
+        loading: false, // Estado para manejar el loading
     },
 
     getters: {
         getArchivos(state) {
             return state.listArchivos;
         },
-
         getObs(state) {
             return state.observacion;
+        },
+        isLoading(state) {
+            return state.loading; // Getter para el estado de carga
         },
     },
 
@@ -27,35 +30,46 @@ export default {
         llenarlista(state, Archivos) {
             state.listArchivos = Archivos;
         },
-
         cargarObs(state, sms) {
             state.observacion = sms;
         },
-
-        setObsArch(state, value) {
-            this.state = value;
-        }
+        setLoading(state, isLoading) {
+            state.loading = isLoading; // Cambiar el estado de loading
+        },
     },
 
     actions: {
+        async cargarArchivos({ commit }) {
+            commit('setLoading', true);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de tiempo de espera
 
-        cargarArchivos: async function ({ commit }) {
             try {
                 const setting = {
-                    methods: 'GET',
-                }
-                const url = '';
-                const data = await fetch(url, setting);
-                const json = await data.json();
-                commit('cargarObs', json);
+                    method: 'GET',
+                    signal: controller.signal, // Añadir la señal de abortar
+                };
+                const url = ''; // tu URL
+                const json = await fetchWithRetry(url, setting);
+                commit('llenarlista', json);
 
             } catch (error) {
-                console.error('Error en la solicitud:', error);
+                if (error.name === 'AbortError') {
+                    commit('cargarObs', 'La solicitud ha tardado demasiado y fue cancelada.');
+                } else {
+                    console.error('Error en la solicitud:', error);
+                    commit('cargarObs', 'Hubo un problema con la conexión a Internet. Por favor, inténtalo de nuevo.');
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                commit('setLoading', false);
             }
-
         },
 
-        cargarObsArchivos: async function ({ commit }, { rutaObs }) {
+        async cargarObsArchivos({ commit }, { rutaObs }) {
+            commit('setLoading', true);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de tiempo de espera
 
             try {
                 const datosEST = new FormData();
@@ -63,26 +77,31 @@ export default {
                 const setting = {
                     method: 'POST',
                     body: datosEST,
+                    signal: controller.signal,
                 };
                 const url = `${baseURL}obsArchSelect.php`;
-                const data = await fetch(url, setting);
-                const json = await data.json();
+                const json = await fetchWithRetry(url, setting);
 
-                if (data.ok) {
-                    commit('cargarObs', json);
-                } else {
-                    commit('cargarObs', 'La respuesta no es un JSON válido:');
-                }
+                commit('cargarObs', json);
             } catch (error) {
-                console.error('Error en la solicitud:', error);
+                if (error.name === 'AbortError') {
+                    commit('cargarObs', 'La solicitud ha tardado demasiado y fue cancelada.');
+                } else {
+                    console.error('Error en la solicitud:', error);
+                    commit('cargarObs', 'Hubo un problema con la conexión a Internet. Por favor, inténtalo de nuevo.');
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                commit('setLoading', false);
             }
-
         },
 
-        crearArchivos: async function ({ commit, dispatch }, { ruta, archivo }) {
+        async crearArchivos({ commit }, { ruta, archivo }) {
+            commit('setLoading', true);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de tiempo de espera
+
             try {
-                console.log('RUTAS+> '+ruta);
-                console.log('Archivo+> '+archivo);
                 const datosArchivos = new FormData();
                 datosArchivos.append('rutaRemota', ruta);
                 datosArchivos.append('file', archivo);
@@ -90,30 +109,32 @@ export default {
                 const setting = {
                     method: 'POST',
                     body: datosArchivos,
+                    signal: controller.signal,
                 }
                 const url = `${baseURL}crearArchivos.php`;
-                const data = await fetch(url, setting);
-                const json = await data.text();
-                if (json.startsWith('{')) {
-                    const jsonData = JSON.parse(json);
-                    //dispatch('cargarArchivos');
-                } else {
-                    //dispatch('cargarArchivos');
-                }
-            } catch (error) {
-                console.error('Error en la solicitud:', error);
-            }
+                const json = await fetchWithRetry(url, setting);
 
+                // Aquí puedes manejar el json según sea necesario
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    commit('cargarObs', 'La solicitud ha tardado demasiado y fue cancelada.');
+                } else {
+                    console.error('Error en la solicitud:', error);
+                    commit('cargarObs', 'Hubo un problema con la conexión a Internet. Por favor, inténtalo de nuevo.');
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                commit('setLoading', false);
+            }
         },
 
-        crearObsArchivos: async function ({ commit, dispatch }, { ruta, observacion, idEstPer }) {
-            /*console.log("Datos a insertar");
-            console.log("RUTA "+ ruta);
-            console.log("RUTA "+ observacion);
-            console.log("RUTA "+ idEstPer);*/
+        async crearObsArchivos({ commit }, { ruta, observacion, idEstPer }) {
+            commit('setLoading', true);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de tiempo de espera
+
             try {
-                //console.log(observacion);
-                //console.log(ruta);
                 const datosObsArchivos = new FormData();
                 datosObsArchivos.append('RutaArchivo', ruta);
                 datosObsArchivos.append('Observacion', observacion);
@@ -122,39 +143,45 @@ export default {
                 const setting = {
                     method: 'POST',
                     body: datosObsArchivos,
+                    signal: controller.signal,
                 }
                 const url = `${baseURL}insertarObsArch.php`;
-                const data = await fetch(url, setting);
-                const json = await data.text();
-                if (json.startsWith('{')) {
-                    const jsonData = JSON.parse(json);
-                    //dispatch('cargarArchivos');
-                } else {
-                    //dispatch('cargarArchivos');
-                }
-            } catch (error) {
-                console.error('Error en la solicitud:', error);
-            }
+                const json = await fetchWithRetry(url, setting);
 
+                // Aquí puedes manejar el json según sea necesario
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    commit('cargarObs', 'La solicitud ha tardado demasiado y fue cancelada.');
+                } else {
+                    console.error('Error en la solicitud:', error);
+                    commit('cargarObs', 'Hubo un problema con la conexión a Internet. Por favor, inténtalo de nuevo.');
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                commit('setLoading', false);
+            }
         },
 
-        descargarArchivo: async function ({ commit }, { ruta, nombre }) {
+        async descargarArchivo({ commit }, { ruta, nombre }) {
+            commit('setLoading', true);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de tiempo de espera
+
             try {
-                //console.log('RUTA ' + ruta);
-                //console.log('NOMBRE00 ' + nombre);
                 const datosArchivos = new FormData();
                 datosArchivos.append('rutaRemota', ruta);
 
                 const setting = {
                     method: 'POST',
                     body: datosArchivos,
+                    signal: controller.signal,
                 }
                 const url = `${baseURL}descargarDir_Arch.php`;
                 const response = await fetch(url, setting);
-                //const json = await response.text();
+                
                 if (response.ok) {
                     const blob = await response.blob();
-                    // Crear un enlace de descarga y hacer clic en él
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -164,11 +191,30 @@ export default {
                     window.URL.revokeObjectURL(url);
                 }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
+                if (error.name === 'AbortError') {
+                    commit('cargarObs', 'La solicitud ha tardado demasiado y fue cancelada.');
+                } else {
+                    console.error('Error en la solicitud:', error);
+                    commit('cargarObs', 'Hubo un problema con la conexión a Internet. Por favor, inténtalo de nuevo.');
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                commit('setLoading', false);
             }
-
         },
-
     },
+}
 
+// Función para realizar reintentos
+async function fetchWithRetry(url, options, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return await response.json(); // Asumiendo que esperas JSON
+        } catch (error) {
+            if (i === retries - 1) throw error; // Lanza el error si es el último intento
+            console.log(`Intento ${i + 1} fallido, reintentando...`);
+        }
+    }
 }
