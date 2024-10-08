@@ -33,8 +33,6 @@
                                 <v-autocomplete :items="getPermisos" item-text="nomPer" item-value="IdPer" label="Permisos*"
                                     multiple v-model="ItemUsuario.permisos"></v-autocomplete>
                             </v-col>
-                            {{ getCarreras }}
-                            {{ ItemUsuario.carreras }}
                             <v-col cols="12" sm="4">
                                 <v-autocomplete :rules="controles().controlCar" :items="getCarreras" item-text="NomCar"
                                     item-value="IdCar" label="Carreras*" multiple
