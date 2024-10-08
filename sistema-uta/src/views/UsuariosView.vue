@@ -47,7 +47,7 @@ export default {
                 { icon: "account-plus-outline", text: "Crear Usuario" },
             ],
             page: 1,
-            itemsPerPage: 10, // Puedes ajustar este valor según tu necesidad
+            itemsPerPage: 5, // Puedes ajustar este valor según tu necesidad
         }
     },
 
