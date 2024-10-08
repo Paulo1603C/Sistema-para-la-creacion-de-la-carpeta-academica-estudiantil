@@ -39,7 +39,7 @@ export default {
     actions: {
 
         cargarCarpetas: async function ({ commit }, ruta) {
-            //console.log('RUTA===>' + ruta.toUpperCase());
+            console.log('RUTA Para cargar===>' + ruta.toUpperCase());
             if (ruta) {
                 try {
                     const items = new FormData();
@@ -53,7 +53,8 @@ export default {
                     const data = await fetch(url, setting);
                     if (data.ok) {
                         const json = await data.text();
-                        //console.log(json);
+                        /*console.log('json Datso mostara C and F');
+                        console.log(json);*/
                         if (json.startsWith('{')) {
                             const jsonData = JSON.parse(json);
                             commit('llenarlista', jsonData);

@@ -9,7 +9,7 @@
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
                     </v-text-field>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="descargarAll()">Descargar Todo
+                    <v-btn color="primary" :disabled="loading" @click="descargarAll()">Descargar Todo
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
@@ -22,7 +22,7 @@
                             <td>
                                 <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="30" @click.stop="descargarDirectorio(item)"
+                                        <v-icon color="black darken-2" size="30" :disabled="loadingUnit"  @click.stop="descargarDirectorio(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-download
                                         </v-icon>
@@ -52,6 +52,8 @@ export default {
             carrera: 0,
             permisosDirectorios: new Map(),
             sms: 'Obteniendo Permisos...',
+            loading: false,
+            loadingUnit: false,
         }
     },
 
@@ -86,18 +88,34 @@ export default {
         },
 
         descargarDirectorio: async function (item) {
-            this.rutaNueva();
-            await this.descargarCarpeta({ ruta: this.path, nombre: item.nomCar });
-            this.$alertify.success('Archivo Descargado ');
-            this.path = '';
+            this.loadingUnit = true;
+            try {
+                this.rutaNueva();
+                await this.descargarCarpeta({ ruta: this.path, nombre: item.nomCar });
+                this.$alertify.success('Archivo Descargado ');
+                this.path = '';
+            } catch (error) {
+                console.error('Error al descargar carpeta:', error);
+                this.$alertify.error('Error al descargar carpeta ' + error);
+            } finally {
+                this.loadingUnit = false;
+            }
         },
 
         descargarAll: async function () {
             //this.rutaNueva();
-            const nom = '';
-            await this.descargarCarpeta({ ruta: this.itemsBread[0], nombre: nom });
-            this.$alertify.success('Archivo Descargado ');
-            this.path = '';
+            this.loading = true;
+            try {
+                const nom = '';
+                await this.descargarCarpeta({ ruta: this.itemsBread[0], nombre: nom });
+                this.$alertify.success('Archivo Descargado ');
+                this.path = '';
+            } catch (error) {
+                console.error('Error al descargar carpeta:', error);
+                this.$alertify.error('Error al descargar carpeta ' + error);
+            } finally {
+                this.loading = false;
+            }
         },
 
         obtnerIdCarrera() {

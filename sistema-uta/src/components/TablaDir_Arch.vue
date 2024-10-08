@@ -10,7 +10,7 @@
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
                     </v-text-field>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="descargarAll()">Descargar Todo
+                    <v-btn color="primary" :disabled="loading" @click="descargarAll()">Descargar Todo
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
@@ -54,7 +54,7 @@
                                     <div>
                                         <v-tooltip bottom style="margin-right: 15px;">
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-icon color="black darken-2" size="30" @click.stop="descargarDatos(item)"
+                                                <v-icon color="black darken-2" size="30" :disabled="loadingUnit" @click.stop="descargarDatos(item)"
                                                     v-bind="attrs" v-on="on">
                                                     mdi-download
                                                 </v-icon>
@@ -115,6 +115,8 @@ export default {
             dialogObs: false,
             auxPermisosControl: [],
             sinPermisos:"",
+            loading: false,
+            loadingUnit : false, 
         }
     },
 
@@ -145,7 +147,7 @@ export default {
                 this.$alertify.confirm(
                     'Deseas eliminar el estudiante: ' + item.nombre,
                     async () => {
-                        console.log('Ruta Borrar ' + this.path + item.nombre);
+                        //console.log('Ruta Borrar ' + this.path + item.nombre);
                         await this.eliminarCarpeta({ ruta1: this.path, ruta2: this.path + item.nombre, tipo: item.tipo });
                         await this.cargarCarpetas(this.path);
                         this.path = '';
@@ -159,9 +161,14 @@ export default {
         },
 
         async hacerAlgoAlHacerClic(item) {
-            this.setDailogEliminar(true);
+            /*console.log('hacerAlgoAlHacerClic');
+            console.log(item);*/
+            //this.setDailogEliminar(true);
             if (this.verificarSiPadre(item)) {
+                //console.log('Es padre y se agrega');
                 localStorage.setItem('padreActual', item.nombre.trim().toLowerCase());
+                //console.log(localStorage.getItem('padreActual'));
+
             }
             this.verificarSiArchivo(item);
             this.rutaNueva();
@@ -187,10 +194,13 @@ export default {
         },
 
         verificarSiPadre(item) {
+            //console.log(item);
             try {
                 const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+                //console(localStorage.getItem('PermisosSubDirectorios'));
                 const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-                console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
+                //console('permisosSubdirectorio');
+                //console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
                 return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
             } catch (error) {
                 this.$alertify.error('Error al verificar Carpeta Padre ' + error);
@@ -204,16 +214,25 @@ export default {
         },
 
         // Verificar permisos genérico
-        verificarPermisosGenerico(item, permiso) {
+        //verificarPermisosGenerico(item, permiso) {
+        verificarPermisosGenerico(item) {
+            /*console.log('Metodo verificar permisos');
+            console.log(item);*/
             try {
                 const permisosSubdirectorio = this.recuperarPermisos();
+                /*console.log(permisosSubdirectorio);
+                console.log(this.getSubCarpetas);*/
                 const nombreTrim = item.nombre.trim().toLowerCase();
+                //console.log(nombreTrim);
                 if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
+                    console.log('Padre ');
                     localStorage.setItem('padreActual', '');
                 }
                 if (permisosSubdirectorio.get(nombreTrim) != null) {
+                    console.log('tiene permisos');
                     return true;
                 }
+                console.log(localStorage.getItem('padreActual'));
                 const padreActual = localStorage.getItem('padreActual');
                 const auxPermisos = permisosSubdirectorio.get(padreActual);
                 return auxPermisos != null;
@@ -233,6 +252,8 @@ export default {
                 }
 
                 const padreActual = localStorage.getItem('padreActual');
+                //console.info('Mostarta permios de CRUD');
+                //console.info(localStorage.getItem('padreActual'));
                 const aux = permisosSubdirectorio.get(padreActual.trim());
                 return aux != null && aux.includes(permiso);
             } catch (error) {
@@ -243,6 +264,9 @@ export default {
         // Verificar permisos
         verificarPermisos(item) {
             const tienePermisos = this.verificarPermisosGenerico(item);
+            /*console.log("Generico");
+            console.log(item);
+            console.log(tienePermisos);*/
             
             if (!tienePermisos) {
                 //this.sinPermisos = item.nombre;
@@ -256,7 +280,7 @@ export default {
 
         // Mostrar editar
         mostrarEditar(item) {
-            this.mostrarCrear(item);
+            //this.mostrarCrear(item);
             return this.mostrarEditarGenerico(item, 'Editar');
         },
 
@@ -283,6 +307,7 @@ export default {
         },
 
         descargarItem: async function (ruta, item) {
+            this.loadingUnit = true;
             try {
                 //this.rutaNueva();
                 await this.descargarArchivo({ ruta: ruta + item.nombre, nombre: item.nombre });
@@ -290,10 +315,13 @@ export default {
                 //this.path = '';
             } catch (error) {
                 this.$alertify.error('Error al descargar el archivo ' + error);
+            }finally {
+                this.loadingUnit = false;
             }
         },
 
         descargarDirectorio: async function (ruta, item) {
+            this.loadingUnit = true;
             try {
                 //this.rutaNueva();
                 await this.descargarCarpeta({ ruta: ruta, nombre: item.nombre });
@@ -301,11 +329,14 @@ export default {
                 //this.path = '';
             } catch (error) {
                 this.$alertify.error('Error al descargar carpeta ' + error);
+            }finally {
+                this.loadingUnit = false;
             }
         },
 
 
         descargarAll: async function () {
+            this.loading = true;
             try {
                 this.rutaNueva();
                 const nom = '';
@@ -314,6 +345,8 @@ export default {
                 this.path = '';
             } catch (error) {
                 this.$alertify.error('Error al descargar las carpetas ' + error);
+            }finally {
+                this.loading = false;
             }
         },
 

@@ -14,7 +14,7 @@
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
                     </v-text-field>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="descargarAll()">Descargar Todo
+                    <v-btn color="primary" :disabled="loading" @click="descargarAll()">Descargar Todo
                         <v-icon right>mdi-folder-download</v-icon>
                     </v-btn>
                 </v-card-title>
@@ -48,7 +48,7 @@
                                 </v-tooltip>
                                 <v-tooltip bottom style="margin-right: 100px;">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-icon color="black darken-2" size="30" @click.stop="descargarItem(item)"
+                                        <v-icon color="black darken-2" size="30" :disabled="loadingUnit" @click.stop="descargarItem(item)"
                                             v-bind="attrs" v-on="on">
                                             mdi-download
                                         </v-icon>
@@ -95,6 +95,8 @@ export default {
             estudianteSeleccionado: {},
             dialogFile:false,
             studentData:{},
+            loading: false, 
+            loadingUnit: false, 
         }
     },
 
@@ -164,6 +166,7 @@ export default {
         },
 
         descargarItem: async function (item) {
+            this.loadingUnit = true;
             try {
                 this.rutaNueva();
                 await this.descargarCarpeta({ ruta: this.path, nombre: item.NomEst + " " + item.ApeEst });
@@ -171,10 +174,13 @@ export default {
                 this.path = '';
             } catch (error) {
                 this.$alertify.error('Error al descargar un archivo ' + error);
+            }finally {
+                this.loadingUnit = false;
             }
         },
 
         async descargarAll() {
+            this.loading = true;
             try {
                 this.rutaNueva();
                 const nombre = '';
@@ -184,6 +190,8 @@ export default {
             } catch (error) {
                 console.error('Error al descargar carpeta:', error);
                 this.$alertify.error('Error al descargar carpeta ' + error);
+            } finally {
+                this.loading = false;
             }
         },
 

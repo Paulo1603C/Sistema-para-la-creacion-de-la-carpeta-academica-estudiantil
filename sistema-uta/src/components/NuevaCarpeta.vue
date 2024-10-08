@@ -118,8 +118,8 @@ export default {
                                 await this.crearSubDirectorios(this.path, this.ItemCarpeta.NomEst);
                             }
                             await this.agregarPermisos(this.ItemCarpeta.NomEst);
-                            await this.cargarSubCarpetas();
                             await this.obtenerPermisosDirectorios();
+                            await this.cargarSubCarpetas();
                         } else {
                             //console.log("HIJA "+ultimoValor);
                             await this.crearCarpeta({ datos: this.ItemCarpeta, path: this.path, oldPath: this.rutaAnterior });
