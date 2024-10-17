@@ -198,10 +198,10 @@ export default {
             //console.log(item);
             try {
                 const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-                //console(localStorage.getItem('PermisosSubDirectorios'));
+                console(localStorage.getItem('PermisosSubDirectorios'));
                 const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-                //console('permisosSubdirectorio');
-                //console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
+                console('permisosSubdirectorio');
+                console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
                 return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
             } catch (error) {
                 this.$alertify.error('Error al verificar Carpeta Padre ' + error);
@@ -211,6 +211,8 @@ export default {
         // Función para recuperar permisos
         recuperarPermisos() {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
+            console.log('recuperarPermisos');
+            console.log(recuperarPermisos);
             return new Map(JSON.parse(recuperarPermisos));
         },
 
@@ -263,10 +265,10 @@ export default {
 
         // Verificar permisos
         verificarPermisos(item) {
-            const tienePermisos = this.verificarPermisosGenerico(item);
-            /*console.log("Generico");
+            console.log("Generico");
             console.log(item);
-            console.log(tienePermisos);*/
+            const tienePermisos = this.verificarPermisosGenerico(item);
+            console.log(tienePermisos);
             
             if (!tienePermisos) {
                 //this.sinPermisos = item.nombre;
@@ -296,6 +298,7 @@ export default {
         },
 
         mostrarVista(item) {
+            //console.log(item)
             return item.tipo === 'Archivo' ? true : false;
         },
 
@@ -385,11 +388,13 @@ export default {
 
         mostaraDatos(){
             for( let i=0; i < this.getSubCarpetas.length; i++ ){
-                let permisos = this.recuperarPermisos().get(this.getSubCarpetas[0].NomItem.toLowerCase());
+                let permisos = this.recuperarPermisos().get(this.getSubCarpetas[i].NomItem.toLowerCase());
+                //console.log('permisos');
+                //console.log(permisos);
                 if( permisos != null ){
                     this.auxPermisosControl = permisos
                 }else{
-                    console.log('No tienes permisos');
+                    console.log('No tienes permisos, mostrar');
                 }
             }
             try {

@@ -70,6 +70,9 @@ export default {
     },
 
     cargarPermisosDirectorios: async function ({ commit }, { idUser, nomItem }) {
+      console.log('carganfo per');
+      console.log(idUser);
+      console.log(nomItem);
       try {
         const datosPerDir = new FormData();
         datosPerDir.append('IdUser', idUser);
@@ -85,6 +88,8 @@ export default {
           throw new Error(`Error en la solicitud: ${response.statusText}`);
         }
         const json = await response.json();
+        /*console.log("permisoso user ")
+        console.log(json)*/
         commit('llenarPermisosDirectorios', json);
       } catch (error) {
         console.error('Error en la solicitud:', error);
