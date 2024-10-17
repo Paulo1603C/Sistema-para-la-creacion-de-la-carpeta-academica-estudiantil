@@ -95,8 +95,16 @@ export default {
                     }
                     datosCarpeta.append('nombreDirectorio', oldPath.toUpperCase());
                 } else {
-                    datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
-                    datosCarpeta.append('nombreDirectorio', oldPath);
+                    //puedes existr el caso aux sea mayor a -1 
+                    
+                    if( datos.ApeEst === '' ){
+                        //crear una carpeta normal
+                        datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst);
+                        datosCarpeta.append('nombreDirectorio', oldPath);
+                    }else{
+                        //auiq creae la carpesta de un estudiante
+                        datosCarpeta.append('nuevoNombreDirectorio', path + datos.NomEst.toUpperCase() + ' ' + datos.ApeEst.toUpperCase());
+                    }
                 }
                 const setting = {
                     method: 'POST',
@@ -120,6 +128,7 @@ export default {
         },
 
         crearSubCarpeta: async function ({ commit, dispatch }, { datos, path, nombre }) {
+
             commit('setIsLoading', true);
             commit('setErrorMessage', "");
             try {

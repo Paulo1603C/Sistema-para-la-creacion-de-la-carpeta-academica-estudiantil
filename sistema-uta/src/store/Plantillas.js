@@ -82,6 +82,9 @@ export default {
     },
 
     cargarItemsPlantillas: async function ({ commit }, datos) {
+      console.log('cargarItemsPlantillas')
+      console.log(datos)
+      console.log(datos.idPlanPer)
       try {
         const datosPlantilla = new FormData();
         datosPlantilla.append('idPlantilla', datos.idPlanPer);

@@ -132,9 +132,10 @@ export default {
                         await this.AgregarEstudiante(this.ItemEstudiante);
                         await this.crearCarpeta({ datos: this.ItemEstudiante, path: this.path, oldPath: this.rutaAnterior });
                         if (this.ItemEstudiante.IdEst == 0) {
+                            //console.log('creando sub caprteax');
                             await this.crearSubDirectorios(this.ItemEstudiante, this.path);
                         }
-                        console.log("ID=> "+ this.idUser);
+                        //console.log("ID=> "+ this.idUser);
                         await this.cargarEstudiantes({ idCar: this.idCarreraSelect, idUser: this.idUser });
                     } else {
                         await this.crearCarpeta({ datos: this.ItemEstudiante, path: this.path, oldPath: this.rutaAnterior });
@@ -171,9 +172,6 @@ export default {
                 const subSubItemsPromises = auxIdItemsPlan.map(async (id, index) => {
                     await this.cargarSubSubItemsHas({ idPlan: id });
                     const nomSubDirectorio = auxItemsPlan[index];
-                    console.log('Datsos porblem')
-                    console.log(this.getSubSubItems);
-                    console.log(this.nomSubDirectorio);
                     if (this.getSubSubItems.length > 0) {
                     const crearSubSubCarpetasPromises = this.getSubSubItems.map((subSubItem) =>
                         this.crearSubSubCarpeta({
