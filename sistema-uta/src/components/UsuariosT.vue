@@ -117,6 +117,8 @@ export default {
         },
 
         async asignarPermisos() {
+            /*console.log('this.id ');
+            console.log(this.id );*/
             try {
                 await this.cargarPermisosSubDir_User({ idUser: this.id });
                 this.permisoInit = {

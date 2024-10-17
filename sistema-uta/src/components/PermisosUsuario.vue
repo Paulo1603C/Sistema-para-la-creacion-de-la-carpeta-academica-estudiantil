@@ -9,24 +9,29 @@
                     </v-text-field>
                 </v-card-title>
                 <v-card-text>
-                    <v-data-table v-if="getPermisosSubDir_User.length != 0" style="max-height:200px; overflow-y: auto;"
-                        dense :headers="Cabecera" :items="getPermisosSubDir_User" :search="search" hide-default-footer>
+                    <v-data-table
+                        v-if="getPermisosSubDir_User.length != 0"
+                        style="max-height:200px; overflow-y: auto;"
+                        dense
+                        :headers="Cabecera"
+                        :items="getPermisosSubDir_User"
+                        :search="search"
+                        >
                         <template v-slot:item="{ item }">
                             <tr class="myStyle">
-                                <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
-                                <td>{{ item.NomItem }}</td>
-                                <td>{{ item.NomPer }}</td>
-                                <td>
-                                    <v-tooltip bottom style="margin-right: 100px; !important">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-icon color="red darken-2" size="30" @click.stop="eliminarItem(item)"
-                                                v-bind="attrs" v-on="on">
-                                                mdi-delete
-                                            </v-icon>
-                                        </template>
-                                        <span>Eliminar</span>
-                                    </v-tooltip>
-                                </td>
+                            <td><v-icon class="mr-3" color="yellow darken-1">mdi-folder</v-icon></td>
+                            <td>{{ item.NomItem }}</td>
+                            <td>{{ item.NomPer }}</td>
+                            <td>
+                                <v-tooltip bottom style="margin-right: 100px;">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="red darken-2" size="30" @click.stop="eliminarItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-delete
+                                    </v-icon>
+                                </template>
+                                <span>Eliminar</span>
+                                </v-tooltip>
+                            </td>
                             </tr>
                         </template>
                     </v-data-table>
