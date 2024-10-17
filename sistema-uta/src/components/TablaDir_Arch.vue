@@ -200,8 +200,8 @@ export default {
                 const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
                 console(localStorage.getItem('PermisosSubDirectorios'));
                 const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-                console('permisosSubdirectorio');
-                console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));
+                /*console('permisosSubdirectorio');
+                console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));*/
                 return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
             } catch (error) {
                 this.$alertify.error('Error al verificar Carpeta Padre ' + error);
@@ -211,8 +211,8 @@ export default {
         // Función para recuperar permisos
         recuperarPermisos() {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            console.log('recuperarPermisos');
-            console.log(recuperarPermisos);
+            /*console.log('recuperarPermisos');
+            console.log(recuperarPermisos);*/
             return new Map(JSON.parse(recuperarPermisos));
         },
 
@@ -265,10 +265,10 @@ export default {
 
         // Verificar permisos
         verificarPermisos(item) {
-            console.log("Generico");
-            console.log(item);
+            /*console.log("Generico");
+            console.log(item);*/
             const tienePermisos = this.verificarPermisosGenerico(item);
-            console.log(tienePermisos);
+            //console.log(tienePermisos);
             
             if (!tienePermisos) {
                 //this.sinPermisos = item.nombre;
