@@ -83,7 +83,8 @@ export default {
         const url = `${baseURL}estudiantesSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
-
+        console.log('json');
+        console.log(json);
         if (data.ok) {
           commit('llenarItems', json);
         } else {
