@@ -87,7 +87,7 @@
                     </template>
                 </v-data-table>
                 <div v-else-if="auxPermisosControl.length == 0" class="error-message text-center">No tienes permisos, solicitalos al administrador</div>
-                <div v-else-if="ItemsArchivos.elementos.length == 0" class="error-message text-center">Sin elementos para mostrar</div>
+                <!--<div v-else-if="ItemsArchivos.elementos.length == 0" class="error-message text-center">Sin elementos para mostrar</div>-->
                 <div v-else class="error-message text-center">No se puede conectar al servidor</div>
             </v-card>
         </template>
