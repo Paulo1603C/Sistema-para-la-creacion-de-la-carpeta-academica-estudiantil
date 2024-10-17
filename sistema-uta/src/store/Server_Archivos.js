@@ -97,6 +97,8 @@ export default {
         },
 
         async crearArchivos({ commit }, { ruta, archivo }) {
+            console.log('archivo');
+            console.log(archivo);
             commit('setLoading', true);
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de tiempo de espera
@@ -113,6 +115,8 @@ export default {
                 }
                 const url = `${baseURL}crearArchivos.php`;
                 const json = await fetchWithRetry(url, setting);
+                console.log('Subir arch');
+                console.log(json);
 
                 // Aquí puedes manejar el json según sea necesario
 

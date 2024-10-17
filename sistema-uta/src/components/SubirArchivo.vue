@@ -90,8 +90,16 @@ export default {
         },
 
         handleFileChange(event) {
-            this.selectedFiles = Array.from(event.target.files);
+            const maxFileSize = 50 * 1024 * 1024; // 50 MB en bytes
+            this.selectedFiles = Array.from(event.target.files).filter(file => {
+                if (file.size > maxFileSize) {
+                    this.$alertify.error(`El archivo ${file.name} excede el tamaño máximo permitido de 50 MB.`);
+                    return false;
+                }
+                return true;
+            });
         },
+
 
         rutaNueva() {
             this.path = '';

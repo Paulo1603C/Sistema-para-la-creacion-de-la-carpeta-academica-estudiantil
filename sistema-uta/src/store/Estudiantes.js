@@ -71,7 +71,9 @@ export default {
 
 
     cargarEstudiantes: async function ({ commit,  rootState }, { idCar,idUser }) {
-
+      console.log('Ejecutando metodo')
+      console.log(idCar)
+      console.log(idUser)
       try {
         const datosEST = new FormData();
         datosEST.append('IdUser', idUser);
