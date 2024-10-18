@@ -87,7 +87,7 @@
                     </template>
                 </v-data-table>
                 <div v-else-if="auxPermisosControl.length == 0" class="error-message text-center">No tienes permisos, solicitalos al administrador</div>
-                <!--<div v-else-if="ItemsArchivos.elementos.length == 0" class="error-message text-center">Sin elementos para mostrar</div>-->
+                <div v-else-if="ItemsArchivos.elementos.length == 0" class="error-message text-center">Sin elementos para mostrar</div>
                 <div v-else class="error-message text-center">No se puede conectar al servidor</div>
             </v-card>
         </template>
@@ -169,7 +169,6 @@ export default {
                 //console.log('Es padre y se agrega');
                 localStorage.setItem('padreActual', item.nombre.trim().toLowerCase());
                 //console.log(localStorage.getItem('padreActual'));
-
             }
             this.verificarSiArchivo(item);
             this.rutaNueva();
@@ -195,18 +194,38 @@ export default {
         },
 
         verificarSiPadre(item) {
-            //console.log(item);
+            //console.log('Verificando si es carpeta padre para:', item);
+
             try {
+                // Intenta recuperar los permisos desde localStorage
                 const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-                console(localStorage.getItem('PermisosSubDirectorios'));
+
+                // Verifica si los permisos fueron recuperados correctamente
+                if (!recuperarPermisos) {
+                    console.log('No se encontraron permisos en el almacenamiento local');
+                    return false; // No hay permisos almacenados
+                }
+
+                // Convierte los permisos recuperados a un objeto Map
                 const permisosSubdirectorio = new Map(JSON.parse(recuperarPermisos));
-                /*console('permisosSubdirectorio');
-                console.log(permisosSubdirectorio.get(item.nombre.trim().toLowerCase()));*/
-                return permisosSubdirectorio.get(item.nombre.trim().toLowerCase()) != null ? true : false;
+
+                // Obtiene el permiso correspondiente al nombre del item (normalizado)
+                const permiso = permisosSubdirectorio.get(item.nombre.trim().toLowerCase());
+
+                // Muestra el permiso en la consola para depuración
+                //console.log('Permiso encontrado para', item.nombre.trim().toLowerCase(), ':', permiso);
+
+                // Retorna true si el permiso existe, de lo contrario false
+                return permiso != null;
+
             } catch (error) {
+                // Maneja cualquier error que ocurra durante la verificación
+                console.error('Error al verificar Carpeta Padre:', error);
                 this.$alertify.error('Error al verificar Carpeta Padre ' + error);
+                return false; // Retorna false en caso de error
             }
         },
+
 
         // Función para recuperar permisos
         recuperarPermisos() {
@@ -218,23 +237,24 @@ export default {
 
         // Verificar permisos genérico
         verificarPermisosGenerico(item, permiso) {
-            /*console.log('Metodo verificar permisos');
-            console.log(item);*/
+            console.log('Metodo verificar permisos');
+            console.log(item);
             try {
                 const permisosSubdirectorio = this.recuperarPermisos();
-                /*console.log(permisosSubdirectorio);
-                console.log(this.getSubCarpetas);*/
+                console.log(permisosSubdirectorio);
+                console.log(this.getSubCarpetas);
                 const nombreTrim = item.nombre.trim().toLowerCase();
                 //console.log(nombreTrim);
                 if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
-                    //console.log('Padre ');
+                    console.log('Padre ');
                     localStorage.setItem('padreActual', '');
                 }
                 if (permisosSubdirectorio.get(nombreTrim) != null) {
                     //console.log('tiene permisos');
                     return true;
                 }
-                //console.log(localStorage.getItem('padreActual'));
+                console.log('obyterkjsk pades');
+                console.log(localStorage.getItem('padreActual'));
                 const padreActual = localStorage.getItem('padreActual');
                 const auxPermisos = permisosSubdirectorio.get(padreActual);
                 return auxPermisos != null;
@@ -386,26 +406,42 @@ export default {
         ...mapState('Permisos', ['permisosSubDirectorios']),
         ...mapGetters('SubCarpetas', ['getSubCarpetas']),
 
-        mostaraDatos(){
-            for( let i=0; i < this.getSubCarpetas.length; i++ ){
+        mostaraDatos() {
+            // Itera sobre todos los elementos de this.getSubCarpetas
+            for (let i = 0; i < this.getSubCarpetas.length; i++) {
+                // Obtén los permisos para cada elemento actual de getSubCarpetas
                 let permisos = this.recuperarPermisos().get(this.getSubCarpetas[i].NomItem.toLowerCase());
-                //console.log('permisos');
-                //console.log(permisos);
-                if( permisos != null ){
-                    this.auxPermisosControl = permisos
-                }else{
-                    console.log('No tienes permisos, mostrar');
+                /*console.log('Permisos para', this.getSubCarpetas[i].NomItem);
+                console.log(permisos);*/
+                
+                if (permisos != null) {
+                    // Si hay permisos, actualiza auxPermisosControl
+                    this.auxPermisosControl = permisos;
+                } else {
+                    // Si no hay permisos, muestra un mensaje en consola
+                    console.log(`No tienes permisos para ${this.getSubCarpetas[i].NomItem}`);
                 }
             }
-            try {
-                if(this.ItemsArchivos.elementos.length > 0 && this.auxPermisosControl.length > 0 ){
-                   return true
-                }else{
-                    return false
 
+            // Verifica si hay elementos en ItemsArchivos y si auxPermisosControl tiene permisos
+            //console.log('ItemsArchivos:', this.ItemsArchivos);
+            //console.log('AuxPermisosControl:', this.auxPermisosControl);
+
+            try {
+                // Controla si ItemsArchivos y auxPermisosControl existen y tienen datos válidos
+                const hayElementosArchivos = this.ItemsArchivos && this.ItemsArchivos.elementos && this.ItemsArchivos.elementos.length > 0;
+                const hayPermisosControl = this.auxPermisosControl && this.auxPermisosControl.length > 0;
+
+                if (hayElementosArchivos || hayPermisosControl) {
+                    //console.log('Condición cumplida: Hay elementos o permisos');
+                    return true;
+                } else {
+                    //console.log('Condición no cumplida: No hay elementos ni permisos');
+                    return false;
                 }
             } catch (error) {
-                return false
+                console.error('Error al verificar los elementos o permisos:', error);
+                return false;
             }
         }
     },
