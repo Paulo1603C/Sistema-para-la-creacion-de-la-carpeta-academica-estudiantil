@@ -71,9 +71,9 @@ export default {
 
 
     cargarEstudiantes: async function ({ commit,  rootState }, { idCar,idUser }) {
-      console.log('Ejecutando metodo')
+      /*console.log('Ejecutando metodo')
       console.log(idCar)
-      console.log(idUser)
+      console.log(idUser)*/
       try {
         const datosEST = new FormData();
         datosEST.append('IdUser', idUser);
@@ -85,8 +85,8 @@ export default {
         const url = `${baseURL}estudiantesSelect.php`;
         const data = await fetch(url, setting);
         const json = await data.json();
-        console.log('json');
-        console.log(json);
+        /*console.log('json');
+        console.log(json);*/
         if (data.ok) {
           commit('llenarItems', json);
         } else {

@@ -230,31 +230,32 @@ export default {
         // Función para recuperar permisos
         recuperarPermisos() {
             const recuperarPermisos = localStorage.getItem('PermisosSubDirectorios');
-            /*console.log('recuperarPermisos');
+            /**console.log('recuperarPermisos');
             console.log(recuperarPermisos);*/
             return new Map(JSON.parse(recuperarPermisos));
         },
 
         // Verificar permisos genérico
         verificarPermisosGenerico(item, permiso) {
-            console.log('Metodo verificar permisos');
-            console.log(item);
+            /*console.log('Metodo verificar permisos');
+            console.log(item);*/
             try {
                 const permisosSubdirectorio = this.recuperarPermisos();
-                console.log(permisosSubdirectorio);
-                console.log(this.getSubCarpetas);
-                const nombreTrim = item.nombre.trim().toLowerCase();
-                //console.log(nombreTrim);
+                /*console.log(permisosSubdirectorio);
+                console.log(this.getSubCarpetas);*/
+                const nombreTrim = String(item.nombre).trim().toLowerCase();
+                /*console.log('nombreTrim');
+                console.log(nombreTrim);*/
                 if (this.getSubCarpetas.some(({ NomItem }) => NomItem.toLowerCase() === item.nombre.toLowerCase())) {
-                    console.log('Padre ');
+                    //console.log('Padre ');
                     localStorage.setItem('padreActual', '');
                 }
                 if (permisosSubdirectorio.get(nombreTrim) != null) {
                     //console.log('tiene permisos');
                     return true;
                 }
-                console.log('obyterkjsk pades');
-                console.log(localStorage.getItem('padreActual'));
+                /*console.log('obyterkjsk pades');
+                console.log(localStorage.getItem('padreActual'));*/
                 const padreActual = localStorage.getItem('padreActual');
                 const auxPermisos = permisosSubdirectorio.get(padreActual);
                 return auxPermisos != null;
